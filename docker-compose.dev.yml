@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:8
+    container_name: mysql
+    ports:
+      - 3307:3306
+    volumes:
+      - db-store:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: katteyokatta_dev
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+      TZ: Asia/Tokyo
+volumes:
+  db-store:
