@@ -4,7 +4,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import { withSession } from "../lib/server/auth/withSession";
 import { useGetAllUsersQuery, User } from "../lib/client/generated/index";
-import { prisma } from "../lib/server/prisma";
 import { FC } from "react";
 
 type HomeProps = {
