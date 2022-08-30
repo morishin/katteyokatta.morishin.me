@@ -2,7 +2,7 @@ import { GraphQLClient } from "graphql-request";
 import type { GetServerSideProps, NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-import { withSession } from "../lib/server/auth/withSession";
+import { makeGetServerSidePropsWithSession } from "../lib/server/auth/withSession";
 import { getSdkWithHooks, User } from "../lib/client/generated/index";
 import { FC } from "react";
 
@@ -10,11 +10,10 @@ type HomeProps = {
   initialUsers: User[];
 };
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = withSession(
-  async (_context) => {
+export const getServerSideProps: GetServerSideProps<HomeProps> =
+  makeGetServerSidePropsWithSession(async (_context, _session) => {
     return { props: { initialUsers: [] } };
-  }
-);
+  });
 
 const graphqlClient = new GraphQLClient("/api/graphql");
 const sdk = getSdkWithHooks(graphqlClient);
