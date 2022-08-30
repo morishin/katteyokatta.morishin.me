@@ -3,7 +3,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import { withSession } from "../lib/server/auth/withSession";
-import { useGetAllUsersQuery, User } from "../lib/client/generated/index";
+import { getSdkWithHooks, User } from "../lib/client/generated/index";
 import { FC } from "react";
 
 type HomeProps = {
@@ -17,10 +17,11 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = withSession(
 );
 
 const graphqlClient = new GraphQLClient("/api/graphql");
+const sdk = getSdkWithHooks(graphqlClient);
 
 const Home: NextPage<HomeProps> = ({ initialUsers }) => {
   const { status } = useSession();
-  const allUsersResult = useGetAllUsersQuery(graphqlClient);
+  const { data, error } = sdk.useGetAllUsers("allUsers");
 
   return (
     <div>
@@ -54,14 +55,12 @@ const Home: NextPage<HomeProps> = ({ initialUsers }) => {
           Data is fetched by client via GraphQL API (Apollo Server is running on
           API Routes of Next.js).
         </p>
-        {allUsersResult.isLoading ? (
+        {!data ? (
           <div>Loading...</div>
-        ) : allUsersResult.isError ? (
+        ) : error ? (
           <div>Error</div>
         ) : (
-          allUsersResult.data && (
-            <UsersList users={allUsersResult.data.allUsers} />
-          )
+          data && <UsersList users={data.allUsers} />
         )}
       </section>
     </div>

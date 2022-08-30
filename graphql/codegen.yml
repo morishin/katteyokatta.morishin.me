@@ -9,9 +9,17 @@ generates:
     plugins:
       - typescript
       - typescript-operations
-      - typescript-react-query
+      - typescript-graphql-request
+      - plugin-typescript-swr
     documents: 'graphql/*/**/*.graphql'
-    config:
-      fetcher: graphql-request
-      isReactHook: true
-      exposeQueryKeys: true
+    # config:
+    #   # If you have a query that you want to use `useSWRInfinite`, list it in Options
+    #   useSWRInfinite:
+    #     - GetPost
+    #   scalars:
+    #     DateTime: string
+    #     JSON: unknown
+    #     Upload: unknown
+    #     Time: string
+    #     Date: string
+    #     Long: number
