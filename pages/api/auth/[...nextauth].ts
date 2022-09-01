@@ -13,6 +13,20 @@ export default NextAuth({
       clientId: env("TWITTER_CLIENT_ID"),
       clientSecret: env("TWITTER_CLIENT_SECRET"),
       version: "2.0",
+      profile: ({ data }) => {
+        return {
+          id: data.id,
+          name: data.username,
+          // NOTE: E-mail is currently unsupported by OAuth 2 Twitter.
+          email: null,
+          image: data.profile_image_url,
+        };
+      },
     }),
   ],
+  callbacks: {
+    async session({ session, user, token }) {
+      return session;
+    },
+  },
 });
