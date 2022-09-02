@@ -12,14 +12,10 @@ generates:
       - typescript-graphql-request
       - plugin-typescript-swr
     documents: 'graphql/*/**/*.graphql'
-    # config:
-    #   # If you have a query that you want to use `useSWRInfinite`, list it in Options
-    #   useSWRInfinite:
-    #     - GetPost
-    #   scalars:
-    #     DateTime: string
-    #     JSON: unknown
-    #     Upload: unknown
-    #     Time: string
-    #     Date: string
-    #     Long: number
+    config:
+      # If you have a query that you want to use `useSWRInfinite`, list it in Options
+      useSWRInfinite:
+        - getPosts
+      autogenSWRKey: true
+      scalars:
+        RFC3339DateTime: string

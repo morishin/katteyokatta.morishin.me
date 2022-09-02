@@ -1,10 +1,51 @@
+scalar RFC3339DateTime
+
+type Query {
+  posts(page: PageArgs!): PostConnection!
+}
+
+input PageArgs {
+  first: Int
+  after: String
+  last: Int
+  before: String
+}
+
 type User {
-  id: ID!
-  name: String
+  id: Int!
+  name: String!
   imageUrl: String
 }
 
-type Query {
-  user(id: ID!): User!
-  allUsers: [User!]!
+type Post {
+  id: Int!
+  comment: String!
+  createdAt: RFC3339DateTime!
+  user: User!
+  item: Item!
+}
+
+type Item {
+  id: Int!
+  asin: String!
+  name: String!
+  imageUrl: String
+  createdAt: RFC3339DateTime!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type PostConnection {
+  edges: [PostEdge!]!
+  pageInfo: PageInfo!
+}
+
+type PostEdge {
+  node: Post!
+  cursor: String!
 }

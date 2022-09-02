@@ -2,25 +2,44 @@ import { GraphQLClient } from "graphql-request";
 import type { GetServerSideProps, NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
+import { getSdkWithHooks } from "../lib/client/generated/index";
 import { makeGetServerSidePropsWithSession } from "../lib/server/auth/withSession";
-import { getSdkWithHooks, User } from "../lib/client/generated/index";
-import { FC } from "react";
 
-type HomeProps = {
-  initialUsers: User[];
-};
+type HomeProps = {};
 
 export const getServerSideProps: GetServerSideProps<HomeProps> =
   makeGetServerSidePropsWithSession(async (_context, _session) => {
-    return { props: { initialUsers: [] } };
+    return { props: {} };
   });
 
 const graphqlClient = new GraphQLClient("/api/graphql");
 const sdk = getSdkWithHooks(graphqlClient);
+const PER_PAGE = 20;
 
-const Home: NextPage<HomeProps> = ({ initialUsers }) => {
+const Home: NextPage<HomeProps> = () => {
   const { status } = useSession();
-  const { data, error } = sdk.useGetAllUsers("allUsers");
+  const { data, error, size, setSize } = sdk.useGetPostsInfinite(
+    (_pageIndex, previousPageData) => {
+      if (previousPageData && !previousPageData.posts.pageInfo.hasPreviousPage)
+        return null;
+      return [
+        "page",
+        previousPageData?.posts?.pageInfo &&
+        previousPageData.posts.pageInfo.hasPreviousPage &&
+        previousPageData.posts.pageInfo.startCursor
+          ? {
+              before: previousPageData.posts.pageInfo.startCursor,
+              last: PER_PAGE,
+            }
+          : null,
+      ];
+    },
+    {
+      page: {
+        last: PER_PAGE,
+      },
+    }
+  );
 
   return (
     <div>
@@ -28,7 +47,7 @@ const Home: NextPage<HomeProps> = ({ initialUsers }) => {
         <title>next-prisma-graphql-example</title>
       </Head>
 
-      <header>
+      <div>
         {status === "loading" ? (
           <p>Loading...</p>
         ) : status === "authenticated" ? (
@@ -36,48 +55,9 @@ const Home: NextPage<HomeProps> = ({ initialUsers }) => {
         ) : (
           <button onClick={() => signIn()}>Sign in</button>
         )}
-      </header>
-
-      <h1>next-prisma-graphql-example</h1>
-
-      <section>
-        <h2>Users List (SSR)</h2>
-        <p>
-          Data is fetched in `getServerSideProps` from DB with Prisma Client.
-        </p>
-        <UsersList users={initialUsers} />
-      </section>
-
-      <section>
-        <h2>Users List (CSR)</h2>
-        <p>
-          Data is fetched by client via GraphQL API (Apollo Server is running on
-          API Routes of Next.js).
-        </p>
-        {!data ? (
-          <div>Loading...</div>
-        ) : error ? (
-          <div>Error</div>
-        ) : (
-          data && <UsersList users={data.allUsers} />
-        )}
-      </section>
+      </div>
     </div>
   );
 };
-
-const UsersList: FC<{ users: User[] }> = ({ users }) => (
-  <ul>
-    {users.map((user) => (
-      <li key={user.id}>
-        <span>{user.name}</span>
-        {user.imageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={user.imageUrl} width={30} height={30} alt="" />
-        )}
-      </li>
-    ))}
-  </ul>
-);
 
 export default Home;
