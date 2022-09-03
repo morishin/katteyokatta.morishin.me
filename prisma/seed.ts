@@ -68,11 +68,15 @@ async function main() {
   await prisma.post.deleteMany({});
   const allItems = await prisma.item.findMany({});
   await prisma.post.createMany({
-    data: allItems.map((item) => ({
-      userId: user.id,
-      itemId: item.id,
-      comment: `${item.name}へのコメントです`,
-    })),
+    data: allItems
+      .flatMap((_e, _i, x) => x)
+      .flatMap((_e, _i, x) => x)
+      .flatMap((_e, _i, x) => x)
+      .map((item, index) => ({
+        userId: user.id,
+        itemId: item.id,
+        comment: `${item.name}へのコメントです (${index})`,
+      })),
   });
 }
 
