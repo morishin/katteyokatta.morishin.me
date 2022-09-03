@@ -21,15 +21,13 @@ const DEFAULT_PER_PAGE = 20;
 const getPosts = async (page: PageArgs): Promise<PostConnection> => {
   let cursorId: number | null;
   let take: number;
-  if (page.before) {
-    cursorId = Number(decodeCursor(page.before));
+  const decsending = page.before || page.last ? true : false;
+  if (decsending) {
+    cursorId = page.before ? Number(decodeCursor(page.before)) : null;
     take = -(page.last || DEFAULT_PER_PAGE);
-  } else if (page.after) {
-    cursorId = Number(decodeCursor(page.after));
-    take = page.first || DEFAULT_PER_PAGE;
   } else {
-    cursorId = null;
-    take = DEFAULT_PER_PAGE;
+    cursorId = page.after ? Number(decodeCursor(page.after)) : null;
+    take = page.first || DEFAULT_PER_PAGE;
   }
   const posts = await prisma.post.findMany({
     take,
