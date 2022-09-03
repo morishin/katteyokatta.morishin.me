@@ -20,6 +20,7 @@ const PER_PAGE = 20;
 
 const Home: NextPage<HomeProps> = () => {
   const { status } = useSession();
+
   const { data, error, size, setSize, isValidating, mutate } =
     sdk.useGetPostsInfinite(
       (_pageIndex, previousPageData) => {
@@ -37,7 +38,9 @@ const Home: NextPage<HomeProps> = () => {
                 before: previousPageData.posts.pageInfo.startCursor,
                 last: PER_PAGE,
               }
-            : null,
+            : {
+                last: PER_PAGE,
+              },
         ];
       },
       {
@@ -61,8 +64,7 @@ const Home: NextPage<HomeProps> = () => {
     [data]
   );
 
-  useEffect(() => {
-  }, [posts]);
+  useEffect(() => {}, [posts]);
 
   return (
     <div>

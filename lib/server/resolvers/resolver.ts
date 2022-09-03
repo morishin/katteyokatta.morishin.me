@@ -23,10 +23,10 @@ const getPosts = async (page: PageArgs): Promise<PostConnection> => {
   let take: number;
   const decsending = page.before || page.last ? true : false;
   if (decsending) {
-    cursorId = page.before ? Number(decodeCursor(page.before)) : null;
-    take = -(page.last || DEFAULT_PER_PAGE);
+    cursorId = (page.before && Number(decodeCursor(page.before))) || null;
+    take = page.last || DEFAULT_PER_PAGE;
   } else {
-    cursorId = page.after ? Number(decodeCursor(page.after)) : null;
+    cursorId = (page.after && Number(decodeCursor(page.after))) || null;
     take = page.first || DEFAULT_PER_PAGE;
   }
   const posts = await prisma.post.findMany({
@@ -37,7 +37,7 @@ const getPosts = async (page: PageArgs): Promise<PostConnection> => {
         }
       : undefined,
     orderBy: {
-      id: page.before ? "desc" : "asc",
+      id: decsending ? "desc" : "asc",
     },
     include: {
       user: true,
@@ -45,13 +45,13 @@ const getPosts = async (page: PageArgs): Promise<PostConnection> => {
     },
   });
   const startCursor = encodeCursor(
-    page.before ? posts.slice(-1)[0].id : posts[0].id
+    decsending ? posts.slice(-1)[0].id : posts[0].id
   );
   const endCursor = encodeCursor(
-    page.before ? posts[0].id : posts.slice(-1)[0].id
+    decsending ? posts[0].id : posts.slice(-1)[0].id
   );
-  const hasNextPage = page.before ? true : posts.length === take;
-  const hasPreviousPage = page.before ? posts.length === take : true;
+  const hasNextPage = decsending ? true : posts.length === take;
+  const hasPreviousPage = decsending ? posts.length === take : true;
   return {
     edges: posts.map((post) => ({
       node: post,
