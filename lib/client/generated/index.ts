@@ -16,15 +16,15 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  RFC3339DateTime: string;
+  ISO8601DateTime: string;
 };
 
 export type Item = {
   __typename?: 'Item';
   asin: Scalars['String'];
-  createdAt: Scalars['RFC3339DateTime'];
+  createdAt: Scalars['ISO8601DateTime'];
   id: Scalars['Int'];
-  imageUrl?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
   name: Scalars['String'];
 };
 
@@ -46,7 +46,7 @@ export type PageInfo = {
 export type Post = {
   __typename?: 'Post';
   comment: Scalars['String'];
-  createdAt: Scalars['RFC3339DateTime'];
+  createdAt: Scalars['ISO8601DateTime'];
   id: Scalars['Int'];
   item: Item;
   user: User;
@@ -77,18 +77,37 @@ export type QueryPostsArgs = {
 export type User = {
   __typename?: 'User';
   id: Scalars['Int'];
-  imageUrl?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
   name: Scalars['String'];
 };
+
+export type PostForTopPageFragment = { __typename?: 'Post', id: number, comment: string, createdAt: string, user: { __typename?: 'User', id: number, name: string, image?: string | null }, item: { __typename?: 'Item', id: number, asin: string, name: string, image?: string | null } };
 
 export type GetPostsQueryVariables = Exact<{
   page: PageArgs;
 }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostConnection', pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, startCursor?: string | null }, edges: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: number, comment: string, createdAt: string, user: { __typename?: 'User', id: number, name: string, imageUrl?: string | null }, item: { __typename?: 'Item', id: number, asin: string, name: string, imageUrl?: string | null } } }> } };
+export type GetPostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostConnection', pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, startCursor?: string | null }, edges: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: number, comment: string, createdAt: string, user: { __typename?: 'User', id: number, name: string, image?: string | null }, item: { __typename?: 'Item', id: number, asin: string, name: string, image?: string | null } } }> } };
 
-
+export const PostForTopPageFragmentDoc = gql`
+    fragment PostForTopPage on Post {
+  id
+  comment
+  createdAt
+  user {
+    id
+    name
+    image
+  }
+  item {
+    id
+    asin
+    name
+    image
+  }
+}
+    `;
 export const GetPostsDocument = gql`
     query getPosts($page: PageArgs!) {
   posts(page: $page) {
@@ -98,25 +117,12 @@ export const GetPostsDocument = gql`
     }
     edges {
       node {
-        id
-        comment
-        createdAt
-        user {
-          id
-          name
-          imageUrl
-        }
-        item {
-          id
-          asin
-          name
-          imageUrl
-        }
+        ...PostForTopPage
       }
     }
   }
 }
-    `;
+    ${PostForTopPageFragmentDoc}`;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 

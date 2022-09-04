@@ -3,51 +3,110 @@ import { GraphQLClient } from "graphql-request";
 import type { GetServerSideProps, NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-import { useEffect, useMemo } from "react";
-import { getSdkWithHooks } from "../lib/client/generated/index";
+import { useMemo } from "react";
+import { encodeCursor } from "~/lib/server/cursor";
+import { prisma } from "~/lib/server/prisma";
+import {
+  getSdkWithHooks,
+  PostForTopPageFragment,
+} from "../lib/client/generated/index";
 import { makeGetServerSidePropsWithSession } from "../lib/server/auth/withSession";
 
-type HomeProps = {};
+type HomeProps = {
+  initialData: {
+    posts: PostForTopPageFragment[];
+    nextCursor: string | null;
+  };
+};
+
+const PER_PAGE = 2;
 
 export const getServerSideProps: GetServerSideProps<HomeProps> =
-  makeGetServerSidePropsWithSession(async (_context, _session) => {
-    return { props: {} };
+  makeGetServerSidePropsWithSession<HomeProps>(async (_context, _session) => {
+    const posts = await prisma.post.findMany({
+      take: PER_PAGE,
+      orderBy: {
+        id: "desc",
+      },
+      select: {
+        id: true,
+        comment: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        item: {
+          select: {
+            id: true,
+            asin: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
+    });
+    const hasPreviousPage = posts.length === PER_PAGE;
+    const startCursor = encodeCursor(posts.slice(-1)[0].id);
+    return {
+      props: {
+        initialData: {
+          posts: posts.map((post) => ({
+            ...post,
+            createdAt: post.createdAt.toISOString(),
+          })),
+          nextCursor: hasPreviousPage ? startCursor : null,
+        },
+      },
+    };
   });
 
 const graphqlClient = new GraphQLClient("/api/graphql");
 const sdk = getSdkWithHooks(graphqlClient);
-const PER_PAGE = 20;
 
-const Home: NextPage<HomeProps> = () => {
+const Home: NextPage<HomeProps> = ({ initialData }) => {
   const { status } = useSession();
 
   const { data, error, size, setSize, isValidating, mutate } =
     sdk.useGetPostsInfinite(
       (_pageIndex, previousPageData) => {
-        if (
-          previousPageData &&
-          !previousPageData.posts.pageInfo.hasPreviousPage
-        )
+        if (previousPageData === null) {
+          // first request
+          return [
+            "page",
+            {
+              before: initialData.nextCursor,
+              last: PER_PAGE,
+            },
+          ];
+        }
+        if (!previousPageData.posts.pageInfo.hasPreviousPage) {
+          // reached the end
           return null;
+        }
+        if (previousPageData.posts.pageInfo.startCursor === null) {
+          throw new Error("startCursor is null");
+        }
+        // load next page
         return [
           "page",
-          previousPageData?.posts?.pageInfo &&
-          previousPageData.posts.pageInfo.hasPreviousPage &&
-          previousPageData.posts.pageInfo.startCursor
-            ? {
-                before: previousPageData.posts.pageInfo.startCursor,
-                last: PER_PAGE,
-              }
-            : {
-                last: PER_PAGE,
-              },
+          {
+            before: previousPageData.posts.pageInfo.startCursor,
+            last: PER_PAGE,
+          },
         ];
       },
+      // variables for the first request
       {
         page: {
+          before: initialData.nextCursor,
           last: PER_PAGE,
         },
-      }
+      },
+      { initialSize: 0 }
     );
 
   const isLoadingInitialData = !data && !error;
@@ -60,11 +119,14 @@ const Home: NextPage<HomeProps> = () => {
   const isRefreshing = isValidating && data && data.length === size;
 
   const posts = useMemo(
-    () => data?.reverse().flatMap((page) => page.posts.edges) || [],
-    [data]
+    () =>
+      initialData.posts.concat(
+        data
+          ?.reverse()
+          .flatMap((page) => page.posts.edges.map((edge) => edge.node)) || []
+      ),
+    [data, initialData.posts]
   );
-
-  useEffect(() => {}, [posts]);
 
   return (
     <div>
@@ -102,10 +164,10 @@ const Home: NextPage<HomeProps> = () => {
         </Button>
       </p>
       {isEmpty ? <p>Yay, no posts found.</p> : null}
-      {posts.map((edge) => {
+      {posts.map((post) => {
         return (
-          <p key={edge.node.id} style={{ margin: "6px 0" }}>
-            - {edge.node.id}
+          <p key={post.id} style={{ margin: "6px 0" }}>
+            - {post.id}
           </p>
         );
       })}

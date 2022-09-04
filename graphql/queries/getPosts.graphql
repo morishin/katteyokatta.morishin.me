@@ -6,20 +6,7 @@ query getPosts($page: PageArgs!) {
     }
     edges {
       node {
-        id
-        comment
-        createdAt
-        user {
-          id
-          name
-          imageUrl
-        }
-        item {
-          id
-          asin
-          name
-          imageUrl
-        }
+        ...PostForTopPage
       }
     }
   }

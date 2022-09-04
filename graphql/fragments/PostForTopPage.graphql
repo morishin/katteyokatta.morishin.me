@@ -1,0 +1,16 @@
+fragment PostForTopPage on Post {
+  id
+  comment
+  createdAt
+  user {
+    id
+    name
+    image
+  }
+  item {
+    id
+    asin
+    name
+    image
+  }
+}

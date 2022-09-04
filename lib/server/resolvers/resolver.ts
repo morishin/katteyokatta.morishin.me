@@ -1,21 +1,47 @@
-import { Buffer } from "buffer";
+import { GraphQLScalarType, Kind } from "graphql";
 import {
   PageArgs,
   PostConnection,
   Resolvers,
 } from "~/lib/server/generated/resolvers";
 import { prisma } from "~/lib/server/prisma";
+import { decodeCursor, encodeCursor } from "../cursor";
 
 export const resolvers: Resolvers = {
   Query: {
     posts: async (_parent, args, _context, _info) => getPosts(args.page),
   },
+  ISO8601DateTime: new GraphQLScalarType<Date, string>({
+    name: "ISO8601DateTime",
+    description: "ISO8601DateTime",
+    serialize(data) {
+      if (!(data instanceof Date)) {
+        throw new Error(
+          "ISO8601DateTime scalar can only serialize Date objects"
+        );
+      }
+      return data.toISOString();
+    },
+    parseValue(data) {
+      if (typeof data === "string") {
+        const date = new Date(data);
+        if (date.toString() !== "Invalid Date") {
+          return date;
+        }
+      }
+      throw new Error(
+        "ISO8601DateTime scalar can only parse valid format strings"
+      );
+    },
+    parseLiteral(ast) {
+      if (ast.kind === Kind.STRING) {
+        return new Date(ast.value);
+      }
+      throw new Error("Invalid ISO8601DateTime");
+    },
+  }),
 };
 
-const encodeCursor = (value: number | string): string =>
-  Buffer.from(value.toString()).toString("base64");
-const decodeCursor = (value: string): string =>
-  Buffer.from(value, "base64").toString();
 const DEFAULT_PER_PAGE = 20;
 
 const getPosts = async (page: PageArgs): Promise<PostConnection> => {
@@ -31,6 +57,7 @@ const getPosts = async (page: PageArgs): Promise<PostConnection> => {
   }
   const posts = await prisma.post.findMany({
     take,
+    skip: 1, // cusor is not included
     cursor: cursorId
       ? {
           id: cursorId,

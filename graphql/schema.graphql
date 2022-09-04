@@ -1,4 +1,4 @@
-scalar RFC3339DateTime
+scalar ISO8601DateTime
 
 type Query {
   posts(page: PageArgs!): PostConnection!
@@ -14,13 +14,13 @@ input PageArgs {
 type User {
   id: Int!
   name: String!
-  imageUrl: String
+  image: String
 }
 
 type Post {
   id: Int!
   comment: String!
-  createdAt: RFC3339DateTime!
+  createdAt: ISO8601DateTime!
   user: User!
   item: Item!
 }
@@ -29,8 +29,8 @@ type Item {
   id: Int!
   asin: String!
   name: String!
-  imageUrl: String
-  createdAt: RFC3339DateTime!
+  image: String
+  createdAt: ISO8601DateTime!
 }
 
 type PageInfo {

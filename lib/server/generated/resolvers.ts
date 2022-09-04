@@ -12,15 +12,15 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  RFC3339DateTime: any;
+  ISO8601DateTime: any;
 };
 
 export type Item = {
   __typename?: 'Item';
   asin: Scalars['String'];
-  createdAt: Scalars['RFC3339DateTime'];
+  createdAt: Scalars['ISO8601DateTime'];
   id: Scalars['Int'];
-  imageUrl?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
   name: Scalars['String'];
 };
 
@@ -42,7 +42,7 @@ export type PageInfo = {
 export type Post = {
   __typename?: 'Post';
   comment: Scalars['String'];
-  createdAt: Scalars['RFC3339DateTime'];
+  createdAt: Scalars['ISO8601DateTime'];
   id: Scalars['Int'];
   item: Item;
   user: User;
@@ -73,7 +73,7 @@ export type QueryPostsArgs = {
 export type User = {
   __typename?: 'User';
   id: Scalars['Int'];
-  imageUrl?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
   name: Scalars['String'];
 };
 
@@ -147,6 +147,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  ISO8601DateTime: ResolverTypeWrapper<Scalars['ISO8601DateTime']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Item: ResolverTypeWrapper<Item>;
   PageArgs: PageArgs;
@@ -155,7 +156,6 @@ export type ResolversTypes = {
   PostConnection: ResolverTypeWrapper<PostConnection>;
   PostEdge: ResolverTypeWrapper<PostEdge>;
   Query: ResolverTypeWrapper<{}>;
-  RFC3339DateTime: ResolverTypeWrapper<Scalars['RFC3339DateTime']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   User: ResolverTypeWrapper<User>;
 };
@@ -163,6 +163,7 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  ISO8601DateTime: Scalars['ISO8601DateTime'];
   Int: Scalars['Int'];
   Item: Item;
   PageArgs: PageArgs;
@@ -171,16 +172,19 @@ export type ResolversParentTypes = {
   PostConnection: PostConnection;
   PostEdge: PostEdge;
   Query: {};
-  RFC3339DateTime: Scalars['RFC3339DateTime'];
   String: Scalars['String'];
   User: User;
 };
 
+export interface Iso8601DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ISO8601DateTime'], any> {
+  name: 'ISO8601DateTime';
+}
+
 export type ItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['Item'] = ResolversParentTypes['Item']> = {
   asin?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['RFC3339DateTime'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['ISO8601DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -195,7 +199,7 @@ export type PageInfoResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
   comment?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['RFC3339DateTime'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['ISO8601DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   item?: Resolver<ResolversTypes['Item'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -218,25 +222,21 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   posts?: Resolver<ResolversTypes['PostConnection'], ParentType, ContextType, RequireFields<QueryPostsArgs, 'page'>>;
 };
 
-export interface Rfc3339DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RFC3339DateTime'], any> {
-  name: 'RFC3339DateTime';
-}
-
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
+  ISO8601DateTime?: GraphQLScalarType;
   Item?: ItemResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
   Post?: PostResolvers<ContextType>;
   PostConnection?: PostConnectionResolvers<ContextType>;
   PostEdge?: PostEdgeResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  RFC3339DateTime?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
 };
 
