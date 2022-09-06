@@ -1,6 +1,6 @@
-import { Input, Button, HStack, Box, LayoutProps } from "@chakra-ui/react";
+import { Box, Button, HStack, Input } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React, { FormEventHandler, useRef, useState } from "react";
+import React, { FormEventHandler, useRef } from "react";
 
 type Props = {
   keyword?: string;

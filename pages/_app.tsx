@@ -1,11 +1,17 @@
-import "../styles/globals.css";
-import type { AppProps } from "next/app";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { SessionProvider } from "next-auth/react";
-import { ChakraProvider } from "@chakra-ui/react";
+import type { AppProps } from "next/app";
 import { Layout } from "../components/layouts/Layout";
-import { extendTheme } from "@chakra-ui/react";
+import "../styles/globals.css";
 
 const theme = extendTheme({
+  styles: {
+    global: {
+      "html, body": {
+        color: "gray.800",
+      },
+    },
+  },
   semanticTokens: {
     colors: {
       primary: {

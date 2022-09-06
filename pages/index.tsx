@@ -4,6 +4,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import { useMemo } from "react";
+import { PostGrid } from "~/components/post/PostGrid";
 import { encodeCursor } from "~/lib/server/cursor";
 import { prisma } from "~/lib/server/prisma";
 import {
@@ -19,7 +20,7 @@ type HomeProps = {
   };
 };
 
-const PER_PAGE = 2;
+const PER_PAGE = 24;
 
 export const getServerSideProps: GetServerSideProps<HomeProps> =
   makeGetServerSidePropsWithSession<HomeProps>(async (_context, _session) => {
@@ -163,14 +164,7 @@ const Home: NextPage<HomeProps> = ({ initialData }) => {
           clear
         </Button>
       </p>
-      {isEmpty ? <p>Yay, no posts found.</p> : null}
-      {posts.map((post) => {
-        return (
-          <p key={post.id} style={{ margin: "6px 0" }}>
-            - {post.id}
-          </p>
-        );
-      })}
+      {isEmpty ? <p>Yay, no posts found.</p> : <PostGrid posts={posts} />}
     </div>
   );
 };

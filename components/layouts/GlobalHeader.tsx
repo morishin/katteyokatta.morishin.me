@@ -27,7 +27,7 @@ export const GlobalHeader: FC<Props> = () => {
         boxShadow="0px 8px 7px 0 rgb(0 0 0 / 14%), 0 1px 0px 0 rgb(0 0 0 / 12%), 0 3px 1px -2px rgb(0 0 0 / 20%)"
       >
         <Flex
-          maxW="1100px"
+          maxW="1440px"
           paddingTop={2}
           paddingBottom={2}
           paddingLeft={{ base: 2, md: 4 }}
