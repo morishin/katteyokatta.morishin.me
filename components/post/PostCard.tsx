@@ -27,8 +27,10 @@ export const PostCard: FC<Props> = ({ post }) => {
           <Link href={`/items/${post.item.id}`} passHref>
             <ChakraLink color="primary">{post.item.name}</ChakraLink>
           </Link>
-          {/* TODO: associateId を渡す */}
-          <AmazonButton asin={post.item.asin} />
+          <AmazonButton
+            asin={post.item.asin}
+            associateTag={post.user.associateTag || undefined}
+          />
         </VStack>
         <Box
           paddingX="24px"

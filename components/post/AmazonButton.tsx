@@ -4,14 +4,14 @@ import { FC } from "react";
 
 type Props = {
   asin: string;
-  associateId?: string;
+  associateTag?: string;
 };
 
 const DEFAULT_ASSOCIATE_ID = "morishin02-22";
 
-export const AmazonButton: FC<Props> = ({ asin, associateId }) => {
+export const AmazonButton: FC<Props> = ({ asin, associateTag }) => {
   const linkUrl = `https://www.amazon.co.jp/dp/${asin}/?tag=${
-    associateId || DEFAULT_ASSOCIATE_ID
+    associateTag || DEFAULT_ASSOCIATE_ID
   }`;
   return (
     <Link href={linkUrl} passHref>

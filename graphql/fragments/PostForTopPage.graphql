@@ -6,6 +6,7 @@ fragment PostForTopPage on Post {
     id
     name
     image
+    associateTag
   }
   item {
     id

@@ -15,6 +15,7 @@ type User {
   id: Int!
   name: String!
   image: String
+  associateTag: String
 }
 
 type Post {
