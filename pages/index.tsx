@@ -1,9 +1,11 @@
-import { Button } from "@chakra-ui/react";
+import { Center, Circle, Icon, Spinner } from "@chakra-ui/react";
 import { GraphQLClient } from "graphql-request";
 import type { GetServerSideProps, NextPage } from "next";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { HiShoppingCart } from "react-icons/hi";
+import { useIntersection } from "react-use";
 import { PostGrid } from "~/components/post/PostGrid";
 import { encodeCursor } from "~/lib/server/cursor";
 import { prisma } from "~/lib/server/prisma";
@@ -107,17 +109,11 @@ const Home: NextPage<HomeProps> = ({ initialData }) => {
           last: PER_PAGE,
         },
       },
-      { initialSize: 0 }
+      { initialSize: 0, revalidateFirstPage: false }
     );
 
-  const isLoadingInitialData = !data && !error;
-  const isLoadingMore =
-    isLoadingInitialData ||
-    (size > 0 && data && typeof data[size - 1] === "undefined");
-  const isEmpty = data?.[0]?.posts.edges.length === 0;
   const isReachingEnd =
-    isEmpty || (data && data.slice(-1)[0]?.posts.edges.length < PER_PAGE);
-  const isRefreshing = isValidating && data && data.length === size;
+    data && data.slice(-1)[0]?.posts.pageInfo.hasPreviousPage === false;
 
   const posts = useMemo(
     () =>
@@ -129,42 +125,40 @@ const Home: NextPage<HomeProps> = ({ initialData }) => {
     [data, initialData.posts]
   );
 
+  const bottomRef = useRef(null);
+  const intersection = useIntersection(bottomRef, {
+    root: null,
+  });
+
+  const previousIsIntersecting = useRef<boolean | undefined>(false);
+  useEffect(() => {
+    if (
+      intersection?.isIntersecting &&
+      !previousIsIntersecting.current &&
+      !isValidating
+    ) {
+      setSize(size + 1);
+    }
+    previousIsIntersecting.current = intersection?.isIntersecting;
+  }, [intersection?.isIntersecting, isValidating, setSize, size]);
+
   return (
     <div>
       <Head>
-        <title>next-prisma-graphql-example</title>
+        <title>買ってよかったもの</title>
       </Head>
 
-      <div>
-        {status === "loading" ? (
-          <p>Loading...</p>
-        ) : status === "authenticated" ? (
-          <Button onClick={() => signOut()}>Sign out</Button>
-        ) : (
-          <Button onClick={() => signIn()}>Sign in</Button>
-        )}
-      </div>
-
-      <p>
-        showing {size} page(s) of {isLoadingMore ? "..." : posts.length} post(s){" "}
-        <Button
-          disabled={isLoadingMore || isReachingEnd}
-          onClick={() => setSize(size + 1)}
-        >
-          {isLoadingMore
-            ? "loading..."
-            : isReachingEnd
-            ? "no more posts"
-            : "load more"}
-        </Button>
-        <Button disabled={isRefreshing} onClick={() => mutate()}>
-          {isRefreshing ? "refreshing..." : "refresh"}
-        </Button>
-        <Button disabled={!size} onClick={() => setSize(0)}>
-          clear
-        </Button>
-      </p>
-      {isEmpty ? <p>Yay, no posts found.</p> : <PostGrid posts={posts} />}
+      <PostGrid posts={posts} />
+      <Center ref={bottomRef} marginY="70px" opacity={isValidating ? 1 : 0}>
+        <Spinner color="secondary" size="xl" />
+      </Center>
+      {isReachingEnd && (
+        <Center marginY="70px">
+          <Circle bg="#ddd" size="70px" overflow="hidden">
+            <Icon as={HiShoppingCart} w="30px" h="30px" color="white" />
+          </Circle>
+        </Center>
+      )}
     </div>
   );
 };
