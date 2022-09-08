@@ -72,6 +72,7 @@ export type Query = {
 
 export type QueryPostsArgs = {
   page: PageArgs;
+  userId?: InputMaybe<Scalars['Int']>;
 };
 
 export type User = {
@@ -82,17 +83,17 @@ export type User = {
   name: Scalars['String'];
 };
 
-export type PostForTopPageFragment = { __typename?: 'Post', id: number, comment: string, createdAt: string, user: { __typename?: 'User', id: number, name: string, image?: string | null, associateTag?: string | null }, item: { __typename?: 'Item', id: number, asin: string, name: string, image?: string | null } };
+export type DefaultPostFragment = { __typename?: 'Post', id: number, comment: string, createdAt: string, user: { __typename?: 'User', id: number, name: string, image?: string | null, associateTag?: string | null }, item: { __typename?: 'Item', id: number, asin: string, name: string, image?: string | null } };
 
-export type GetPostsQueryVariables = Exact<{
+export type GetAllPostsQueryVariables = Exact<{
   page: PageArgs;
 }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostConnection', pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, startCursor?: string | null }, edges: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: number, comment: string, createdAt: string, user: { __typename?: 'User', id: number, name: string, image?: string | null, associateTag?: string | null }, item: { __typename?: 'Item', id: number, asin: string, name: string, image?: string | null } } }> } };
+export type GetAllPostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostConnection', pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, startCursor?: string | null }, edges: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: number, comment: string, createdAt: string, user: { __typename?: 'User', id: number, name: string, image?: string | null, associateTag?: string | null }, item: { __typename?: 'Item', id: number, asin: string, name: string, image?: string | null } } }> } };
 
-export const PostForTopPageFragmentDoc = gql`
-    fragment PostForTopPage on Post {
+export const DefaultPostFragmentDoc = gql`
+    fragment DefaultPost on Post {
   id
   comment
   createdAt
@@ -110,8 +111,8 @@ export const PostForTopPageFragmentDoc = gql`
   }
 }
     `;
-export const GetPostsDocument = gql`
-    query getPosts($page: PageArgs!) {
+export const GetAllPostsDocument = gql`
+    query getAllPosts($page: PageArgs!) {
   posts(page: $page) {
     pageInfo {
       hasPreviousPage
@@ -119,12 +120,12 @@ export const GetPostsDocument = gql`
     }
     edges {
       node {
-        ...PostForTopPage
+        ...DefaultPost
       }
     }
   }
 }
-    ${PostForTopPageFragmentDoc}`;
+    ${DefaultPostFragmentDoc}`;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -133,8 +134,8 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
-    getPosts(variables: GetPostsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPostsQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetPostsQuery>(GetPostsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPosts', 'query');
+    getAllPosts(variables: GetAllPostsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetAllPostsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetAllPostsQuery>(GetAllPostsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getAllPosts', 'query');
     }
   };
 }
@@ -162,13 +163,13 @@ export function getSdkWithHooks(client: GraphQLClient, withWrapper: SdkFunctionW
   const genKey = <V extends Record<string, unknown> = Record<string, unknown>>(name: string, object: V = {} as V): SWRKeyInterface => [name, ...Object.keys(object).sort().map(key => object[key])];
   return {
     ...sdk,
-    useGetPosts(variables: GetPostsQueryVariables, config?: SWRConfigInterface<GetPostsQuery, ClientError>) {
-      return useSWR<GetPostsQuery, ClientError>(genKey<GetPostsQueryVariables>('GetPosts', variables), () => sdk.getPosts(variables), config);
+    useGetAllPosts(variables: GetAllPostsQueryVariables, config?: SWRConfigInterface<GetAllPostsQuery, ClientError>) {
+      return useSWR<GetAllPostsQuery, ClientError>(genKey<GetAllPostsQueryVariables>('GetAllPosts', variables), () => sdk.getAllPosts(variables), config);
     },
-    useGetPostsInfinite(getKey: SWRInfiniteKeyLoader<GetPostsQuery, GetPostsQueryVariables>, variables: GetPostsQueryVariables, config?: SWRInfiniteConfiguration<GetPostsQuery, ClientError>) {
-      return useSWRInfinite<GetPostsQuery, ClientError>(
-        utilsForInfinite.generateGetKey<GetPostsQuery, GetPostsQueryVariables>(genKey<GetPostsQueryVariables>('GetPosts', variables), getKey),
-        utilsForInfinite.generateFetcher<GetPostsQuery, GetPostsQueryVariables>(sdk.getPosts, variables),
+    useGetAllPostsInfinite(getKey: SWRInfiniteKeyLoader<GetAllPostsQuery, GetAllPostsQueryVariables>, variables: GetAllPostsQueryVariables, config?: SWRInfiniteConfiguration<GetAllPostsQuery, ClientError>) {
+      return useSWRInfinite<GetAllPostsQuery, ClientError>(
+        utilsForInfinite.generateGetKey<GetAllPostsQuery, GetAllPostsQueryVariables>(genKey<GetAllPostsQueryVariables>('GetAllPosts', variables), getKey),
+        utilsForInfinite.generateFetcher<GetAllPostsQuery, GetAllPostsQueryVariables>(sdk.getAllPosts, variables),
         config);
     }
   };

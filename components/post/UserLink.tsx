@@ -1,11 +1,11 @@
 import { HStack, Link as ChakraLink, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { FC } from "react";
-import { PostForTopPageFragment } from "~/lib/client/generated";
+import { DefaultPostFragment } from "~/lib/client/generated";
 import { UserIcon } from "../UserIcon";
 
 type Props = {
-  user: PostForTopPageFragment["user"];
+  user: DefaultPostFragment["user"];
 };
 
 export const UserLink: FC<Props> = ({ user }) => {

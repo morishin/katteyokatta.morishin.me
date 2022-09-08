@@ -68,6 +68,7 @@ export type Query = {
 
 export type QueryPostsArgs = {
   page: PageArgs;
+  userId?: InputMaybe<Scalars['Int']>;
 };
 
 export type User = {

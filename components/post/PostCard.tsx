@@ -1,12 +1,12 @@
 import { Box, Img, Link as ChakraLink, Text, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 import { FC } from "react";
-import { PostForTopPageFragment } from "~/lib/client/generated";
+import { DefaultPostFragment } from "~/lib/client/generated";
 import { AmazonButton } from "./AmazonButton";
 import { UserLink } from "./UserLink";
 
 type Props = {
-  post: PostForTopPageFragment;
+  post: DefaultPostFragment;
 };
 
 export const PostCard: FC<Props> = ({ post }) => {

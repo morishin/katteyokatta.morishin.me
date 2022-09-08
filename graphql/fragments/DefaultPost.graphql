@@ -1,4 +1,4 @@
-fragment PostForTopPage on Post {
+fragment DefaultPost on Post {
   id
   comment
   createdAt

@@ -10,14 +10,14 @@ import { PostGrid } from "~/components/post/PostGrid";
 import { encodeCursor } from "~/lib/server/cursor";
 import { prisma } from "~/lib/server/prisma";
 import {
+  DefaultPostFragment,
   getSdkWithHooks,
-  PostForTopPageFragment,
 } from "../lib/client/generated/index";
 import { makeGetServerSidePropsWithSession } from "../lib/server/auth/withSession";
 
 type HomeProps = {
   initialData: {
-    posts: PostForTopPageFragment[];
+    posts: DefaultPostFragment[];
     nextCursor: string | null;
   };
 };
@@ -74,7 +74,7 @@ const Home: NextPage<HomeProps> = ({ initialData }) => {
   const { status } = useSession();
 
   const { data, error, size, setSize, isValidating, mutate } =
-    sdk.useGetPostsInfinite(
+    sdk.useGetAllPostsInfinite(
       (_pageIndex, previousPageData) => {
         if (previousPageData === null) {
           // first request

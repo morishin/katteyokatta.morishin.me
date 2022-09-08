@@ -1,10 +1,10 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import { FC } from "react";
-import { PostForTopPageFragment } from "~/lib/client/generated";
+import { DefaultPostFragment } from "~/lib/client/generated";
 import { PostCard } from "./PostCard";
 
 type Props = {
-  posts: PostForTopPageFragment[];
+  posts: DefaultPostFragment[];
 };
 
 export const PostGrid: FC<Props> = ({ posts }) => {

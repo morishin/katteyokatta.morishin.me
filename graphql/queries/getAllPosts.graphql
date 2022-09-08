@@ -1,4 +1,4 @@
-query getPosts($page: PageArgs!) {
+query getAllPosts($page: PageArgs!) {
   posts(page: $page) {
     pageInfo {
       hasPreviousPage
@@ -6,7 +6,7 @@ query getPosts($page: PageArgs!) {
     }
     edges {
       node {
-        ...PostForTopPage
+        ...DefaultPost
       }
     }
   }
