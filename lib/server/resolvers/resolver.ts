@@ -10,8 +10,8 @@ import { decodeCursor, encodeCursor } from "../cursor";
 export const resolvers: Resolvers = {
   Query: {
     posts: async (_parent, args, _context, _info) => {
-      if (args.userId) {
-        return getPosts(args.page, { userId: args.userId });
+      if (args.userName) {
+        return getPosts(args.page, { userName: args.userName });
       } else {
         return getPosts(args.page);
       }
@@ -52,7 +52,7 @@ const DEFAULT_PER_PAGE = 20;
 
 const getPosts = async (
   page: PageArgs,
-  option?: { userId?: number }
+  option?: { userName?: string }
 ): Promise<PostConnection> => {
   let cursorId: number | null;
   let take: number;
@@ -64,6 +64,15 @@ const getPosts = async (
     cursorId = (page.after && Number(decodeCursor(page.after))) || null;
     take = page.first || DEFAULT_PER_PAGE;
   }
+
+  const user = option?.userName
+    ? await prisma.user.findFirst({
+        where: {
+          name: option?.userName,
+        },
+      })
+    : null;
+
   const posts = await prisma.post.findMany({
     take,
     skip: 1, // cusor is not included
@@ -73,7 +82,7 @@ const getPosts = async (
         }
       : undefined,
     where: {
-      userId: option?.userId,
+      userId: user?.id,
     },
     orderBy: {
       id: decsending ? "desc" : "asc",

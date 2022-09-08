@@ -19,6 +19,7 @@ generates:
       # If you have a query that you want to use `useSWRInfinite`, list it in Options
       useSWRInfinite:
         - getAllPosts
+        - getPostsByUser
       autogenSWRKey: true
       scalars:
         ISO8601DateTime: string

@@ -1,7 +1,7 @@
 scalar ISO8601DateTime
 
 type Query {
-  posts(page: PageArgs!, userId: Int): PostConnection!
+  posts(page: PageArgs!, userName: String): PostConnection!
 }
 
 input PageArgs {

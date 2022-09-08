@@ -1,5 +1,5 @@
-query getPostsByUserId($userId: Int, $page: PageArgs!) {
-  posts(page: $page, userId: $userId) {
+query getPostsByUser($userName: String!, $page: PageArgs!) {
+  posts(page: $page, userName: $userName) {
     pageInfo {
       hasPreviousPage
       startCursor

@@ -72,7 +72,7 @@ export type Query = {
 
 export type QueryPostsArgs = {
   page: PageArgs;
-  userId?: InputMaybe<Scalars['Int']>;
+  userName?: InputMaybe<Scalars['String']>;
 };
 
 export type User = {
@@ -92,13 +92,13 @@ export type GetAllPostsQueryVariables = Exact<{
 
 export type GetAllPostsQuery = { __typename?: 'Query', posts: { __typename?: 'PostConnection', pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, startCursor?: string | null }, edges: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: number, comment: string, createdAt: string, user: { __typename?: 'User', id: number, name: string, image?: string | null, associateTag?: string | null }, item: { __typename?: 'Item', id: number, asin: string, name: string, image?: string | null } } }> } };
 
-export type GetPostsByUserIdQueryVariables = Exact<{
-  userId?: InputMaybe<Scalars['Int']>;
+export type GetPostsByUserQueryVariables = Exact<{
+  userName: Scalars['String'];
   page: PageArgs;
 }>;
 
 
-export type GetPostsByUserIdQuery = { __typename?: 'Query', posts: { __typename?: 'PostConnection', pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, startCursor?: string | null }, edges: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: number, comment: string, createdAt: string, user: { __typename?: 'User', id: number, name: string, image?: string | null, associateTag?: string | null }, item: { __typename?: 'Item', id: number, asin: string, name: string, image?: string | null } } }> } };
+export type GetPostsByUserQuery = { __typename?: 'Query', posts: { __typename?: 'PostConnection', pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, startCursor?: string | null }, edges: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: number, comment: string, createdAt: string, user: { __typename?: 'User', id: number, name: string, image?: string | null, associateTag?: string | null }, item: { __typename?: 'Item', id: number, asin: string, name: string, image?: string | null } } }> } };
 
 export const DefaultPostFragmentDoc = gql`
     fragment DefaultPost on Post {
@@ -134,9 +134,9 @@ export const GetAllPostsDocument = gql`
   }
 }
     ${DefaultPostFragmentDoc}`;
-export const GetPostsByUserIdDocument = gql`
-    query getPostsByUserId($userId: Int, $page: PageArgs!) {
-  posts(page: $page, userId: $userId) {
+export const GetPostsByUserDocument = gql`
+    query getPostsByUser($userName: String!, $page: PageArgs!) {
+  posts(page: $page, userName: $userName) {
     pageInfo {
       hasPreviousPage
       startCursor
@@ -160,8 +160,8 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getAllPosts(variables: GetAllPostsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetAllPostsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetAllPostsQuery>(GetAllPostsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getAllPosts', 'query');
     },
-    getPostsByUserId(variables: GetPostsByUserIdQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPostsByUserIdQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetPostsByUserIdQuery>(GetPostsByUserIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPostsByUserId', 'query');
+    getPostsByUser(variables: GetPostsByUserQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPostsByUserQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetPostsByUserQuery>(GetPostsByUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPostsByUser', 'query');
     }
   };
 }
@@ -198,8 +198,14 @@ export function getSdkWithHooks(client: GraphQLClient, withWrapper: SdkFunctionW
         utilsForInfinite.generateFetcher<GetAllPostsQuery, GetAllPostsQueryVariables>(sdk.getAllPosts, variables),
         config);
     },
-    useGetPostsByUserId(variables: GetPostsByUserIdQueryVariables, config?: SWRConfigInterface<GetPostsByUserIdQuery, ClientError>) {
-      return useSWR<GetPostsByUserIdQuery, ClientError>(genKey<GetPostsByUserIdQueryVariables>('GetPostsByUserId', variables), () => sdk.getPostsByUserId(variables), config);
+    useGetPostsByUser(variables: GetPostsByUserQueryVariables, config?: SWRConfigInterface<GetPostsByUserQuery, ClientError>) {
+      return useSWR<GetPostsByUserQuery, ClientError>(genKey<GetPostsByUserQueryVariables>('GetPostsByUser', variables), () => sdk.getPostsByUser(variables), config);
+    },
+    useGetPostsByUserInfinite(getKey: SWRInfiniteKeyLoader<GetPostsByUserQuery, GetPostsByUserQueryVariables>, variables: GetPostsByUserQueryVariables, config?: SWRInfiniteConfiguration<GetPostsByUserQuery, ClientError>) {
+      return useSWRInfinite<GetPostsByUserQuery, ClientError>(
+        utilsForInfinite.generateGetKey<GetPostsByUserQuery, GetPostsByUserQueryVariables>(genKey<GetPostsByUserQueryVariables>('GetPostsByUser', variables), getKey),
+        utilsForInfinite.generateFetcher<GetPostsByUserQuery, GetPostsByUserQueryVariables>(sdk.getPostsByUser, variables),
+        config);
     }
   };
 }

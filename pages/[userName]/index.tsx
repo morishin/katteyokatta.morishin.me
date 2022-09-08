@@ -1,20 +1,33 @@
-import { Center, Spinner } from "@chakra-ui/react";
+import {
+  Center,
+  HStack,
+  Icon,
+  Link as ChakraLink,
+  Spinner,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { GraphQLClient } from "graphql-request";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
+import { FaTwitter } from "react-icons/fa";
 import { useIntersection } from "react-use";
 import { PostGrid } from "~/components/post/PostGrid";
 import { ReachedEndMark } from "~/components/post/ReachedEndMark";
+import { UserIcon } from "~/components/UserIcon";
 import {
   DefaultPostFragment,
   getSdkWithHooks,
+  User,
 } from "~/lib/client/generated/index";
 import { makeGetServerSidePropsWithSession } from "~/lib/server/auth/withSession";
 import { encodeCursor } from "~/lib/server/cursor";
 import { prisma } from "~/lib/server/prisma";
 
-type HomeProps = {
+type UserPageProps = {
+  user: User;
   initialData: {
     posts: DefaultPostFragment[];
     nextCursor: string | null;
@@ -23,54 +36,77 @@ type HomeProps = {
 
 const PER_PAGE = 24;
 
-export const getServerSideProps: GetServerSideProps<HomeProps> =
-  makeGetServerSidePropsWithSession<HomeProps>(async (_context, _session) => {
-    const posts = await prisma.post.findMany({
-      take: PER_PAGE,
-      orderBy: {
-        id: "desc",
-      },
-      select: {
-        id: true,
-        comment: true,
-        createdAt: true,
-        user: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
+export const getServerSideProps: GetServerSideProps<UserPageProps> =
+  makeGetServerSidePropsWithSession<UserPageProps>(
+    async (context, _session) => {
+      const { params } = context;
+      const userName = params?.["userName"];
+      if (typeof userName !== "string") throw new Error("Invalid params");
+
+      const user = await prisma.user.findFirst({
+        where: {
+          name: userName,
+        },
+        select: {
+          id: true,
+          associateTag: true,
+          image: true,
+          name: true,
+        },
+      });
+      if (!user) return { notFound: true };
+
+      const posts = await prisma.post.findMany({
+        where: {
+          userId: user.id,
+        },
+        take: PER_PAGE,
+        orderBy: {
+          id: "desc",
+        },
+        select: {
+          id: true,
+          comment: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+          item: {
+            select: {
+              id: true,
+              asin: true,
+              name: true,
+              image: true,
+            },
           },
         },
-        item: {
-          select: {
-            id: true,
-            asin: true,
-            name: true,
-            image: true,
+      });
+      const hasPreviousPage = posts.length === PER_PAGE;
+      const startCursor = encodeCursor(posts.slice(-1)[0].id);
+      return {
+        props: {
+          user,
+          initialData: {
+            posts: posts.map((post) => ({
+              ...post,
+              createdAt: post.createdAt.toISOString(),
+            })),
+            nextCursor: hasPreviousPage ? startCursor : null,
           },
         },
-      },
-    });
-    const hasPreviousPage = posts.length === PER_PAGE;
-    const startCursor = encodeCursor(posts.slice(-1)[0].id);
-    return {
-      props: {
-        initialData: {
-          posts: posts.map((post) => ({
-            ...post,
-            createdAt: post.createdAt.toISOString(),
-          })),
-          nextCursor: hasPreviousPage ? startCursor : null,
-        },
-      },
-    };
-  });
+      };
+    }
+  );
 
 const graphqlClient = new GraphQLClient("/api/graphql");
 const sdk = getSdkWithHooks(graphqlClient);
 
-const Home: NextPage<HomeProps> = ({ initialData }) => {
-  const { data, size, setSize, isValidating } = sdk.useGetAllPostsInfinite(
+const UserPage: NextPage<UserPageProps> = ({ initialData, user }) => {
+  const { data, size, setSize, isValidating } = sdk.useGetPostsByUserInfinite(
     (_pageIndex, previousPageData) => {
       if (previousPageData === null) {
         // first request
@@ -100,6 +136,7 @@ const Home: NextPage<HomeProps> = ({ initialData }) => {
     },
     // variables for the first request
     {
+      userName: user.name,
       page: {
         before: initialData.nextCursor,
         last: PER_PAGE,
@@ -144,6 +181,22 @@ const Home: NextPage<HomeProps> = ({ initialData }) => {
         <title>買ってよかったもの</title>
       </Head>
 
+      <Center>
+        <VStack paddingY="40px">
+          <UserIcon image={user.image} size={100} />
+          <Link href={`https://twitter.com/${user.name}`} passHref>
+            <ChakraLink>
+              <Icon as={FaTwitter} w="20px" h="20px" color="#46BAED" />
+            </ChakraLink>
+          </Link>
+          <HStack>
+            <Text as="b" fontSize="2xl">
+              {`@${user.name}`}
+            </Text>
+            <Text>さんの買ってよかったもの</Text>
+          </HStack>
+        </VStack>
+      </Center>
       <PostGrid posts={posts} />
       <Center ref={bottomRef} marginY="70px" opacity={isValidating ? 1 : 0}>
         <Spinner color="secondary" size="xl" />
@@ -153,4 +206,4 @@ const Home: NextPage<HomeProps> = ({ initialData }) => {
   );
 };
 
-export default Home;
+export default UserPage;
