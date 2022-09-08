@@ -17,9 +17,9 @@ export const AmazonButton: FC<Props> = ({ asin, associateTag }) => {
     <Link href={linkUrl} passHref>
       <ChakraLink>
         <Img
-          src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbutt_or_amz.png"
-          width="90px"
-          height="26px"
+          src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon1.png"
+          width="78px"
+          height="23px"
         />
       </ChakraLink>
     </Link>
