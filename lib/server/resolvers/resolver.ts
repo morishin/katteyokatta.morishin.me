@@ -9,7 +9,13 @@ import { decodeCursor, encodeCursor } from "../cursor";
 
 export const resolvers: Resolvers = {
   Query: {
-    posts: async (_parent, args, _context, _info) => getAllPosts(args.page),
+    posts: async (_parent, args, _context, _info) => {
+      if (args.userId) {
+        return getPosts(args.page, { userId: args.userId });
+      } else {
+        return getPosts(args.page);
+      }
+    },
   },
   ISO8601DateTime: new GraphQLScalarType<Date, string>({
     name: "ISO8601DateTime",
@@ -44,7 +50,10 @@ export const resolvers: Resolvers = {
 
 const DEFAULT_PER_PAGE = 20;
 
-const getAllPosts = async (page: PageArgs): Promise<PostConnection> => {
+const getPosts = async (
+  page: PageArgs,
+  option?: { userId?: number }
+): Promise<PostConnection> => {
   let cursorId: number | null;
   let take: number;
   const decsending = page.before || page.last ? true : false;
@@ -63,6 +72,9 @@ const getAllPosts = async (page: PageArgs): Promise<PostConnection> => {
           id: cursorId,
         }
       : undefined,
+    where: {
+      userId: option?.userId,
+    },
     orderBy: {
       id: decsending ? "desc" : "asc",
     },
