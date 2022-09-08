@@ -1,5 +1,6 @@
-import { Avatar, HStack, Text } from "@chakra-ui/react";
+import { HStack, Text } from "@chakra-ui/react";
 import { FC } from "react";
+import { UserIcon } from "../UserIcon";
 
 type Props = {
   name: string;
@@ -9,7 +10,7 @@ type Props = {
 export const CurrentUser: FC<Props> = ({ name, image }) => {
   return (
     <HStack>
-      <Avatar name={name} src={image} size="sm" />
+      <UserIcon image={image} />
       <Text>{name}</Text>
     </HStack>
   );
