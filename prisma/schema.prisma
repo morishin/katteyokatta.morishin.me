@@ -43,17 +43,17 @@ model Session {
 }
 
 model User {
-  id                Int       @id @default(autoincrement())
-  name              String
-  email             String?
-  emailVerified     DateTime?
-  image             String?
-  accounts          Account[]
-  sessions          Session[]
-  associateTag      String?
-  createdAt         DateTime  @default(now())
-  updatedat         DateTime  @updatedAt
-  Post              Post[]
+  id            Int       @id @default(autoincrement())
+  name          String
+  email         String?
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  associateTag  String?
+  createdAt     DateTime  @default(now())
+  updatedat     DateTime  @updatedAt
+  posts         Post[]
 }
 
 model VerificationToken {
@@ -84,5 +84,5 @@ model Item {
   image     String?
   createdAt DateTime @default(now())
   updatedat DateTime @updatedAt
-  Post      Post[]
+  posts     Post[]
 }
