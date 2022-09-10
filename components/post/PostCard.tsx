@@ -30,6 +30,7 @@ export const PostCard: FC<Props> = ({ post }) => {
           <AmazonButton
             asin={post.item.asin}
             associateTag={post.user.associateTag || undefined}
+            type="small"
           />
         </VStack>
         <Box

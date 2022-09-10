@@ -52,7 +52,8 @@ export const getServerSideProps: GetServerSideProps<HomeProps> =
       },
     });
     const hasPreviousPage = posts.length === PER_PAGE;
-    const startCursor = encodeCursor(posts.slice(-1)[0].id);
+    const lastPost = posts[posts.length - 1];
+    const startCursor = lastPost ? encodeCursor(lastPost.id) : null;
     return {
       props: {
         initialData: {
