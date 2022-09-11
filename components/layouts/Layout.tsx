@@ -11,7 +11,7 @@ export const Layout: FC<PropsWithChildren<{}>> = ({ children }) => {
       <Box bg="#ededed" minHeight="100vh">
         <Box
           as="main"
-          maxW="1440px"
+          maxW="1200px"
           paddingTop={2}
           paddingBottom={2}
           paddingLeft={{ base: 2, md: 4 }}

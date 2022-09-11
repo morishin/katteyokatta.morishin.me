@@ -1,6 +1,7 @@
 import { Heading, Img, Text, VStack } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
+import { Comment } from "~/components/item/Comment";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { makeGetServerSidePropsWithSession } from "~/lib/server/auth/withSession";
 import { prisma } from "~/lib/server/prisma";
@@ -104,9 +105,20 @@ const ItemPage: NextPage<ItemPageProps> = ({ item }) => {
           type="large"
         />
       </VStack>
-      <Heading as="h2" fontSize="2xl" fontWeight="normal" marginTop="24px">
+      <Heading
+        as="h2"
+        fontSize="2xl"
+        fontWeight="normal"
+        marginTop="24px"
+        marginBottom="16px"
+      >
         これを買ってよかったと言っている人
       </Heading>
+      <div>
+        {item.posts.map((post) => (
+          <Comment key={post.id} post={post} />
+        ))}
+      </div>
     </div>
   );
 };

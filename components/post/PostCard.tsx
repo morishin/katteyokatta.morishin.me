@@ -1,9 +1,9 @@
 import { Box, Img, Link as ChakraLink, Text, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 import { FC } from "react";
+import { AmazonButton } from "~/components/post/AmazonButton";
+import { UserLink } from "~/components/UserLink";
 import { DefaultPostFragment } from "~/lib/client/generated";
-import { AmazonButton } from "./AmazonButton";
-import { UserLink } from "./UserLink";
 
 type Props = {
   post: DefaultPostFragment;
@@ -39,7 +39,7 @@ export const PostCard: FC<Props> = ({ post }) => {
           borderTop="1px solid"
           borderColor="gray.300"
         >
-          <UserLink user={post.user} />
+          <UserLink userName={post.user.name} userImage={post.user.image} />
           <Text marginTop="8px">{post.comment}</Text>
         </Box>
       </VStack>
