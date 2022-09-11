@@ -1,8 +1,9 @@
-import { Heading, Img, Text, VStack } from "@chakra-ui/react";
+import { Heading, HStack, Img, Spacer, Text, VStack } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import { Comment } from "~/components/item/Comment";
 import { AmazonButton } from "~/components/post/AmazonButton";
+import { TweetButton } from "~/components/TweetButton";
 import { makeGetServerSidePropsWithSession } from "~/lib/server/auth/withSession";
 import { prisma } from "~/lib/server/prisma";
 
@@ -25,12 +26,13 @@ type ItemPageProps = {
       createdAt: string;
     }[];
   };
+  url?: string;
 };
 
 export const getServerSideProps: GetServerSideProps<ItemPageProps> =
   makeGetServerSidePropsWithSession<ItemPageProps>(
     async (context, _session) => {
-      const { params } = context;
+      const { params, req } = context;
       const itemId = Number(params?.["id"]);
       if (isNaN(itemId)) throw new Error("Invalid params");
 
@@ -73,17 +75,23 @@ export const getServerSideProps: GetServerSideProps<ItemPageProps> =
               createdAt: post.createdAt.toISOString(),
             })),
           },
+          url: req.url
+            ? new URL(req.url, `https://${req.headers.host}`).toString()
+            : undefined,
         },
       };
     }
   );
 
-const ItemPage: NextPage<ItemPageProps> = ({ item }) => {
+const ItemPage: NextPage<ItemPageProps> = ({ item, url }) => {
   return (
     <div>
       <Head>
         <title>買ってよかったもの</title>
       </Head>
+      <HStack justifyContent="flex-end">
+        <TweetButton url={url} />
+      </HStack>
       <VStack
         alignItems="center"
         borderRadius="6px"
@@ -94,7 +102,10 @@ const ItemPage: NextPage<ItemPageProps> = ({ item }) => {
         marginX="auto"
       >
         <Img src={item.image || undefined} maxHeight="200px" marginX="auto" />
-        <Text fontWeight="bold">{item.name}</Text>
+        <Text fontWeight="bold" fontSize="sm">
+          {item.name}
+        </Text>
+        <Spacer h="10px" />
         <AmazonButton
           asin={item.asin}
           associateTag={
