@@ -30,7 +30,8 @@ export const SearchForm: React.FC<Props> = ({ keyword }) => {
           />
           <Button
             fontSize="15px"
-            colorScheme="gray"
+            bgColor="white"
+            _hover={{ bgColor: "gray.100" }}
             type="submit"
             textColor="gray.600"
           >
