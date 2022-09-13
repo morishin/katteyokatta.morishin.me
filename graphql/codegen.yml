@@ -20,6 +20,7 @@ generates:
       useSWRInfinite:
         - getAllPosts
         - getPostsByUser
+        - searchAmazonItems
       autogenSWRKey: true
       scalars:
         ISO8601DateTime: string

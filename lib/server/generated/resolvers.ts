@@ -15,6 +15,33 @@ export type Scalars = {
   ISO8601DateTime: any;
 };
 
+export type AmazonItem = {
+  __typename?: 'AmazonItem';
+  amazonUrl: Scalars['String'];
+  asin: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  price?: Maybe<Scalars['String']>;
+};
+
+export type AmazonItemConnection = {
+  __typename?: 'AmazonItemConnection';
+  edges: Array<AmazonItemEdge>;
+  pageInfo: PageInfo;
+};
+
+export type AmazonItemEdge = {
+  __typename?: 'AmazonItemEdge';
+  cursor: Scalars['String'];
+  node: AmazonItem;
+};
+
+export type AmazonItemsSearchArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  query: Scalars['String'];
+};
+
 export type Item = {
   __typename?: 'Item';
   asin: Scalars['String'];
@@ -62,7 +89,13 @@ export type PostEdge = {
 
 export type Query = {
   __typename?: 'Query';
+  amazonItems: AmazonItemConnection;
   posts: PostConnection;
+};
+
+
+export type QueryAmazonItemsArgs = {
+  searchArgs: AmazonItemsSearchArgs;
 };
 
 
@@ -148,6 +181,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AmazonItem: ResolverTypeWrapper<AmazonItem>;
+  AmazonItemConnection: ResolverTypeWrapper<AmazonItemConnection>;
+  AmazonItemEdge: ResolverTypeWrapper<AmazonItemEdge>;
+  AmazonItemsSearchArgs: AmazonItemsSearchArgs;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   ISO8601DateTime: ResolverTypeWrapper<Scalars['ISO8601DateTime']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -164,6 +201,10 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AmazonItem: AmazonItem;
+  AmazonItemConnection: AmazonItemConnection;
+  AmazonItemEdge: AmazonItemEdge;
+  AmazonItemsSearchArgs: AmazonItemsSearchArgs;
   Boolean: Scalars['Boolean'];
   ISO8601DateTime: Scalars['ISO8601DateTime'];
   Int: Scalars['Int'];
@@ -176,6 +217,27 @@ export type ResolversParentTypes = {
   Query: {};
   String: Scalars['String'];
   User: User;
+};
+
+export type AmazonItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['AmazonItem'] = ResolversParentTypes['AmazonItem']> = {
+  amazonUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  asin?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  price?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AmazonItemConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['AmazonItemConnection'] = ResolversParentTypes['AmazonItemConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['AmazonItemEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AmazonItemEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['AmazonItemEdge'] = ResolversParentTypes['AmazonItemEdge']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['AmazonItem'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface Iso8601DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ISO8601DateTime'], any> {
@@ -221,6 +283,7 @@ export type PostEdgeResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  amazonItems?: Resolver<ResolversTypes['AmazonItemConnection'], ParentType, ContextType, RequireFields<QueryAmazonItemsArgs, 'searchArgs'>>;
   posts?: Resolver<ResolversTypes['PostConnection'], ParentType, ContextType, RequireFields<QueryPostsArgs, 'page'>>;
 };
 
@@ -233,6 +296,9 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type Resolvers<ContextType = any> = {
+  AmazonItem?: AmazonItemResolvers<ContextType>;
+  AmazonItemConnection?: AmazonItemConnectionResolvers<ContextType>;
+  AmazonItemEdge?: AmazonItemEdgeResolvers<ContextType>;
   ISO8601DateTime?: GraphQLScalarType;
   Item?: ItemResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;

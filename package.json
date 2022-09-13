@@ -30,6 +30,7 @@
     "@next-auth/prisma-adapter": "^1.0.4",
     "@prisma/client": "^4.2.1",
     "@types/micro-cors": "^0.1.2",
+    "amazon-paapi": "^1.0.7",
     "apollo-server-micro": "^3.10.2",
     "date-fns": "^2.29.2",
     "graphql": "^16.6.0",

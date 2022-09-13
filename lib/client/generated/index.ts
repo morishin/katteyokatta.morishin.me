@@ -19,6 +19,33 @@ export type Scalars = {
   ISO8601DateTime: string;
 };
 
+export type AmazonItem = {
+  __typename?: 'AmazonItem';
+  amazonUrl: Scalars['String'];
+  asin: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  price?: Maybe<Scalars['String']>;
+};
+
+export type AmazonItemConnection = {
+  __typename?: 'AmazonItemConnection';
+  edges: Array<AmazonItemEdge>;
+  pageInfo: PageInfo;
+};
+
+export type AmazonItemEdge = {
+  __typename?: 'AmazonItemEdge';
+  cursor: Scalars['String'];
+  node: AmazonItem;
+};
+
+export type AmazonItemsSearchArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  query: Scalars['String'];
+};
+
 export type Item = {
   __typename?: 'Item';
   asin: Scalars['String'];
@@ -66,7 +93,13 @@ export type PostEdge = {
 
 export type Query = {
   __typename?: 'Query';
+  amazonItems: AmazonItemConnection;
   posts: PostConnection;
+};
+
+
+export type QueryAmazonItemsArgs = {
+  searchArgs: AmazonItemsSearchArgs;
 };
 
 
@@ -99,6 +132,13 @@ export type GetPostsByUserQueryVariables = Exact<{
 
 
 export type GetPostsByUserQuery = { __typename?: 'Query', posts: { __typename?: 'PostConnection', pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, startCursor?: string | null }, edges: Array<{ __typename?: 'PostEdge', node: { __typename?: 'Post', id: number, comment: string, createdAt: string, user: { __typename?: 'User', id: number, name: string, image?: string | null, associateTag?: string | null }, item: { __typename?: 'Item', id: number, asin: string, name: string, image?: string | null } } }> } };
+
+export type SearchAmazonItemsQueryVariables = Exact<{
+  searchArgs: AmazonItemsSearchArgs;
+}>;
+
+
+export type SearchAmazonItemsQuery = { __typename?: 'Query', amazonItems: { __typename?: 'AmazonItemConnection', pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null }, edges: Array<{ __typename?: 'AmazonItemEdge', node: { __typename?: 'AmazonItem', asin: string, name: string, image?: string | null, amazonUrl: string, price?: string | null } }> } };
 
 export const DefaultPostFragmentDoc = gql`
     fragment DefaultPost on Post {
@@ -149,6 +189,25 @@ export const GetPostsByUserDocument = gql`
   }
 }
     ${DefaultPostFragmentDoc}`;
+export const SearchAmazonItemsDocument = gql`
+    query searchAmazonItems($searchArgs: AmazonItemsSearchArgs!) {
+  amazonItems(searchArgs: $searchArgs) {
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    edges {
+      node {
+        asin
+        name
+        image
+        amazonUrl
+        price
+      }
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -162,6 +221,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getPostsByUser(variables: GetPostsByUserQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPostsByUserQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetPostsByUserQuery>(GetPostsByUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getPostsByUser', 'query');
+    },
+    searchAmazonItems(variables: SearchAmazonItemsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SearchAmazonItemsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SearchAmazonItemsQuery>(SearchAmazonItemsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'searchAmazonItems', 'query');
     }
   };
 }
@@ -205,6 +267,15 @@ export function getSdkWithHooks(client: GraphQLClient, withWrapper: SdkFunctionW
       return useSWRInfinite<GetPostsByUserQuery, ClientError>(
         utilsForInfinite.generateGetKey<GetPostsByUserQuery, GetPostsByUserQueryVariables>(genKey<GetPostsByUserQueryVariables>('GetPostsByUser', variables), getKey),
         utilsForInfinite.generateFetcher<GetPostsByUserQuery, GetPostsByUserQueryVariables>(sdk.getPostsByUser, variables),
+        config);
+    },
+    useSearchAmazonItems(variables: SearchAmazonItemsQueryVariables, config?: SWRConfigInterface<SearchAmazonItemsQuery, ClientError>) {
+      return useSWR<SearchAmazonItemsQuery, ClientError>(genKey<SearchAmazonItemsQueryVariables>('SearchAmazonItems', variables), () => sdk.searchAmazonItems(variables), config);
+    },
+    useSearchAmazonItemsInfinite(getKey: SWRInfiniteKeyLoader<SearchAmazonItemsQuery, SearchAmazonItemsQueryVariables>, variables: SearchAmazonItemsQueryVariables, config?: SWRInfiniteConfiguration<SearchAmazonItemsQuery, ClientError>) {
+      return useSWRInfinite<SearchAmazonItemsQuery, ClientError>(
+        utilsForInfinite.generateGetKey<SearchAmazonItemsQuery, SearchAmazonItemsQueryVariables>(genKey<SearchAmazonItemsQueryVariables>('SearchAmazonItems', variables), getKey),
+        utilsForInfinite.generateFetcher<SearchAmazonItemsQuery, SearchAmazonItemsQueryVariables>(sdk.searchAmazonItems, variables),
         config);
     }
   };

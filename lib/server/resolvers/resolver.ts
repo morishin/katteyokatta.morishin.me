@@ -1,5 +1,8 @@
+import * as amazon from "amazon-paapi";
 import { GraphQLScalarType, Kind } from "graphql";
+import { env } from "~/lib/server/env";
 import {
+  AmazonItemConnection,
   PageArgs,
   PostConnection,
   Resolvers,
@@ -16,6 +19,8 @@ export const resolvers: Resolvers = {
         return getPosts(args.page);
       }
     },
+    amazonItems: async (_parent, args, _context, _info) =>
+      searchAmazonItems(args.searchArgs),
   },
   ISO8601DateTime: new GraphQLScalarType<Date, string>({
     name: "ISO8601DateTime",
@@ -110,6 +115,62 @@ const getPosts = async (
       endCursor,
       hasNextPage,
       hasPreviousPage,
+    },
+  };
+};
+
+const searchAmazonItems = async ({
+  after,
+  first,
+  query,
+}: {
+  after?: PageArgs["after"];
+  first?: PageArgs["first"];
+  query: string;
+}): Promise<AmazonItemConnection> => {
+  const nextPageNumber = after ? Number(decodeCursor(after)) + 1 : null;
+  const perPage = first || 10; // 10 is max value https://webservices.amazon.com/paapi5/documentation/search-items.html
+
+  const metadata = {
+    AccessKey: env("AMAZON_API_ACCESS_KEY"),
+    SecretKey: env("AMAZON_API_SECRET_KEY"),
+    PartnerTag: env("AMAZON_API_PARTNER_TAG"),
+    PartnerType: "Associates" as const,
+    Marketplace: "www.amazon.co.jp" as const,
+  };
+
+  const res = await amazon.SearchItems(metadata, {
+    Keywords: query,
+    SearchIndex: "All",
+    Resources: [
+      "ItemInfo.Title",
+      "Images.Primary.Large",
+      "Offers.Listings.Price",
+    ],
+    ItemCount: perPage,
+    ItemPage: nextPageNumber ?? undefined,
+  });
+  if (res.Errors) throw new Error(res.Errors[0].Message);
+
+  const amazonItems = res.SearchResult.Items.map((rawItem) => ({
+    asin: rawItem.ASIN,
+    name: rawItem.ItemInfo.Title?.DisplayValue ?? "",
+    image: rawItem.Images.Primary?.Large?.URL ?? null,
+    amazonUrl: rawItem.DetailPageURL,
+    price: rawItem.Offers.Listings?.[0].Price?.Amount.toString() ?? "",
+  }));
+
+  const cursor = encodeCursor(nextPageNumber ?? 1);
+  return {
+    edges: amazonItems.map((item) => ({
+      node: item,
+      cursor,
+    })),
+    pageInfo: {
+      startCursor: cursor,
+      endCursor: cursor,
+      hasNextPage: amazonItems.length === perPage,
+      hasPreviousPage: false,
     },
   };
 };

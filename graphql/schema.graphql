@@ -2,6 +2,7 @@ scalar ISO8601DateTime
 
 type Query {
   posts(page: PageArgs!, userName: String): PostConnection!
+  amazonItems(searchArgs: AmazonItemsSearchArgs!): AmazonItemConnection!
 }
 
 input PageArgs {
@@ -9,6 +10,12 @@ input PageArgs {
   after: String
   last: Int
   before: String
+}
+
+input AmazonItemsSearchArgs {
+  after: String
+  first: Int
+  query: String!
 }
 
 type User {
@@ -48,5 +55,23 @@ type PostConnection {
 
 type PostEdge {
   node: Post!
+  cursor: String!
+}
+
+type AmazonItem {
+  asin: String!
+  name: String!
+  image: String
+  amazonUrl: String!
+  price: String
+}
+
+type AmazonItemConnection {
+  edges: [AmazonItemEdge!]!
+  pageInfo: PageInfo!
+}
+
+type AmazonItemEdge {
+  node: AmazonItem!
   cursor: String!
 }
