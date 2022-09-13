@@ -53,9 +53,14 @@ const NewPostPage: NextPage<NewPostPageProps> = ({}) => {
       (_pageIndex, previousPageData) => {
         if (previousPageData === null) {
           // first request
-          return searchQuery.length > 0
-            ? ["searchArgs", { query: searchQuery }]
-            : null;
+          if (searchQuery.length > 0) {
+            const asin = searchQuery.match(
+              /https?:\/\/(www\.)?amazon(\.co)?\.jp\/(.+\/)?((gp\/product\/)|(dp\/))(?<asin>[A-Z0-9]+).*/
+            )?.groups?.asin;
+            return ["searchArgs", { query: asin ?? searchQuery }];
+          } else {
+            return null;
+          }
         }
         if (!previousPageData.amazonItems.pageInfo.hasNextPage) {
           // reached the end
