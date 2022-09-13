@@ -6,13 +6,16 @@ import {
   Heading,
   HStack,
   Icon,
+  Link as ChakraLink,
+  Spacer,
   Text,
 } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { FC } from "react";
+import { BsPlusLg } from "react-icons/bs";
 import { HiShoppingCart } from "react-icons/hi";
-import { CurrentUser } from "./CurrentUser";
+import { UserLink } from "../UserLink";
 import { SearchForm } from "./SearchForm";
 
 type Props = {};
@@ -27,7 +30,7 @@ export const GlobalHeader: FC<Props> = () => {
         boxShadow="0px 8px 7px 0 rgb(0 0 0 / 14%), 0 1px 0px 0 rgb(0 0 0 / 12%), 0 3px 1px -2px rgb(0 0 0 / 20%)"
       >
         <Flex
-          maxW="1440px"
+          maxW="1200px"
           paddingTop={2}
           paddingBottom={2}
           paddingLeft={{ base: 2, md: 4 }}
@@ -36,31 +39,47 @@ export const GlobalHeader: FC<Props> = () => {
           marginRight="auto"
           alignItems="center"
         >
-          <Link href="/">
-            <Heading as="h1" marginRight={{ base: 2, md: 4, lg: 20 }}>
-              <Link href="/">
-                <a>
-                  <HStack alignItems="center">
-                    <Center>
-                      <Icon as={HiShoppingCart} w="24px" h="24px" />
-                    </Center>
-                    <Text fontSize="15px" fontWeight="bold">
-                      買ってよかったもの
-                    </Text>
-                  </HStack>
-                </a>
-              </Link>
-            </Heading>
+          <Link href="/" passHref>
+            <ChakraLink>
+              <Heading as="h1">
+                <HStack alignItems="center">
+                  <Center>
+                    <Icon as={HiShoppingCart} w="24px" h="24px" />
+                  </Center>
+                  <Text fontSize="15px" fontWeight="bold">
+                    買ってよかったもの
+                  </Text>
+                </HStack>
+              </Heading>
+            </ChakraLink>
           </Link>
+          <Spacer />
           <SearchForm />
           <Flex flex="auto" textAlign="right" justifyContent="flex-end">
             {session?.user ? (
-              <CurrentUser
-                name={session.user.name || ""}
-                image={session.user.image || undefined}
-              />
+              <HStack>
+                <Button
+                  leftIcon={<BsPlusLg color="white" />}
+                  color="white"
+                  bgColor="primary"
+                  _hover={{ bgColor: "#CC565A" }}
+                  as="a"
+                  href="/posts/new"
+                >
+                  買ってよかったものを追加
+                </Button>
+                <UserLink
+                  userName={session.user.name ?? ""}
+                  userImage={session.user.image ?? undefined}
+                  color="white"
+                />
+              </HStack>
             ) : (
-              <Button variant="outline" onClick={() => signIn()}>
+              <Button
+                variant="outline"
+                _hover={{ bgColor: "#f07e80" }}
+                onClick={() => signIn()}
+              >
                 Twitterログイン
               </Button>
             )}

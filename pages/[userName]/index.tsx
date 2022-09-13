@@ -1,4 +1,5 @@
 import {
+  Button,
   Center,
   HStack,
   Icon,
@@ -12,10 +13,12 @@ import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
+import { BsPlusLg } from "react-icons/bs";
 import { FaTwitter } from "react-icons/fa";
 import { useIntersection } from "react-use";
 import { PostGrid } from "~/components/post/PostGrid";
 import { ReachedEndMark } from "~/components/post/ReachedEndMark";
+import { TweetButton } from "~/components/TweetButton";
 import { UserIcon } from "~/components/UserIcon";
 import {
   DefaultPostFragment,
@@ -32,6 +35,7 @@ type UserPageProps = {
     posts: DefaultPostFragment[];
     nextCursor: string | null;
   };
+  url?: string;
 };
 
 const PER_PAGE = 24;
@@ -39,7 +43,7 @@ const PER_PAGE = 24;
 export const getServerSideProps: GetServerSideProps<UserPageProps> =
   makeGetServerSidePropsWithSession<UserPageProps>(
     async (context, _session) => {
-      const { params } = context;
+      const { params, req } = context;
       const userName = params?.["userName"];
       if (typeof userName !== "string") throw new Error("Invalid params");
 
@@ -97,6 +101,9 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> =
             })),
             nextCursor: hasPreviousPage ? startCursor : null,
           },
+          url: req.url
+            ? new URL(req.url, `https://${req.headers.host}`).toString()
+            : undefined,
         },
       };
     }
@@ -105,7 +112,7 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> =
 const graphqlClient = new GraphQLClient("/api/graphql");
 const sdk = getSdkWithHooks(graphqlClient);
 
-const UserPage: NextPage<UserPageProps> = ({ initialData, user }) => {
+const UserPage: NextPage<UserPageProps> = ({ initialData, user, url }) => {
   const { data, size, setSize, isValidating } = sdk.useGetPostsByUserInfinite(
     (_pageIndex, previousPageData) => {
       if (previousPageData === null) {
@@ -180,7 +187,9 @@ const UserPage: NextPage<UserPageProps> = ({ initialData, user }) => {
       <Head>
         <title>買ってよかったもの</title>
       </Head>
-
+      <HStack justifyContent="flex-end">
+        <TweetButton url={url} />
+      </HStack>
       <Center>
         <VStack paddingY="40px">
           <UserIcon image={user.image} size={100} />
@@ -195,6 +204,23 @@ const UserPage: NextPage<UserPageProps> = ({ initialData, user }) => {
             </Text>
             <Text>さんの買ってよかったもの</Text>
           </HStack>
+          <Button
+            leftIcon={<BsPlusLg color="white" />}
+            color="white"
+            bgColor="primary"
+            _hover={{ bgColor: "#CC565A" }}
+            as="a"
+            href="/posts/new"
+          >
+            買ってよかったものを追加
+          </Button>
+          <ChakraLink
+            href="https://www.amazon.co.jp/gp/css/order-history/"
+            color="primary"
+            target="_blank"
+          >
+            Amazonの購入履歴を見る
+          </ChakraLink>
         </VStack>
       </Center>
       <PostGrid posts={posts} />
