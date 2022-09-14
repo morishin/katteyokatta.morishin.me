@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Center,
   HStack,
@@ -14,6 +13,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import { FormEventHandler, useEffect, useRef, useState } from "react";
 import { useIntersection } from "react-use";
+import { AmazonSearchResultItemCard } from "~/components/item/AmazonSearchResultItemCard";
 import { ReachedEndMark } from "~/components/post/ReachedEndMark";
 import { getSdkWithHooks } from "~/lib/client/generated/index";
 import { makeGetServerSidePropsWithSession } from "~/lib/server/auth/withSession";
@@ -154,11 +154,17 @@ const NewPostPage: NextPage<NewPostPageProps> = ({}) => {
         >
           Amazonの購入履歴を見る
         </ChakraLink>
-        {items.map((item) => (
-          <Box key={item.asin} bg="black" color="white">
-            {JSON.stringify(item, null, 2)}
-          </Box>
-        ))}
+        <VStack alignItems="stretch" spacing="20px">
+          {items.map((item) => (
+            <AmazonSearchResultItemCard
+              key={item.asin}
+              item={item}
+              onClick={(item) => {
+                console.log(`🔥 ${JSON.stringify(item, null, 2)}`);
+              }}
+            />
+          ))}
+        </VStack>
         <Center ref={bottomRef} marginY="70px" opacity={isValidating ? 1 : 0}>
           <Spinner color="secondary" size="xl" />
         </Center>
