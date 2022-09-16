@@ -204,16 +204,17 @@ const UserPage: NextPage<UserPageProps> = ({ initialData, user, url }) => {
             </Text>
             <Text>さんの買ってよかったもの</Text>
           </HStack>
-          <Button
-            leftIcon={<BsPlusLg color="white" />}
-            color="white"
-            bgColor="primary"
-            _hover={{ bgColor: "#CC565A" }}
-            as="a"
-            href="/posts/new"
-          >
-            買ってよかったものを追加
-          </Button>
+          <Link href="/posts/new" passHref>
+            <Button
+              leftIcon={<BsPlusLg color="white" />}
+              color="white"
+              bgColor="primary"
+              _hover={{ bgColor: "#CC565A" }}
+              as="a"
+            >
+              買ってよかったものを追加
+            </Button>
+          </Link>
           <ChakraLink
             href="https://www.amazon.co.jp/gp/css/order-history/"
             color="primary"

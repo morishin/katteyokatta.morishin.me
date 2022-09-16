@@ -11,11 +11,12 @@ import {
 import { GraphQLClient } from "graphql-request";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { FormEventHandler, useEffect, useRef, useState } from "react";
 import { useIntersection } from "react-use";
 import { AmazonSearchResultItemCard } from "~/components/item/AmazonSearchResultItemCard";
 import { ReachedEndMark } from "~/components/post/ReachedEndMark";
-import { getSdkWithHooks } from "~/lib/client/generated/index";
+import { AmazonItem, getSdkWithHooks } from "~/lib/client/generated/index";
 import { makeGetServerSidePropsWithSession } from "~/lib/server/auth/withSession";
 
 type NewPostPageProps = {};
@@ -47,6 +48,21 @@ const NewPostPage: NextPage<NewPostPageProps> = ({}) => {
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  const router = useRouter();
+
+  const onClickItem = (item: AmazonItem) => {
+    console.log(`🔥 ${JSON.stringify(item, null, 2)}`);
+    router.push({
+      pathname: "/posts/new/details",
+      query: {
+        name: item.name,
+        asin: item.asin,
+        image: item.image,
+        amazonUrl: item.amazonUrl,
+      },
+    });
+  };
 
   const { data, size, setSize, isValidating } =
     sdk.useSearchAmazonItemsInfinite(
@@ -159,9 +175,7 @@ const NewPostPage: NextPage<NewPostPageProps> = ({}) => {
             <AmazonSearchResultItemCard
               key={item.asin}
               item={item}
-              onClick={(item) => {
-                console.log(`🔥 ${JSON.stringify(item, null, 2)}`);
-              }}
+              onClick={onClickItem}
             />
           ))}
         </VStack>

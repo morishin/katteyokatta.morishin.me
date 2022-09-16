@@ -1,4 +1,4 @@
-import { Img, Link as ChakraLink } from "@chakra-ui/react";
+import { Box, Img, Link as ChakraLink } from "@chakra-ui/react";
 import Link from "next/link";
 import { FC } from "react";
 
@@ -15,22 +15,24 @@ export const AmazonButton: FC<Props> = ({ asin, associateTag, type }) => {
     associateTag || DEFAULT_ASSOCIATE_ID
   }`;
   return (
-    <Link href={linkUrl} passHref>
-      <ChakraLink>
-        {type === "small" ? (
-          <Img
-            src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon1.png"
-            width="78px"
-            height="23px"
-          />
-        ) : (
-          <Img
-            src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon4.png"
-            width="177px"
-            height="28px"
-          />
-        )}
-      </ChakraLink>
-    </Link>
+    <Box w={type === "small" ? "78px" : "177px"}>
+      <Link href={linkUrl} passHref>
+        <ChakraLink>
+          {type === "small" ? (
+            <Img
+              src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon1.png"
+              width="78px"
+              height="23px"
+            />
+          ) : (
+            <Img
+              src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon4.png"
+              width="177px"
+              height="28px"
+            />
+          )}
+        </ChakraLink>
+      </Link>
+    </Box>
   );
 };
