@@ -10,6 +10,7 @@ import {
   DefaultPostFragment,
   getSdkWithHooks,
 } from "~/lib/client/generated/index";
+import { trpc } from "~/lib/client/trpc/trpc";
 import { makeGetServerSidePropsWithSession } from "~/lib/server/auth/withSession";
 import { encodeCursor } from "~/lib/server/cursor";
 import { prisma } from "~/lib/server/prisma";
@@ -71,6 +72,11 @@ const graphqlClient = new GraphQLClient("/api/graphql");
 const sdk = getSdkWithHooks(graphqlClient);
 
 const Home: NextPage<HomeProps> = ({ initialData }) => {
+  const helloNoArgs = trpc.useQuery(["hello"]);
+  useEffect(() => {
+    console.log(`🔥 ${JSON.stringify(helloNoArgs.data, null, 2)}`);
+  }, [helloNoArgs.data]);
+
   const { data, size, setSize, isValidating } = sdk.useGetAllPostsInfinite(
     (_pageIndex, previousPageData) => {
       if (previousPageData === null) {
