@@ -1,6 +1,7 @@
 import * as trpc from "@trpc/server";
 import superjson from "superjson";
-import { postRouter } from "./post";
+import { amazonItemRouter } from "~/lib/server/trpc/routers/amazonItem";
+import { postRouter } from "~/lib/server/trpc/routers/post";
 
 export const appRouter = trpc
   .router()
@@ -17,6 +18,7 @@ export const appRouter = trpc
       return "yay!";
     },
   })
-  .merge("post.", postRouter);
+  .merge("post.", postRouter)
+  .merge("amazonItem.", amazonItemRouter);
 
 export type AppRouter = typeof appRouter;

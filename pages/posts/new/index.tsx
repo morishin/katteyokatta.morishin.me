@@ -1,22 +1,23 @@
 import {
   Button,
-  Center,
   HStack,
   Input,
   Link as ChakraLink,
-  Spinner,
   theme,
   VStack,
 } from "@chakra-ui/react";
-import { GraphQLClient } from "graphql-request";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FormEventHandler, useEffect, useRef, useState } from "react";
-import { useIntersection } from "react-use";
-import { AmazonSearchResultItemCard } from "~/components/item/AmazonSearchResultItemCard";
-import { ReachedEndMark } from "~/components/post/ReachedEndMark";
-import { AmazonItem, getSdkWithHooks } from "~/lib/client/generated/index";
+import {
+  FormEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { AmazonSearchResults } from "~/components/post/AmazonSearchResults";
+import { DefaultAmazonItem } from "~/lib/client/types/type";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
 type NewPostPageProps = {};
@@ -36,102 +37,36 @@ export const getServerSideProps: GetServerSideProps<NewPostPageProps> =
     };
   });
 
-const graphqlClient = new GraphQLClient("/api/graphql");
-const sdk = getSdkWithHooks(graphqlClient);
-const PER_PAGE = 10;
-
 const NewPostPage: NextPage<NewPostPageProps> = ({}) => {
-  const inputRef = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
+  const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  const onClickItem = (item: AmazonItem) => {
-    console.log(`🔥 ${JSON.stringify(item, null, 2)}`);
-    router.push({
-      pathname: "/posts/new/details",
-      query: {
-        name: item.name,
-        asin: item.asin,
-        image: item.image,
-        amazonUrl: item.amazonUrl,
-      },
-    });
-  };
-
-  const { data, size, setSize, isValidating } =
-    sdk.useSearchAmazonItemsInfinite(
-      (_pageIndex, previousPageData) => {
-        if (previousPageData === null) {
-          // first request
-          if (searchQuery.length > 0) {
-            const asin = searchQuery.match(
-              /https?:\/\/(www\.)?amazon(\.co)?\.jp\/(.+\/)?((gp\/product\/)|(dp\/))(?<asin>[A-Z0-9]+).*/
-            )?.groups?.asin;
-            return ["searchArgs", { query: asin ?? searchQuery }];
-          } else {
-            return null;
-          }
-        }
-        if (!previousPageData.amazonItems.pageInfo.hasNextPage) {
-          // reached the end
-          return null;
-        }
-        if (previousPageData.amazonItems.pageInfo.endCursor === null) {
-          throw new Error("endCursor is null");
-        }
-        // load next page
-        return [
-          "searchArgs",
-          {
-            query: searchQuery,
-            after: previousPageData.amazonItems.pageInfo.endCursor,
-            first: PER_PAGE,
-          },
-        ];
-      },
-      // variables for the first request
-      {
-        searchArgs: {
-          query: searchQuery,
+  const onClickItem = useCallback(
+    (item: DefaultAmazonItem) => {
+      router.push({
+        pathname: "/posts/new/details",
+        query: {
+          name: item.name,
+          asin: item.asin,
+          image: item.image,
+          amazonUrl: item.amazonUrl,
         },
-      },
-      { revalidateFirstPage: false }
-    );
-
-  const isReachingEnd =
-    data && data.slice(-1)[0]?.amazonItems.pageInfo.hasNextPage === false;
-
-  const items =
-    data?.flatMap((page) => page.amazonItems.edges.map((edge) => edge.node)) ??
-    [];
-  const bottomRef = useRef(null);
-  const intersection = useIntersection(bottomRef, {
-    root: null,
-  });
-
-  const previousIsIntersecting = useRef<boolean | undefined>(false);
-  useEffect(() => {
-    if (
-      intersection?.isIntersecting &&
-      !previousIsIntersecting.current &&
-      !isValidating
-    ) {
-      setSize(size + 1);
-    }
-    previousIsIntersecting.current = intersection?.isIntersecting;
-  }, [intersection?.isIntersecting, isValidating, setSize, size]);
+      });
+    },
+    [router]
+  );
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     if (inputRef.current && inputRef.current.value.length > 0) {
       setSearchQuery(inputRef.current.value);
-      setSize(1);
     }
   };
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   return (
     <div>
@@ -168,19 +103,12 @@ const NewPostPage: NextPage<NewPostPageProps> = ({}) => {
         >
           Amazonの購入履歴を見る
         </ChakraLink>
-        <VStack alignItems="stretch" spacing="20px">
-          {items.map((item) => (
-            <AmazonSearchResultItemCard
-              key={item.asin}
-              item={item}
-              onClick={onClickItem}
-            />
-          ))}
-        </VStack>
-        <Center ref={bottomRef} marginY="70px" opacity={isValidating ? 1 : 0}>
-          <Spinner color="secondary" size="xl" />
-        </Center>
-        {isReachingEnd && <ReachedEndMark />}
+        {searchQuery.length > 0 ? (
+          <AmazonSearchResults
+            searchQuery={searchQuery}
+            onClickItem={onClickItem}
+          />
+        ) : null}
       </VStack>
     </div>
   );

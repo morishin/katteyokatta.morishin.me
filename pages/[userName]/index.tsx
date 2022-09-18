@@ -66,20 +66,19 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> =
   });
 
 const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
-  const postQuery = trpc.useInfiniteQuery(
-    [
-      "post.latest",
+  const { data, isFetching, hasNextPage, fetchNextPage } =
+    trpc.useInfiniteQuery(
+      [
+        "post.latest",
+        {
+          limit: PER_PAGE,
+          userName: user.name,
+        },
+      ],
       {
-        limit: PER_PAGE,
-        userName: user.name,
-      },
-    ],
-    {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    }
-  );
-
-  const { data, isFetching, hasNextPage, fetchNextPage } = postQuery;
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      }
+    );
   const isReachedEnd = !hasNextPage && !isFetching;
 
   const bottomRef = useRef(null);

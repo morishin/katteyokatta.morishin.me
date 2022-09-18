@@ -15,3 +15,11 @@ export type DefaultPost = {
     asin: string;
   };
 };
+
+export type DefaultAmazonItem = {
+  asin: string;
+  name: string;
+  image: string | null;
+  amazonUrl: string;
+  price: string;
+};

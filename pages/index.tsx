@@ -25,20 +25,19 @@ export const getServerSideProps: GetServerSideProps<HomeProps> =
     };
   });
 
-const Home: NextPage<HomeProps> = (props) => {
-  const postQuery = trpc.useInfiniteQuery(
-    [
-      "post.latest",
+const Home: NextPage<HomeProps> = () => {
+  const { data, isFetching, hasNextPage, fetchNextPage } =
+    trpc.useInfiniteQuery(
+      [
+        "post.latest",
+        {
+          limit: PER_PAGE,
+        },
+      ],
       {
-        limit: PER_PAGE,
-      },
-    ],
-    {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    }
-  );
-
-  const { data, isFetching, hasNextPage, fetchNextPage } = postQuery;
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      }
+    );
   const isReachedEnd = !hasNextPage && !isFetching;
 
   const bottomRef = useRef(null);
