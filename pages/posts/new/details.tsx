@@ -15,50 +15,48 @@ import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { AmazonItem } from "~/lib/client/generated/index";
-import { makeGetServerSidePropsWithSession } from "~/lib/server/auth/withSession";
+import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
 type NewPostDetailsPageProps = {
   item: AmazonItem;
 };
 
 export const getServerSideProps: GetServerSideProps<NewPostDetailsPageProps> =
-  makeGetServerSidePropsWithSession<NewPostDetailsPageProps>(
-    async (context, session) => {
-      if (!session) {
-        return {
-          redirect: {
-            destination: "/login",
-            permanent: false,
-          },
-        };
-      }
-
-      const name = context.query["name"]?.toString();
-      const asin = context.query["asin"]?.toString();
-      const image = context.query["image"]?.toString();
-      const amazonUrl = context.query["amazonUrl"]?.toString();
-
-      if (!name || !asin || !amazonUrl) {
-        return {
-          redirect: {
-            destination: "/posts/new",
-            permanent: false,
-          },
-        };
-      }
-
+  makeGetServerSideProps<NewPostDetailsPageProps>(async (context, session) => {
+    if (!session) {
       return {
-        props: {
-          item: {
-            name,
-            asin,
-            image,
-            amazonUrl,
-          },
+        redirect: {
+          destination: "/login",
+          permanent: false,
         },
       };
     }
-  );
+
+    const name = context.query["name"]?.toString();
+    const asin = context.query["asin"]?.toString();
+    const image = context.query["image"]?.toString();
+    const amazonUrl = context.query["amazonUrl"]?.toString();
+
+    if (!name || !asin || !amazonUrl) {
+      return {
+        redirect: {
+          destination: "/posts/new",
+          permanent: false,
+        },
+      };
+    }
+
+    return {
+      props: {
+        item: {
+          name,
+          asin,
+          image,
+          amazonUrl,
+        },
+      },
+    };
+  });
 
 type Inputs = {
   comment: string;

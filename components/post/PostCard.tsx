@@ -3,10 +3,10 @@ import Link from "next/link";
 import { FC } from "react";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { UserLink } from "~/components/UserLink";
-import { DefaultPostFragment } from "~/lib/client/generated";
+import { DefaultPost } from "~/lib/client/types/Post";
 
 type Props = {
-  post: DefaultPostFragment;
+  post: DefaultPost;
 };
 
 export const PostCard: FC<Props> = ({ post }) => {

@@ -1,132 +1,45 @@
 import { Center, Spinner } from "@chakra-ui/react";
-import { GraphQLClient } from "graphql-request";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useMemo, useRef } from "react";
 import { useIntersection } from "react-use";
 import { PostGrid } from "~/components/post/PostGrid";
 import { ReachedEndMark } from "~/components/post/ReachedEndMark";
-import {
-  DefaultPostFragment,
-  getSdkWithHooks,
-} from "~/lib/client/generated/index";
 import { trpc } from "~/lib/client/trpc/trpc";
-import { makeGetServerSidePropsWithSession } from "~/lib/server/auth/withSession";
-import { encodeCursor } from "~/lib/server/cursor";
-import { prisma } from "~/lib/server/prisma";
+import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
-type HomeProps = {
-  initialData: {
-    posts: DefaultPostFragment[];
-    nextCursor: string | null;
-  };
-};
+type HomeProps = {};
 
-const PER_PAGE = 24;
+const PER_PAGE = 20;
 
 export const getServerSideProps: GetServerSideProps<HomeProps> =
-  makeGetServerSidePropsWithSession<HomeProps>(async (_context, _session) => {
-    const posts = await prisma.post.findMany({
-      take: PER_PAGE,
-      orderBy: {
-        id: "desc",
-      },
-      select: {
-        id: true,
-        comment: true,
-        createdAt: true,
-        user: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-          },
-        },
-        item: {
-          select: {
-            id: true,
-            asin: true,
-            name: true,
-            image: true,
-          },
-        },
-      },
+  makeGetServerSideProps<HomeProps>(async (_context, { ssg }) => {
+    await ssg.prefetchInfiniteQuery("post.latest", {
+      limit: PER_PAGE,
     });
-    const hasPreviousPage = posts.length === PER_PAGE;
-    const lastPost = posts[posts.length - 1];
-    const startCursor = lastPost ? encodeCursor(lastPost.id) : null;
+
     return {
       props: {
-        initialData: {
-          posts: posts.map((post) => ({
-            ...post,
-            createdAt: post.createdAt.toISOString(),
-          })),
-          nextCursor: hasPreviousPage ? startCursor : null,
-        },
+        trpcState: ssg.dehydrate(),
       },
     };
   });
 
-const graphqlClient = new GraphQLClient("/api/graphql");
-const sdk = getSdkWithHooks(graphqlClient);
-
-const Home: NextPage<HomeProps> = ({ initialData }) => {
-  const helloNoArgs = trpc.useQuery(["hello"]);
-  useEffect(() => {
-    console.log(`🔥 ${JSON.stringify(helloNoArgs.data, null, 2)}`);
-  }, [helloNoArgs.data]);
-
-  const { data, size, setSize, isValidating } = sdk.useGetAllPostsInfinite(
-    (_pageIndex, previousPageData) => {
-      if (previousPageData === null) {
-        // first request
-        return [
-          "page",
-          {
-            before: initialData.nextCursor,
-            last: PER_PAGE,
-          },
-        ];
-      }
-      if (!previousPageData.posts.pageInfo.hasPreviousPage) {
-        // reached the end
-        return null;
-      }
-      if (previousPageData.posts.pageInfo.startCursor === null) {
-        throw new Error("startCursor is null");
-      }
-      // load next page
-      return [
-        "page",
-        {
-          before: previousPageData.posts.pageInfo.startCursor,
-          last: PER_PAGE,
-        },
-      ];
-    },
-    // variables for the first request
-    {
-      page: {
-        before: initialData.nextCursor,
-        last: PER_PAGE,
+const Home: NextPage<HomeProps> = (props) => {
+  const postQuery = trpc.useInfiniteQuery(
+    [
+      "post.latest",
+      {
+        limit: PER_PAGE,
       },
-    },
-    { initialSize: 0, revalidateFirstPage: false }
+    ],
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
   );
 
-  const isReachingEnd =
-    data && data.slice(-1)[0]?.posts.pageInfo.hasPreviousPage === false;
-
-  const posts = useMemo(
-    () =>
-      initialData.posts.concat(
-        data
-          ?.reverse()
-          .flatMap((page) => page.posts.edges.map((edge) => edge.node)) || []
-      ),
-    [data, initialData.posts]
-  );
+  const { data, isFetching, hasNextPage, fetchNextPage } = postQuery;
+  const isReachedEnd = !hasNextPage && !isFetching;
 
   const bottomRef = useRef(null);
   const intersection = useIntersection(bottomRef, {
@@ -138,12 +51,17 @@ const Home: NextPage<HomeProps> = ({ initialData }) => {
     if (
       intersection?.isIntersecting &&
       !previousIsIntersecting.current &&
-      !isValidating
+      !isFetching
     ) {
-      setSize(size + 1);
+      fetchNextPage();
     }
     previousIsIntersecting.current = intersection?.isIntersecting;
-  }, [intersection?.isIntersecting, isValidating, setSize, size]);
+  }, [fetchNextPage, intersection?.isIntersecting, isFetching]);
+
+  const posts = useMemo(
+    () => data?.pages.flatMap((page) => page.posts) ?? [],
+    [data?.pages]
+  );
 
   return (
     <div>
@@ -152,10 +70,10 @@ const Home: NextPage<HomeProps> = ({ initialData }) => {
       </Head>
 
       <PostGrid posts={posts} />
-      <Center ref={bottomRef} marginY="70px" opacity={isValidating ? 1 : 0}>
+      <Center ref={bottomRef} marginY="70px" opacity={isFetching ? 1 : 0}>
         <Spinner color="secondary" size="xl" />
       </Center>
-      {isReachingEnd && <ReachedEndMark />}
+      {isReachedEnd && <ReachedEndMark />}
     </div>
   );
 };

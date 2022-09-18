@@ -4,8 +4,8 @@ import Head from "next/head";
 import { Comment } from "~/components/item/Comment";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { TweetButton } from "~/components/TweetButton";
-import { makeGetServerSidePropsWithSession } from "~/lib/server/auth/withSession";
 import { prisma } from "~/lib/server/prisma";
+import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
 type ItemPageProps = {
   item: {
@@ -30,58 +30,56 @@ type ItemPageProps = {
 };
 
 export const getServerSideProps: GetServerSideProps<ItemPageProps> =
-  makeGetServerSidePropsWithSession<ItemPageProps>(
-    async (context, _session) => {
-      const { params, req } = context;
-      const itemId = Number(params?.["id"]);
-      if (isNaN(itemId)) throw new Error("Invalid params");
+  makeGetServerSideProps<ItemPageProps>(async (context, _session) => {
+    const { params, req } = context;
+    const itemId = Number(params?.["id"]);
+    if (isNaN(itemId)) throw new Error("Invalid params");
 
-      const item = await prisma.item.findFirst({
-        where: {
-          id: itemId,
-        },
-        select: {
-          id: true,
-          asin: true,
-          name: true,
-          image: true,
-          createdAt: true,
-          posts: {
-            select: {
-              id: true,
-              comment: true,
-              createdAt: true,
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  image: true,
-                  associateTag: true,
-                },
+    const item = await prisma.item.findFirst({
+      where: {
+        id: itemId,
+      },
+      select: {
+        id: true,
+        asin: true,
+        name: true,
+        image: true,
+        createdAt: true,
+        posts: {
+          select: {
+            id: true,
+            comment: true,
+            createdAt: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                associateTag: true,
               },
             },
           },
         },
-      });
-      if (!item) return { notFound: true };
+      },
+    });
+    if (!item) return { notFound: true };
 
-      return {
-        props: {
-          item: {
-            ...item,
-            createdAt: item.createdAt.toISOString(),
-            posts: item.posts.map((post) => ({
-              ...post,
-              createdAt: post.createdAt.toISOString(),
-            })),
-          },
-          url: req.url
-            ? new URL(req.url, `https://${req.headers.host}`).toString()
-            : undefined,
+    return {
+      props: {
+        item: {
+          ...item,
+          createdAt: item.createdAt.toISOString(),
+          posts: item.posts.map((post) => ({
+            ...post,
+            createdAt: post.createdAt.toISOString(),
+          })),
         },
-      };
-    }
-  );
+        url: req.url
+          ? new URL(req.url, `https://${req.headers.host}`).toString()
+          : undefined,
+      },
+    };
+  });
 
 const ItemPage: NextPage<ItemPageProps> = ({ item, url }) => {
   return (

@@ -17,26 +17,24 @@ import { useIntersection } from "react-use";
 import { AmazonSearchResultItemCard } from "~/components/item/AmazonSearchResultItemCard";
 import { ReachedEndMark } from "~/components/post/ReachedEndMark";
 import { AmazonItem, getSdkWithHooks } from "~/lib/client/generated/index";
-import { makeGetServerSidePropsWithSession } from "~/lib/server/auth/withSession";
+import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
 type NewPostPageProps = {};
 
 export const getServerSideProps: GetServerSideProps<NewPostPageProps> =
-  makeGetServerSidePropsWithSession<NewPostPageProps>(
-    async (_context, session) => {
-      if (!session) {
-        return {
-          redirect: {
-            destination: "/login",
-            permanent: false,
-          },
-        };
-      }
+  makeGetServerSideProps<NewPostPageProps>(async (_context, session) => {
+    if (!session) {
       return {
-        props: {},
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
       };
     }
-  );
+    return {
+      props: {},
+    };
+  });
 
 const graphqlClient = new GraphQLClient("/api/graphql");
 const sdk = getSdkWithHooks(graphqlClient);

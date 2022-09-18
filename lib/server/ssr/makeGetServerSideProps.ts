@@ -1,3 +1,5 @@
+import { createSSGHelpers } from "@trpc/react/ssg";
+import { IncomingMessage, ServerResponse } from "http";
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -6,33 +8,50 @@ import type {
 } from "next";
 import type { Session } from "next-auth";
 import { getSession } from "next-auth/react";
-import { ParsedUrlQuery } from "querystring";
 import pinoHttp from "pino-http";
-import { IncomingMessage, ServerResponse } from "http";
+import { ParsedUrlQuery } from "querystring";
+import { createContext } from "react";
+import superjson from "superjson";
+import { AppRouter, appRouter } from "~/lib/server/trpc/routers/_app";
 
-type GetServerSidePropsWithSession<
+const _ssgHelperGen = () => {
+  throw new Error("Only for type inference");
+  return createSSGHelpers<AppRouter>({} as any);
+};
+type CreateSSGHelpersReturnType = ReturnType<typeof _ssgHelperGen>;
+type GetServerSidePropsWithParams<
   P extends { [key: string]: any },
   Q extends ParsedUrlQuery = ParsedUrlQuery,
   D extends PreviewData = PreviewData
 > = (
   context: GetServerSidePropsContext<Q, D>,
-  session: Session | null
+  params: {
+    session: Session | null;
+    ssg: CreateSSGHelpersReturnType;
+  }
 ) => Promise<GetServerSidePropsResult<P>>;
 
-export const makeGetServerSidePropsWithSession =
+export const makeGetServerSideProps =
   <
     P extends { [key: string]: any },
     Q extends ParsedUrlQuery = ParsedUrlQuery,
     D extends PreviewData = PreviewData
   >(
-    getServerSideProps: GetServerSidePropsWithSession<P, Q, D>,
+    getServerSideProps: GetServerSidePropsWithParams<P, Q, D>,
     logger: Logger = pinoLogger
   ): GetServerSideProps<P & { session: Session | null }, Q, D> =>
   async (context) => {
     logger(context.req, context.res);
     const { req } = context;
     const session = await getSession({ req });
-    const pageProps = await getServerSideProps(context, session);
+
+    const ssg = createSSGHelpers<AppRouter>({
+      router: appRouter,
+      ctx: createContext,
+      transformer: superjson,
+    });
+
+    const pageProps = await getServerSideProps(context, { session, ssg });
     if ("props" in pageProps) {
       const props =
         pageProps.props instanceof Promise
