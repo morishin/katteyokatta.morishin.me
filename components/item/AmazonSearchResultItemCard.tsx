@@ -1,12 +1,12 @@
 import { Box, HStack, Icon, Image, Text, VStack } from "@chakra-ui/react";
 import { FC } from "react";
 import { HiShoppingCart } from "react-icons/hi";
-import { AmazonItem } from "~/lib/client/generated";
+import { DefaultAmazonItem } from "~/lib/client/types/type";
 import { AmazonButton } from "../post/AmazonButton";
 
 type AmazonSearchResultItemCardProps = {
-  item: AmazonItem;
-  onClick: (item: AmazonItem) => void;
+  item: DefaultAmazonItem;
+  onClick: (item: DefaultAmazonItem) => void;
 };
 
 export const AmazonSearchResultItemCard: FC<
