@@ -5,6 +5,8 @@ import { decodeCursor, encodeCursor } from "~/lib/server/cursor";
 import { prisma } from "~/lib/server/prisma";
 import { trpc } from "~/lib/server/trpc/trpc";
 
+const DEFAULT_PER_PAGE = 20;
+
 const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
   id: true,
   comment: true,
@@ -26,8 +28,6 @@ const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
     },
   },
 });
-
-const DEFAULT_PER_PAGE = 20;
 
 export const postRouter = trpc.router({
   latest: trpc.procedure

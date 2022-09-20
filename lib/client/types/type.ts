@@ -12,7 +12,9 @@ export type DefaultItem = {
   asin: string;
 };
 
-export type DefaultPostWithItem = DefaultPost & { item: DefaultItem };
+export type PostWithItem = DefaultPost & { item: DefaultItem };
+
+export type ItemWithPosts = DefaultItem & { posts: DefaultPost[] };
 
 export type DefaultAmazonItem = {
   asin: string;

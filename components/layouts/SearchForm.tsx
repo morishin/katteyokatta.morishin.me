@@ -11,7 +11,7 @@ export const SearchForm: React.FC<Props> = ({ keyword }) => {
   const router = useRouter();
   const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
-    router.push({ pathname: "/search", query: { q: inputValue.current } });
+    router.push(`/search/${inputValue.current}`);
   };
   return (
     <Box w={500}>
