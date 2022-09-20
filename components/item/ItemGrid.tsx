@@ -1,4 +1,4 @@
-import { SimpleGrid } from "@chakra-ui/react";
+import { Grid } from "@chakra-ui/react";
 import { FC } from "react";
 import { ItemCard } from "~/components/item/ItemCard";
 import { ItemWithPosts } from "~/lib/client/types/type";
@@ -9,10 +9,10 @@ type Props = {
 
 export const ItemGrid: FC<Props> = ({ items }) => {
   return (
-    <SimpleGrid minChildWidth="200px" spacing="10px">
+    <Grid templateColumns="repeat(auto-fit, 200px)" gap="16px">
       {items.map((item) => (
         <ItemCard key={item.id} item={item} />
       ))}
-    </SimpleGrid>
+    </Grid>
   );
 };

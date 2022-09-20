@@ -64,7 +64,7 @@ export const itemRouter = trpc.router({
           : undefined,
         where: {
           name: {
-            contains: input.query,
+            contains: input.keyword,
           },
         },
         orderBy: {
