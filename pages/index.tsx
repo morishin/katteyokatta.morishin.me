@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useIntersection } from "react-use";
 import { PostGrid } from "~/components/post/PostGrid";
 import { ReachedEndMark } from "~/components/post/ReachedEndMark";
-import { trpc } from "~/lib/client/trpc/trpc";
+import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
 type HomeProps = {};
@@ -14,7 +14,7 @@ const PER_PAGE = 20;
 
 export const getServerSideProps: GetServerSideProps<HomeProps> =
   makeGetServerSideProps<HomeProps>(async (_context, { ssg }) => {
-    await ssg.prefetchInfiniteQuery("post.latest", {
+    await ssg.post.latest.prefetchInfinite({
       limit: PER_PAGE,
     });
 
@@ -27,13 +27,8 @@ export const getServerSideProps: GetServerSideProps<HomeProps> =
 
 const Home: NextPage<HomeProps> = () => {
   const { data, isFetching, hasNextPage, fetchNextPage } =
-    trpc.useInfiniteQuery(
-      [
-        "post.latest",
-        {
-          limit: PER_PAGE,
-        },
-      ],
+    trpcNext.post.latest.useInfiniteQuery(
+      { limit: PER_PAGE },
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       }

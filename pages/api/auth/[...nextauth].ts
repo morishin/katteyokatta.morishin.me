@@ -1,12 +1,12 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import TwitterProvider from "next-auth/providers/twitter";
 import { env } from "../../../lib/server/env";
 
 const prisma = new PrismaClient();
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     TwitterProvider({
@@ -28,7 +28,7 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ account, profile, user }) {
+    async signIn({ account, profile }) {
       const existingAccount = await prisma.account.findUnique({
         where: {
           provider_providerAccountId: {
@@ -52,4 +52,6 @@ export default NextAuth({
       return true;
     },
   },
-});
+};
+
+export default NextAuth(authOptions);

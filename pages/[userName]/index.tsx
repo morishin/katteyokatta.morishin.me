@@ -19,13 +19,13 @@ import { PostGrid } from "~/components/post/PostGrid";
 import { ReachedEndMark } from "~/components/post/ReachedEndMark";
 import { TweetButton } from "~/components/TweetButton";
 import { UserIcon } from "~/components/UserIcon";
-import { User } from "~/lib/client/generated/index";
-import { trpc } from "~/lib/client/trpc/trpc";
+import { trpcNext } from "~/lib/client/trpc/trpcNext";
+import { DefaultUser } from "~/lib/client/types/type";
 import { prisma } from "~/lib/server/prisma";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
 type UserPageProps = {
-  user: User;
+  user: DefaultUser;
   url?: string;
 };
 
@@ -37,6 +37,7 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> =
     const userName = params?.["userName"];
     if (typeof userName !== "string") throw new Error("Invalid params");
 
+    // TODO: こっちも tRPC に寄せる
     const user = await prisma.user.findFirst({
       where: {
         name: userName,
@@ -50,7 +51,7 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> =
     });
     if (!user) return { notFound: true };
 
-    await ssg.prefetchInfiniteQuery("post.latest", {
+    await ssg.post.latest.prefetchInfinite({
       limit: PER_PAGE,
       userName,
     });
@@ -61,20 +62,18 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> =
         url: req.url
           ? new URL(req.url, `https://${req.headers.host}`).toString()
           : undefined,
+        trpcState: ssg.dehydrate(),
       },
     };
   });
 
 const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
   const { data, isFetching, hasNextPage, fetchNextPage } =
-    trpc.useInfiniteQuery(
-      [
-        "post.latest",
-        {
-          limit: PER_PAGE,
-          userName: user.name,
-        },
-      ],
+    trpcNext.post.latest.useInfiniteQuery(
+      {
+        limit: PER_PAGE,
+        userName: user.name,
+      },
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       }

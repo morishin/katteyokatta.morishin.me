@@ -1,7 +1,7 @@
 import { Center, Spinner, VStack } from "@chakra-ui/react";
 import { FC, memo, useEffect, useMemo, useRef } from "react";
 import { useIntersection } from "react-use";
-import { trpc } from "~/lib/client/trpc/trpc";
+import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { DefaultAmazonItem } from "~/lib/client/types/type";
 import { AmazonSearchResultItemCard } from "../item/AmazonSearchResultItemCard";
 import { ReachedEndMark } from "./ReachedEndMark";
@@ -16,14 +16,11 @@ type AmazonSearchResultsProps = {
 export const AmazonSearchResults: FC<AmazonSearchResultsProps> = memo(
   function AmazonSearchResults({ searchQuery, onClickItem }) {
     const { data, isFetching, hasNextPage, fetchNextPage } =
-      trpc.useInfiniteQuery(
-        [
-          "amazonItem.search",
-          {
-            query: searchQuery,
-            limit: PER_PAGE,
-          },
-        ],
+      trpcNext.amazonItem.search.useInfiniteQuery(
+        {
+          query: searchQuery,
+          limit: PER_PAGE,
+        },
         {
           getNextPageParam: (lastPage) => lastPage.nextCursor,
           refetchOnMount: false,

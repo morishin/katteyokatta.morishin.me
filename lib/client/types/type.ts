@@ -23,3 +23,10 @@ export type DefaultAmazonItem = {
   amazonUrl: string;
   price: string;
 };
+
+export type DefaultUser = {
+  id: number;
+  name: string;
+  image: string | null;
+  associateTag: string | null;
+};

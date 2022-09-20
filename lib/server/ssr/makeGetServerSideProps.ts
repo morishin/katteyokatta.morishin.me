@@ -1,4 +1,4 @@
-import { createSSGHelpers } from "@trpc/react/ssg";
+import { createProxySSGHelpers } from "@trpc/react/ssg";
 import { IncomingMessage, ServerResponse } from "http";
 import type {
   GetServerSideProps,
@@ -10,13 +10,13 @@ import type { Session } from "next-auth";
 import { getSession } from "next-auth/react";
 import pinoHttp from "pino-http";
 import { ParsedUrlQuery } from "querystring";
-import { createContext } from "react";
 import superjson from "superjson";
 import { AppRouter, appRouter } from "~/lib/server/trpc/routers/_app";
+import { createContext } from "../trpc/context";
 
 const _ssgHelperGen = () => {
   throw new Error("Only for type inference");
-  return createSSGHelpers<AppRouter>({} as any);
+  return createProxySSGHelpers<AppRouter>({} as any);
 };
 type CreateSSGHelpersReturnType = ReturnType<typeof _ssgHelperGen>;
 type GetServerSidePropsWithParams<
@@ -45,7 +45,7 @@ export const makeGetServerSideProps =
     const { req } = context;
     const session = await getSession({ req });
 
-    const ssg = createSSGHelpers<AppRouter>({
+    const ssg = createProxySSGHelpers<AppRouter>({
       router: appRouter,
       ctx: createContext,
       transformer: superjson,
