@@ -34,6 +34,7 @@ export const PostCard: FC<Props> = ({ post }) => {
           />
         </VStack>
         <Box
+          width="100%"
           paddingX="24px"
           paddingY="16px"
           borderTop="1px solid"

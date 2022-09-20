@@ -58,16 +58,17 @@ export const GlobalHeader: FC<Props> = () => {
           <Flex flex="auto" textAlign="right" justifyContent="flex-end">
             {session?.user ? (
               <HStack>
-                <Button
-                  leftIcon={<BsPlusLg color="white" />}
-                  color="white"
-                  bgColor="primary"
-                  _hover={{ bgColor: "#CC565A" }}
-                  as="a"
-                  href="/posts/new"
-                >
-                  買ってよかったものを追加
-                </Button>
+                <Link href="/posts/new" passHref>
+                  <Button
+                    leftIcon={<BsPlusLg color="white" />}
+                    color="white"
+                    bgColor="primary"
+                    _hover={{ bgColor: "#CC565A" }}
+                    as="a"
+                  >
+                    買ってよかったものを追加
+                  </Button>
+                </Link>
                 <UserLink
                   userName={session.user.name ?? ""}
                   userImage={session.user.image ?? undefined}
