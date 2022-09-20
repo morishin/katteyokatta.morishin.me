@@ -1,5 +1,5 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import TwitterProvider from "next-auth/providers/twitter";
 import { env } from "../../../lib/server/env";
@@ -28,6 +28,19 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async session({ session, user }) {
+      const dbUser = user as any as User;
+      const newSession = {
+        user: {
+          id: dbUser.id,
+          name: dbUser.name ?? "",
+          image: dbUser.image ?? null,
+          associateTag: dbUser.associateTag ?? null,
+        },
+        expires: session.expires,
+      };
+      return newSession;
+    },
     async signIn({ account, profile }) {
       const existingAccount = await prisma.account.findUnique({
         where: {

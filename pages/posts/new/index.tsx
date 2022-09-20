@@ -23,7 +23,7 @@ import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps"
 type NewPostPageProps = {};
 
 export const getServerSideProps: GetServerSideProps<NewPostPageProps> =
-  makeGetServerSideProps<NewPostPageProps>(async (_context, session) => {
+  makeGetServerSideProps<NewPostPageProps>(async (_context, { session }) => {
     if (!session) {
       return {
         redirect: {

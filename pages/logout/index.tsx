@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
 export const getServerSideProps: GetServerSideProps =
-  makeGetServerSideProps<{}>(async (_context, session) => {
+  makeGetServerSideProps<{}>(async (_context, { session }) => {
     if (!session) return { redirect: { destination: "/", permanent: false } };
     return { props: {} };
   });

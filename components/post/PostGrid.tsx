@@ -1,10 +1,10 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import { FC } from "react";
-import { DefaultPost } from "~/lib/client/types/Post";
+import { DefaultPostWithItem } from "~/lib/client/types/Post";
 import { PostCard } from "./PostCard";
 
 type Props = {
-  posts: DefaultPost[];
+  posts: DefaultPostWithItem[];
 };
 
 export const PostGrid: FC<Props> = ({ posts }) => {

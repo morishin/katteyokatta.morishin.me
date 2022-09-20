@@ -1,79 +1,30 @@
 import { Heading, HStack, Img, Spacer, Text, VStack } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
+import { useEffect, useState } from "react";
 import { Comment } from "~/components/item/Comment";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { TweetButton } from "~/components/TweetButton";
-import { prisma } from "~/lib/server/prisma";
+import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
 type ItemPageProps = {
-  item: {
-    id: number;
-    createdAt: string;
-    name: string;
-    image: string | null;
-    asin: string;
-    posts: {
-      user: {
-        id: number;
-        name: string;
-        image: string | null;
-        associateTag: string | null;
-      };
-      id: number;
-      comment: string;
-      createdAt: string;
-    }[];
-  };
+  itemId: number;
   url?: string;
 };
 
 export const getServerSideProps: GetServerSideProps<ItemPageProps> =
-  makeGetServerSideProps<ItemPageProps>(async (context, _session) => {
+  makeGetServerSideProps<ItemPageProps>(async (context, { ssg }) => {
     const { params, req } = context;
     const itemId = Number(params?.["id"]);
-    if (isNaN(itemId)) throw new Error("Invalid params");
+    if (isNaN(itemId)) return { notFound: true };
 
-    const item = await prisma.item.findFirst({
-      where: {
-        id: itemId,
-      },
-      select: {
-        id: true,
-        asin: true,
-        name: true,
-        image: true,
-        createdAt: true,
-        posts: {
-          select: {
-            id: true,
-            comment: true,
-            createdAt: true,
-            user: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-                associateTag: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    if (!item) return { notFound: true };
+    await ssg.item.single.prefetch({ id: itemId });
 
     return {
       props: {
-        item: {
-          ...item,
-          createdAt: item.createdAt.toISOString(),
-          posts: item.posts.map((post) => ({
-            ...post,
-            createdAt: post.createdAt.toISOString(),
-          })),
-        },
+        trpcState: ssg.dehydrate(),
+        itemId,
         url: req.url
           ? new URL(req.url, `https://${req.headers.host}`).toString()
           : undefined,
@@ -81,7 +32,29 @@ export const getServerSideProps: GetServerSideProps<ItemPageProps> =
     };
   });
 
-const ItemPage: NextPage<ItemPageProps> = ({ item, url }) => {
+const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
+  const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+  useEffect(() => {
+    setSelectedPostId(
+      Number(window.location.hash.replace("#comment-", "")) || null
+    );
+  }, []);
+  useEffect(() => {
+    const onHashChange = () => {
+      setSelectedPostId(
+        Number(window.location.hash.replace("#comment-", "")) || null
+      );
+    };
+
+    window.addEventListener("hashchange", onHashChange, false);
+    return () => {
+      window.removeEventListener("hashchange", onHashChange);
+    };
+  }, []);
+
+  const { data: item } = trpcNext.item.single.useQuery({ id: itemId });
+  if (!item) return null;
+
   return (
     <div>
       <Head>
@@ -125,7 +98,11 @@ const ItemPage: NextPage<ItemPageProps> = ({ item, url }) => {
       </Heading>
       <div>
         {item.posts.map((post) => (
-          <Comment key={post.id} post={post} />
+          <Comment
+            key={post.id}
+            post={post}
+            isSelected={selectedPostId === post.id}
+          />
         ))}
       </div>
     </div>

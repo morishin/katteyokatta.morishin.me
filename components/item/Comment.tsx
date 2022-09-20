@@ -1,30 +1,21 @@
 import { Box, HStack, Link as ChakraLink } from "@chakra-ui/react";
-import { format, isThisYear, parseISO } from "date-fns";
+import { format, isThisYear } from "date-fns";
 import { useRouter } from "next/router";
 import { FC } from "react";
-import { UserLink } from "../UserLink";
+import { UserLink } from "~/components/UserLink";
+import { DefaultPost } from "~/lib/client/types/type";
 
 type CommentProps = {
-  post: {
-    user: {
-      id: number;
-      name: string;
-      image?: string | null;
-    };
-    id: number;
-    comment: string;
-    createdAt: string;
-  };
+  post: DefaultPost;
+  isSelected: boolean;
 };
 
-export const Comment: FC<CommentProps> = ({ post }) => {
+export const Comment: FC<CommentProps> = ({ post, isSelected }) => {
   const router = useRouter();
-  const commentDate = parseISO(post.createdAt);
   const commentDateText = format(
-    commentDate,
-    isThisYear(commentDate) ? "M月d日" : "yyyy年M月d日"
+    post.createdAt,
+    isThisYear(post.createdAt) ? "M月d日" : "yyyy年M月d日"
   );
-  const isSelected = false;
   const backgroundColor = isSelected ? "#FFFCDF" : "white";
   return (
     <Box id={`comment-${post.id}`} marginBottom="18px">

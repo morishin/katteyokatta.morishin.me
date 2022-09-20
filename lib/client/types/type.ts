@@ -2,19 +2,17 @@ export type DefaultPost = {
   id: number;
   comment: string;
   createdAt: Date;
-  user: {
-    id: number;
-    name: string;
-    image: string | null;
-    associateTag: string | null;
-  };
-  item: {
-    id: number;
-    name: string;
-    image: string | null;
-    asin: string;
-  };
+  user: DefaultUser;
 };
+
+export type DefaultItem = {
+  id: number;
+  name: string;
+  image: string | null;
+  asin: string;
+};
+
+export type DefaultPostWithItem = DefaultPost & { item: DefaultItem };
 
 export type DefaultAmazonItem = {
   asin: string;

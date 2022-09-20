@@ -11,7 +11,7 @@ import { getSession } from "next-auth/react";
 import pinoHttp from "pino-http";
 import { ParsedUrlQuery } from "querystring";
 import superjson from "superjson";
-import { AppRouter, appRouter } from "~/lib/server/trpc/routers/_app";
+import { AppRouter, appRouter } from "~/lib/server/trpc/routers/appRouter";
 import { createContext } from "../trpc/context";
 
 const _ssgHelperGen = () => {
@@ -47,7 +47,7 @@ export const makeGetServerSideProps =
 
     const ssg = createProxySSGHelpers<AppRouter>({
       router: appRouter,
-      ctx: createContext,
+      ctx: createContext as any, // TODO: type mismatch??
       transformer: superjson,
     });
 

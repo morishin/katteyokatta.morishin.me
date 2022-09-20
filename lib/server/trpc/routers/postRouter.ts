@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { decodeCursor, encodeCursor } from "~/lib/server/cursor";
 import { prisma } from "~/lib/server/prisma";
@@ -50,6 +51,10 @@ export const postRouter = trpc.router({
           })
         : null;
 
+      if (input.userName && !user) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
       const posts = await prisma.post.findMany({
         select: defaultPostSelect,
         take: limit + 1, // get an extra item at the end which we'll use as next cursor
@@ -82,9 +87,41 @@ export const postRouter = trpc.router({
   add: trpc.procedure
     .input(
       z.object({
-        asin: z.string(),
+        item: z.object({
+          asin: z.string(),
+          name: z.string(),
+          image: z.string().nullish(),
+        }),
         comment: z.string().max(1000, "1000文字以内で入力してください"),
       })
     )
-    .mutation(({ input, ctx }) => {}),
+    .mutation(async ({ input, ctx }) => {
+      const userId = ctx.session?.user.id;
+      if (userId === undefined) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      let item = await prisma.item.findUnique({
+        where: { asin: input.item.asin },
+      });
+      if (item === null) {
+        item = await prisma.item.create({
+          data: input.item,
+        });
+      }
+      const newPost = await prisma.post.create({
+        data: {
+          userId,
+          itemId: item.id,
+          comment: input.comment,
+        },
+      });
+      return {
+        post: {
+          id: newPost.id,
+          item: {
+            id: item.id,
+          },
+        },
+      };
+    }),
 });
