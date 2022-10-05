@@ -25,7 +25,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> =
   });
 
 const Home: NextPage<HomeProps> = () => {
-  const { data, isFetching, hasNextPage, fetchNextPage } =
+  const { data, isFetching, fetchNextPage } =
     trpcNext.post.latest.useInfiniteQuery(
       { limit: PER_PAGE },
       {

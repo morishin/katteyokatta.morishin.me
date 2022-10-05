@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "~/lib/server/prisma";
 import { trpc } from "~/lib/server/trpc/trpc";
@@ -25,4 +26,18 @@ export const userRouter = trpc.router({
         select: defaultUserSelect,
       })
     ),
+  updateAssociateTag: trpc.procedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session?.user.id;
+      if (userId === undefined) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      const associateTag = input.length === 0 ? null : input;
+      return prisma.user.update({
+        select: defaultUserSelect,
+        where: { id: userId },
+        data: { associateTag },
+      });
+    }),
 });

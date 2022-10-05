@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps<ItemsSearchPageProps> =
   });
 
 const ItemsSearchPage: NextPage<ItemsSearchPageProps> = ({ keyword }) => {
-  const { data, isFetching, hasNextPage, fetchNextPage } =
+  const { data, isFetching, fetchNextPage } =
     trpcNext.item.search.useInfiniteQuery(
       { keyword, limit: PER_PAGE },
       {

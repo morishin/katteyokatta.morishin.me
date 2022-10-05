@@ -13,7 +13,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
 import { BsPlusLg } from "react-icons/bs";
-import { FaTwitter } from "react-icons/fa";
+import { FaCog, FaTwitter } from "react-icons/fa";
 import { useIntersection } from "react-use";
 import { PostGrid } from "~/components/post/PostGrid";
 import { TweetButton } from "~/components/TweetButton";
@@ -55,7 +55,7 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> =
   });
 
 const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
-  const { data, isFetching, hasNextPage, fetchNextPage } =
+  const { data, isFetching, fetchNextPage } =
     trpcNext.post.latest.useInfiniteQuery(
       {
         limit: PER_PAGE,
@@ -93,7 +93,15 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
       <Head>
         <title>買ってよかったもの</title>
       </Head>
-      <HStack justifyContent="flex-end">
+      <HStack justifyContent="flex-end" spacing="25px">
+        <Link href="/account/settings" passHref>
+          <ChakraLink>
+            <HStack spacing="2px">
+              <Icon as={FaCog} w="20px" h="20px" />
+              <Text>アカウント設定</Text>
+            </HStack>
+          </ChakraLink>
+        </Link>
         <TweetButton url={url} />
       </HStack>
       <Center>

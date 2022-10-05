@@ -14,7 +14,7 @@ type AmazonSearchResultsProps = {
 
 export const AmazonSearchResults: FC<AmazonSearchResultsProps> = memo(
   function AmazonSearchResults({ searchQuery, onClickItem }) {
-    const { data, isFetching, hasNextPage, fetchNextPage } =
+    const { data, isFetching, fetchNextPage } =
       trpcNext.amazonItem.search.useInfiniteQuery(
         {
           query: searchQuery,
