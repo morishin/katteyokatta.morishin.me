@@ -20,7 +20,6 @@ import { TweetButton } from "~/components/TweetButton";
 import { UserIcon } from "~/components/UserIcon";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { DefaultUser } from "~/lib/client/types/type";
-import { prisma } from "~/lib/server/prisma";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
 type UserPageProps = {
@@ -36,18 +35,7 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> =
     const userName = params?.["userName"];
     if (typeof userName !== "string") throw new Error("Invalid params");
 
-    // TODO: こっちも tRPC に寄せる
-    const user = await prisma.user.findFirst({
-      where: {
-        name: userName,
-      },
-      select: {
-        id: true,
-        associateTag: true,
-        image: true,
-        name: true,
-      },
-    });
+    const user = await ssg.user.single.fetch({ name: userName });
     if (!user) return { notFound: true };
 
     await ssg.post.latest.prefetchInfinite({
