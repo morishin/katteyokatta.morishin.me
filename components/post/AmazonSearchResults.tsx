@@ -4,7 +4,6 @@ import { useIntersection } from "react-use";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { DefaultAmazonItem } from "~/lib/client/types/type";
 import { AmazonSearchResultItemCard } from "../item/AmazonSearchResultItemCard";
-import { ReachedEndMark } from "./ReachedEndMark";
 
 const PER_PAGE = 9;
 
@@ -29,7 +28,6 @@ export const AmazonSearchResults: FC<AmazonSearchResultsProps> = memo(
           retry: false,
         }
       );
-    const isReachedEnd = !hasNextPage && !isFetching;
 
     const items = useMemo(
       () => data?.pages.flatMap((page) => page.amazonItems) ?? [],
@@ -66,7 +64,6 @@ export const AmazonSearchResults: FC<AmazonSearchResultsProps> = memo(
         <Center ref={bottomRef} marginY="70px" opacity={isFetching ? 1 : 0}>
           <Spinner color="secondary" size="xl" />
         </Center>
-        {isReachedEnd && <ReachedEndMark />}
       </div>
     );
   }

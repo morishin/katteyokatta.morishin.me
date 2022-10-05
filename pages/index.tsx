@@ -4,7 +4,6 @@ import Head from "next/head";
 import { useEffect, useMemo, useRef } from "react";
 import { useIntersection } from "react-use";
 import { PostGrid } from "~/components/post/PostGrid";
-import { ReachedEndMark } from "~/components/post/ReachedEndMark";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
@@ -33,7 +32,6 @@ const Home: NextPage<HomeProps> = () => {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       }
     );
-  const isReachedEnd = !hasNextPage && !isFetching;
 
   const bottomRef = useRef(null);
   const intersection = useIntersection(bottomRef, {
@@ -67,7 +65,6 @@ const Home: NextPage<HomeProps> = () => {
       <Center ref={bottomRef} marginY="70px" opacity={isFetching ? 1 : 0}>
         <Spinner color="secondary" size="xl" />
       </Center>
-      {isReachedEnd && <ReachedEndMark />}
     </div>
   );
 };

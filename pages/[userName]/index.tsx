@@ -16,7 +16,6 @@ import { BsPlusLg } from "react-icons/bs";
 import { FaTwitter } from "react-icons/fa";
 import { useIntersection } from "react-use";
 import { PostGrid } from "~/components/post/PostGrid";
-import { ReachedEndMark } from "~/components/post/ReachedEndMark";
 import { TweetButton } from "~/components/TweetButton";
 import { UserIcon } from "~/components/UserIcon";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
@@ -78,7 +77,6 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       }
     );
-  const isReachedEnd = !hasNextPage && !isFetching;
 
   const bottomRef = useRef(null);
   const intersection = useIntersection(bottomRef, {
@@ -148,7 +146,6 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
       <Center ref={bottomRef} marginY="70px" opacity={isFetching ? 1 : 0}>
         <Spinner color="secondary" size="xl" />
       </Center>
-      {isReachedEnd && <ReachedEndMark />}
     </div>
   );
 };

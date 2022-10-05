@@ -1,10 +1,9 @@
-import { Center, Spinner } from "@chakra-ui/react";
+import { Center, Spinner, Text } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useMemo, useRef } from "react";
 import { useIntersection } from "react-use";
 import { ItemGrid } from "~/components/item/ItemGrid";
-import { ReachedEndMark } from "~/components/post/ReachedEndMark";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
@@ -41,7 +40,6 @@ const ItemsSearchPage: NextPage<ItemsSearchPageProps> = ({ keyword }) => {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       }
     );
-  const isReachedEnd = !hasNextPage && !isFetching;
 
   const bottomRef = useRef(null);
   const intersection = useIntersection(bottomRef, {
@@ -71,11 +69,17 @@ const ItemsSearchPage: NextPage<ItemsSearchPageProps> = ({ keyword }) => {
         <title>買ってよかったもの</title>
       </Head>
 
-      <ItemGrid items={items} />
+      {items.length > 0 ? (
+        <ItemGrid items={items} />
+      ) : (
+        <Text
+          marginTop="30px"
+          fontSize="xl"
+        >{`"${keyword}"に合致する商品は見つかりませんでした。`}</Text>
+      )}
       <Center ref={bottomRef} marginY="70px" opacity={isFetching ? 1 : 0}>
         <Spinner color="secondary" size="xl" />
       </Center>
-      {isReachedEnd && <ReachedEndMark />}
     </div>
   );
 };
