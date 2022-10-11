@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-use";
 import { Comment } from "~/components/item/Comment";
 import { SimilarItemsSection } from "~/components/item/SimilarItemsSection";
 import { Container } from "~/components/layouts/Container";
@@ -49,6 +50,8 @@ export const getServerSideProps: GetServerSideProps<ItemPageProps> =
 
 const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
   const { data: session } = useSession();
+  const { href } = useLocation();
+  const pageUrl = href ?? url;
 
   const { data: item, refetch } = trpcNext.item.single.useQuery({ id: itemId });
   if (!item) {
@@ -95,7 +98,7 @@ const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
         <title>買ってよかったもの</title>
       </Head>
       <HStack justifyContent="flex-end">
-        <TweetButton url={url} />
+        <TweetButton url={pageUrl} />
       </HStack>
       <VStack
         alignItems="center"

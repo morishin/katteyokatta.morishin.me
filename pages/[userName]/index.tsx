@@ -14,7 +14,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaCog, FaTwitter } from "react-icons/fa";
-import { useIntersection } from "react-use";
+import { useIntersection, useLocation } from "react-use";
 import { Container } from "~/components/layouts/Container";
 import { PostGrid } from "~/components/post/PostGrid";
 import { TweetButton } from "~/components/TweetButton";
@@ -56,6 +56,8 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> =
   });
 
 const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
+  const { href } = useLocation();
+  const pageUrl = href ?? url;
   const { data, isFetching, fetchNextPage } =
     trpcNext.post.latest.useInfiniteQuery(
       {
@@ -98,12 +100,12 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
         <Link href="/account/settings" passHref>
           <ChakraLink>
             <HStack spacing="2px">
-              <Icon as={FaCog} w="20px" h="20px" color="gray" />
-              <Text>アカウント設定</Text>
+              <Icon as={FaCog} w="15px" h="15px" color="gray" />
+              <Text fontSize="xs">アカウント設定</Text>
             </HStack>
           </ChakraLink>
         </Link>
-        <TweetButton url={url} />
+        <TweetButton url={pageUrl} />
       </HStack>
       <Center>
         <VStack paddingY="40px">
