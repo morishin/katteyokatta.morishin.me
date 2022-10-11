@@ -30,20 +30,26 @@ export const Comment: FC<CommentProps> = ({
           userImage={post.user.image}
           size={30}
         />
-        <ChakraLink href={`#comment-${post.id}`} fontSize="xs" paddingTop="2px">
-          {commentDateText}
-        </ChakraLink>
-        {isEditable && (
-          <Button
-            color="inherit"
-            fontWeight="normal"
-            size="xs"
-            onClick={onClickEdit}
-            variant="link"
+        <HStack alignItems="baseline">
+          <ChakraLink
+            href={`#comment-${post.id}`}
+            fontSize="xs"
+            paddingTop="2px"
           >
-            編集
-          </Button>
-        )}
+            {commentDateText}
+          </ChakraLink>
+          {isEditable && (
+            <Button
+              color="inherit"
+              fontWeight="normal"
+              size="xs"
+              onClick={onClickEdit}
+              variant="link"
+            >
+              編集
+            </Button>
+          )}
+        </HStack>
       </HStack>
       <Box
         borderBottom={`10px solid ${backgroundColor}`}

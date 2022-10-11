@@ -25,12 +25,19 @@ export const ItemCard: FC<Props> = ({ item }) => (
       bg="white"
       boxShadow="0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%)"
     >
-      <VStack padding="15px" spacing="8px" alignItems="flex-start">
-        <Img src={item.image || undefined} maxHeight="200px" marginX="auto" />
-        <Link href={`/items/${item.id}`} passHref>
-          <ChakraLink color="primary">{item.name}</ChakraLink>
-        </Link>
-      </VStack>
+      <Link href={`/items/${item.id}`} passHref>
+        <ChakraLink color="primary">
+          <VStack padding="15px" spacing="8px" alignItems="flex-start">
+            <Img
+              src={item.image || undefined}
+              maxHeight="200px"
+              marginX="auto"
+            />
+            <Text>{item.name}</Text>
+          </VStack>
+        </ChakraLink>
+      </Link>
+
       <Box
         width="100%"
         paddingX="16px"
