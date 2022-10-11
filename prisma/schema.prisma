@@ -94,7 +94,7 @@ model ItemSimilarity {
   itemId       Int
   targetItemId Int
   score        Float
-  item         Item     @relation(fields: [itemId], references: [id])
+  targetItem   Item     @relation(fields: [targetItemId], references: [id])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

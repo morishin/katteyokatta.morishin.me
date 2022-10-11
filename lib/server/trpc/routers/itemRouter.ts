@@ -26,6 +26,18 @@ const defaultItemSelect = Prisma.validator<Prisma.ItemSelect>()({
       },
     },
   },
+  similarities: {
+    select: {
+      targetItem: {
+        select: {
+          id: true,
+          asin: true,
+          name: true,
+          image: true,
+        },
+      },
+    },
+  },
 });
 
 export const itemRouter = trpc.router({

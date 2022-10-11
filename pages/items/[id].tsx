@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Comment } from "~/components/item/Comment";
+import { SimilarItemsSection } from "~/components/item/SimilarItemsSection";
 import { Container } from "~/components/layouts/Container";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { TweetButton } from "~/components/TweetButton";
@@ -120,6 +121,9 @@ const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
           type="large"
         />
       </VStack>
+      {item.similarities.length > 0 ? (
+        <SimilarItemsSection similarities={item.similarities} />
+      ) : null}
       <Heading
         as="h2"
         fontSize="2xl"

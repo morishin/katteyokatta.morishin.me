@@ -10,6 +10,9 @@ export type DefaultItem = {
   name: string;
   image: string | null;
   asin: string;
+  similarities: {
+    targetItem: Omit<DefaultItem, "similarities">;
+  }[];
 };
 
 export type PostWithItem = DefaultPost & { item: DefaultItem };
