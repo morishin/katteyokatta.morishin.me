@@ -17,6 +17,7 @@ import { FC, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FaCog } from "react-icons/fa";
 import { BeatLoader } from "react-spinners";
+import { Container } from "~/components/layouts/Container";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
@@ -70,7 +71,7 @@ const AccountSettingsPage: FC<AccountSettingsPageProps> = ({
   }, [isSubmitting, isSubmitSuccessful, toast]);
 
   return (
-    <div>
+    <Container>
       <Heading as="h2" fontSize="xl">
         <HStack spacing="2px" marginTop="15px" marginBottom="20px">
           <Icon as={FaCog} />
@@ -122,7 +123,7 @@ const AccountSettingsPage: FC<AccountSettingsPageProps> = ({
           <ChakraLink color="primary">ログアウト</ChakraLink>
         </Link>
       </VStack>
-    </div>
+    </Container>
   );
 };
 export default AccountSettingsPage;

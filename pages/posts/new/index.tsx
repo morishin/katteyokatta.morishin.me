@@ -16,6 +16,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { Container } from "~/components/layouts/Container";
 import { AmazonSearchResults } from "~/components/post/AmazonSearchResults";
 import { DefaultAmazonItem } from "~/lib/client/types/type";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
@@ -69,7 +70,7 @@ const NewPostPage: NextPage<NewPostPageProps> = ({}) => {
   }, []);
 
   return (
-    <div>
+    <Container>
       <Head>
         <title>買ってよかったもの</title>
       </Head>
@@ -110,7 +111,7 @@ const NewPostPage: NextPage<NewPostPageProps> = ({}) => {
           />
         ) : null}
       </VStack>
-    </div>
+    </Container>
   );
 };
 

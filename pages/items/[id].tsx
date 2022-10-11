@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Comment } from "~/components/item/Comment";
+import { Container } from "~/components/layouts/Container";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { TweetButton } from "~/components/TweetButton";
 import { usePostEdit } from "~/lib/client/post/usePostEdit";
@@ -88,7 +89,7 @@ const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
   } = usePostEdit({ onUpdateOrDeletePost });
 
   return (
-    <div>
+    <Container>
       <Head>
         <title>買ってよかったもの</title>
       </Head>
@@ -156,7 +157,7 @@ const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
           onDelete={onDeletePost}
         />
       )}
-    </div>
+    </Container>
   );
 };
 

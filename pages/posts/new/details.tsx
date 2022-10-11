@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { BeatLoader } from "react-spinners";
+import { Container } from "~/components/layouts/Container";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
@@ -104,7 +105,7 @@ const NewPostDetailsPage: NextPage<NewPostDetailsPageProps> = ({ item }) => {
   }, [errors.comment, toast]);
 
   return (
-    <div>
+    <Container>
       <Head>
         <title>買ってよかったもの</title>
       </Head>
@@ -150,7 +151,7 @@ const NewPostDetailsPage: NextPage<NewPostDetailsPageProps> = ({ item }) => {
           </VStack>
         </Box>
       </VStack>
-    </div>
+    </Container>
   );
 };
 

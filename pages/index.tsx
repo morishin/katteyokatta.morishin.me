@@ -1,9 +1,12 @@
-import { Center, Spinner } from "@chakra-ui/react";
+import { Center, Heading, Spinner } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useEffect, useMemo, useRef } from "react";
 import { useIntersection } from "react-use";
+import { Container } from "~/components/layouts/Container";
 import { PostGrid } from "~/components/post/PostGrid";
+import { TopGuide } from "~/components/top/TopGuide";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
@@ -25,6 +28,7 @@ export const getServerSideProps: GetServerSideProps<TopPageProps> =
   });
 
 const TopPage: NextPage<TopPageProps> = () => {
+  const { data: session } = useSession();
   const { data, isFetching, fetchNextPage } =
     trpcNext.post.latest.useInfiniteQuery(
       { limit: PER_PAGE },
@@ -60,11 +64,22 @@ const TopPage: NextPage<TopPageProps> = () => {
       <Head>
         <title>買ってよかったもの</title>
       </Head>
-
-      <PostGrid posts={posts} />
-      <Center ref={bottomRef} marginY="70px" opacity={isFetching ? 1 : 0}>
-        <Spinner color="secondary" size="xl" />
-      </Center>
+      <TopGuide userName={session?.user.name} />
+      <Container>
+        <Heading
+          as="h2"
+          fontSize="2xl"
+          fontWeight="medium"
+          marginTop="10px"
+          marginBottom="15px"
+        >
+          みんなの買ってよかったもの
+        </Heading>
+        <PostGrid posts={posts} />
+        <Center ref={bottomRef} marginY="70px" opacity={isFetching ? 1 : 0}>
+          <Spinner color="secondary" size="xl" />
+        </Center>
+      </Container>
     </div>
   );
 };

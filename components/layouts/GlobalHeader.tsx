@@ -23,70 +23,72 @@ type Props = {};
 export const GlobalHeader: FC<Props> = () => {
   const { data: session } = useSession();
   return (
-    <nav>
+    <header>
       <Box
-        bg="primary"
-        color="white"
+        as="nav"
         boxShadow="0px 8px 7px 0 rgb(0 0 0 / 14%), 0 1px 0px 0 rgb(0 0 0 / 12%), 0 3px 1px -2px rgb(0 0 0 / 20%)"
+        position="relative"
       >
-        <Flex
-          maxW="1200px"
-          paddingTop={2}
-          paddingBottom={2}
-          paddingLeft={{ base: 2, md: 4 }}
-          paddingRight={{ base: 2, md: 4 }}
-          marginLeft="auto"
-          marginRight="auto"
-          alignItems="center"
-        >
-          <Link href="/" passHref>
-            <ChakraLink>
-              <Heading as="h1">
-                <HStack alignItems="center">
-                  <Center>
-                    <Icon as={HiShoppingCart} w="24px" h="24px" />
-                  </Center>
-                  <Text fontSize="15px" fontWeight="bold">
-                    買ってよかったもの
-                  </Text>
-                </HStack>
-              </Heading>
-            </ChakraLink>
-          </Link>
-          <Spacer />
-          <SearchForm />
-          <Flex flex="auto" textAlign="right" justifyContent="flex-end">
-            {session?.user ? (
-              <HStack>
-                <Link href="/posts/new" passHref>
-                  <Button
-                    leftIcon={<BsPlusLg color="white" />}
+        <Box bg="primary" color="white">
+          <Flex
+            maxW="1200px"
+            paddingTop={2}
+            paddingBottom={2}
+            paddingLeft={{ base: 2, md: 4 }}
+            paddingRight={{ base: 2, md: 4 }}
+            marginLeft="auto"
+            marginRight="auto"
+            alignItems="center"
+          >
+            <Link href="/" passHref>
+              <ChakraLink>
+                <Heading as="h1">
+                  <HStack alignItems="center">
+                    <Center>
+                      <Icon as={HiShoppingCart} w="24px" h="24px" />
+                    </Center>
+                    <Text fontSize="15px" fontWeight="bold">
+                      買ってよかったもの
+                    </Text>
+                  </HStack>
+                </Heading>
+              </ChakraLink>
+            </Link>
+            <Spacer />
+            <SearchForm />
+            <Flex flex="auto" textAlign="right" justifyContent="flex-end">
+              {session?.user ? (
+                <HStack>
+                  <Link href="/posts/new" passHref>
+                    <Button
+                      leftIcon={<BsPlusLg color="white" />}
+                      color="white"
+                      bgColor="primary"
+                      _hover={{ bgColor: "#CC565A" }}
+                      as="a"
+                    >
+                      買ってよかったものを追加
+                    </Button>
+                  </Link>
+                  <UserLink
+                    userName={session.user.name ?? ""}
+                    userImage={session.user.image ?? undefined}
                     color="white"
-                    bgColor="primary"
-                    _hover={{ bgColor: "#CC565A" }}
-                    as="a"
-                  >
-                    買ってよかったものを追加
-                  </Button>
-                </Link>
-                <UserLink
-                  userName={session.user.name ?? ""}
-                  userImage={session.user.image ?? undefined}
-                  color="white"
-                />
-              </HStack>
-            ) : (
-              <Button
-                variant="outline"
-                _hover={{ bgColor: "#f07e80" }}
-                onClick={() => signIn()}
-              >
-                Twitterログイン
-              </Button>
-            )}
+                  />
+                </HStack>
+              ) : (
+                <Button
+                  variant="outline"
+                  _hover={{ bgColor: "#f07e80" }}
+                  onClick={() => signIn()}
+                >
+                  Twitterログイン
+                </Button>
+              )}
+            </Flex>
           </Flex>
-        </Flex>
+        </Box>
       </Box>
-    </nav>
+    </header>
   );
 };

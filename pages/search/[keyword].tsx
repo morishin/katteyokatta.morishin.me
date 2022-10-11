@@ -4,6 +4,7 @@ import Head from "next/head";
 import { useEffect, useMemo, useRef } from "react";
 import { useIntersection } from "react-use";
 import { ItemGrid } from "~/components/item/ItemGrid";
+import { Container } from "~/components/layouts/Container";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
@@ -64,7 +65,7 @@ const ItemsSearchPage: NextPage<ItemsSearchPageProps> = ({ keyword }) => {
   );
 
   return (
-    <div>
+    <Container>
       <Head>
         <title>買ってよかったもの</title>
       </Head>
@@ -86,7 +87,7 @@ const ItemsSearchPage: NextPage<ItemsSearchPageProps> = ({ keyword }) => {
       <Center ref={bottomRef} marginY="70px" opacity={isFetching ? 1 : 0}>
         <Spinner color="secondary" size="xl" />
       </Center>
-    </div>
+    </Container>
   );
 };
 

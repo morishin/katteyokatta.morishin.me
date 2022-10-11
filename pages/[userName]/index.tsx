@@ -15,6 +15,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaCog, FaTwitter } from "react-icons/fa";
 import { useIntersection } from "react-use";
+import { Container } from "~/components/layouts/Container";
 import { PostGrid } from "~/components/post/PostGrid";
 import { TweetButton } from "~/components/TweetButton";
 import { UserIcon } from "~/components/UserIcon";
@@ -89,7 +90,7 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
   );
 
   return (
-    <div>
+    <Container>
       <Head>
         <title>買ってよかったもの</title>
       </Head>
@@ -97,7 +98,7 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
         <Link href="/account/settings" passHref>
           <ChakraLink>
             <HStack spacing="2px">
-              <Icon as={FaCog} w="20px" h="20px" />
+              <Icon as={FaCog} w="20px" h="20px" color="gray" />
               <Text>アカウント設定</Text>
             </HStack>
           </ChakraLink>
@@ -142,7 +143,7 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
       <Center ref={bottomRef} marginY="70px" opacity={isFetching ? 1 : 0}>
         <Spinner color="secondary" size="xl" />
       </Center>
-    </div>
+    </Container>
   );
 };
 
