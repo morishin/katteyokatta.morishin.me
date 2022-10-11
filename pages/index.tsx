@@ -7,12 +7,12 @@ import { PostGrid } from "~/components/post/PostGrid";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
-type HomeProps = {};
+type TopPageProps = {};
 
 const PER_PAGE = 20;
 
-export const getServerSideProps: GetServerSideProps<HomeProps> =
-  makeGetServerSideProps<HomeProps>(async (_context, { ssg }) => {
+export const getServerSideProps: GetServerSideProps<TopPageProps> =
+  makeGetServerSideProps<TopPageProps>(async (_context, { ssg }) => {
     await ssg.post.latest.prefetchInfinite({
       limit: PER_PAGE,
     });
@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> =
     };
   });
 
-const Home: NextPage<HomeProps> = () => {
+const TopPage: NextPage<TopPageProps> = () => {
   const { data, isFetching, fetchNextPage } =
     trpcNext.post.latest.useInfiniteQuery(
       { limit: PER_PAGE },
@@ -69,4 +69,4 @@ const Home: NextPage<HomeProps> = () => {
   );
 };
 
-export default Home;
+export default TopPage;
