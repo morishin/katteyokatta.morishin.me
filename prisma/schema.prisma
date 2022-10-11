@@ -85,7 +85,8 @@ model Item {
   createdAt             DateTime                   @default(now())
   updatedAt             DateTime                   @updatedAt
   posts                 Post[]
-  similarities          ItemSimilarity[]
+  similarities          ItemSimilarity[]           @relation("item")
+  reversedSimilarities  ItemSimilarity[]           @relation("targetItem")
   similarityCalculation ItemSimilarityCalculation?
 }
 
@@ -94,7 +95,8 @@ model ItemSimilarity {
   itemId       Int
   targetItemId Int
   score        Float
-  targetItem   Item     @relation(fields: [targetItemId], references: [id])
+  item         Item     @relation("item", fields: [itemId], references: [id])
+  targetItem   Item     @relation("targetItem", fields: [targetItemId], references: [id])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
