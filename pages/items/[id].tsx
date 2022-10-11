@@ -1,12 +1,24 @@
 import { Heading, HStack, Img, Spacer, Text, VStack } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
+import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Comment } from "~/components/item/Comment";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { TweetButton } from "~/components/TweetButton";
+import { usePostEdit } from "~/lib/client/post/usePostEdit";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
+const PostEditModal = dynamic(
+  () =>
+    import("~/components/post/PostEditModal").then(
+      ({ PostEditModal }) => PostEditModal
+    ),
+  {
+    ssr: false,
+  }
+);
 
 type ItemPageProps = {
   itemId: number;
@@ -19,7 +31,8 @@ export const getServerSideProps: GetServerSideProps<ItemPageProps> =
     const itemId = Number(params?.["id"]);
     if (isNaN(itemId)) return { notFound: true };
 
-    await ssg.item.single.prefetch({ id: itemId });
+    const result = await ssg.item.single.fetch({ id: itemId });
+    if (result === null) return { notFound: true };
 
     return {
       props: {
@@ -33,6 +46,14 @@ export const getServerSideProps: GetServerSideProps<ItemPageProps> =
   });
 
 const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
+  const { data: session } = useSession();
+
+  const { data: item, refetch } = trpcNext.item.single.useQuery({ id: itemId });
+  if (!item) {
+    throw new Error("item is null");
+  }
+
+  // アンカーで指定されたコメントをハイライト表示する
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   useEffect(() => {
     setSelectedPostId(
@@ -52,8 +73,19 @@ const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
     };
   }, []);
 
-  const { data: item } = trpcNext.item.single.useQuery({ id: itemId });
-  if (!item) return null;
+  // 投稿編集モーダル
+  const onUpdateOrDeletePost = () => {
+    refetch();
+  };
+  const {
+    isOpenPostEditModal,
+    openPostEditModal,
+    editingPost,
+    setEditingPost,
+    onUpdatePost,
+    onDeletePost,
+    closePostEditModal,
+  } = usePostEdit({ onUpdateOrDeletePost });
 
   return (
     <div>
@@ -97,14 +129,33 @@ const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
         これを買ってよかったと言っている人
       </Heading>
       <div>
-        {item.posts.map((post) => (
-          <Comment
-            key={post.id}
-            post={post}
-            isSelected={selectedPostId === post.id}
-          />
-        ))}
+        {item.posts.map((post) => {
+          const isEditable = session?.user.id === post.user.id;
+          const onClickEdit = () => {
+            setEditingPost(post);
+            openPostEditModal();
+          };
+          return (
+            <Comment
+              key={post.id}
+              post={post}
+              isSelected={selectedPostId === post.id}
+              isEditable={isEditable}
+              onClickEdit={isEditable ? onClickEdit : undefined}
+            />
+          );
+        })}
       </div>
+
+      {editingPost !== null && isOpenPostEditModal && (
+        <PostEditModal
+          post={editingPost}
+          isOpen={isOpenPostEditModal}
+          handleClose={closePostEditModal}
+          onUpdate={onUpdatePost}
+          onDelete={onDeletePost}
+        />
+      )}
     </div>
   );
 };

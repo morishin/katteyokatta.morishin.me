@@ -124,4 +124,42 @@ export const postRouter = trpc.router({
         },
       };
     }),
+  update: trpc.procedure
+    .input(
+      z.object({
+        id: z.number(),
+        comment: z.string().max(1000, "1000文字以内で入力してください"),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const userId = ctx.session?.user.id;
+      if (userId === undefined) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      const post = await prisma.post.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          comment: input.comment,
+        },
+        select: defaultPostSelect,
+      });
+      return {
+        post,
+      };
+    }),
+  delete: trpc.procedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const userId = ctx.session?.user.id;
+      if (userId === undefined) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      await prisma.post.delete({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
 });

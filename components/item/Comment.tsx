@@ -1,6 +1,5 @@
-import { Box, HStack, Link as ChakraLink } from "@chakra-ui/react";
+import { Box, Button, HStack, Link as ChakraLink } from "@chakra-ui/react";
 import { format, isThisYear } from "date-fns";
-import { useRouter } from "next/router";
 import { FC } from "react";
 import { UserLink } from "~/components/UserLink";
 import { DefaultPost } from "~/lib/client/types/type";
@@ -8,10 +7,16 @@ import { DefaultPost } from "~/lib/client/types/type";
 type CommentProps = {
   post: DefaultPost;
   isSelected: boolean;
+  isEditable: boolean;
+  onClickEdit?: () => void;
 };
 
-export const Comment: FC<CommentProps> = ({ post, isSelected }) => {
-  const router = useRouter();
+export const Comment: FC<CommentProps> = ({
+  post,
+  isSelected,
+  isEditable,
+  onClickEdit,
+}) => {
   const commentDateText = format(
     post.createdAt,
     isThisYear(post.createdAt) ? "M月d日" : "yyyy年M月d日"
@@ -28,6 +33,17 @@ export const Comment: FC<CommentProps> = ({ post, isSelected }) => {
         <ChakraLink href={`#comment-${post.id}`} fontSize="xs" paddingTop="2px">
           {commentDateText}
         </ChakraLink>
+        {isEditable && (
+          <Button
+            color="inherit"
+            fontWeight="normal"
+            size="xs"
+            onClick={onClickEdit}
+            variant="link"
+          >
+            編集
+          </Button>
+        )}
       </HStack>
       <Box
         borderBottom={`10px solid ${backgroundColor}`}
