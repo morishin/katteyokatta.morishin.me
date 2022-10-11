@@ -1,4 +1,4 @@
-import { Center, Spinner, Text } from "@chakra-ui/react";
+import { Center, Heading, Spinner, Text } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useMemo, useRef } from "react";
@@ -69,6 +69,12 @@ const ItemsSearchPage: NextPage<ItemsSearchPageProps> = ({ keyword }) => {
         <title>買ってよかったもの</title>
       </Head>
 
+      <Heading
+        as="h2"
+        fontSize="xl"
+        marginTop="10px"
+        marginBottom="15px"
+      >{`"${keyword}" の検索結果`}</Heading>
       {items.length > 0 ? (
         <ItemGrid items={items} />
       ) : (
