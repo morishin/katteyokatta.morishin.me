@@ -15,7 +15,9 @@ export type DefaultItem = {
   }[];
 };
 
-export type PostWithItem = DefaultPost & { item: DefaultItem };
+export type PostWithItem = DefaultPost & {
+  item: Omit<DefaultItem, "similarities">;
+};
 
 export type ItemWithPosts = DefaultItem & { posts: DefaultPost[] };
 

@@ -10,7 +10,7 @@ type Props = {
 export const PostGrid: FC<Props> = ({ posts }) => {
   return (
     <Grid
-      templateColumns="repeat(auto-fit, 200px)"
+      templateColumns="repeat(auto-fill, minmax(160px, 1fr));"
       gap="16px"
       justifyContent="center"
     >
