@@ -2,7 +2,6 @@ import { Box, HStack, Icon, Image, Text, VStack } from "@chakra-ui/react";
 import { FC } from "react";
 import { HiShoppingCart } from "react-icons/hi";
 import { DefaultAmazonItem } from "~/lib/client/types/type";
-import { AmazonButton } from "../post/AmazonButton";
 
 type AmazonSearchResultItemCardProps = {
   item: DefaultAmazonItem;
@@ -49,9 +48,6 @@ export const AmazonSearchResultItemCard: FC<
           paddingY="5px"
         >
           <Text textAlign="start">{item.name}</Text>
-          <Box borderTop="1px solid" borderColor="gray.300" paddingTop="15px">
-            <AmazonButton asin={item.asin} type="large" />
-          </Box>
         </VStack>
       </HStack>
     </button>

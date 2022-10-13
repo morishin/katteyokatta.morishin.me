@@ -76,11 +76,10 @@ const NewPostPage: NextPage<NewPostPageProps> = ({}) => {
       </Head>
       <VStack marginTop="40px" alignItems="center" spacing="20px">
         <form onSubmit={onSubmit}>
-          <HStack>
+          <HStack width={["80vw", "80vw", "50vw"]} maxWidth="500px">
             <Input
               ref={inputRef}
               type="search"
-              minWidth="500px"
               variant="flushed"
               placeholder="商品名またはAmazonページのURL"
               borderColor="gray.500"

@@ -1,9 +1,10 @@
-import { Center, Spinner, VStack } from "@chakra-ui/react";
+import { Box, Center, Spinner, VStack } from "@chakra-ui/react";
 import { FC, memo, useEffect, useMemo, useRef } from "react";
 import { useIntersection } from "react-use";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { DefaultAmazonItem } from "~/lib/client/types/type";
 import { AmazonSearchResultItemCard } from "../item/AmazonSearchResultItemCard";
+import { AmazonButton } from "./AmazonButton";
 
 const PER_PAGE = 9;
 
@@ -54,11 +55,12 @@ export const AmazonSearchResults: FC<AmazonSearchResultsProps> = memo(
       <div>
         <VStack alignItems="stretch" spacing="20px">
           {items.map((item) => (
-            <AmazonSearchResultItemCard
-              key={item.asin}
-              item={item}
-              onClick={onClickItem}
-            />
+            <VStack key={item.asin} alignItems="strech">
+              <AmazonSearchResultItemCard item={item} onClick={onClickItem} />
+              <Box alignSelf="flex-end">
+                <AmazonButton asin={item.asin} type="text" />
+              </Box>
+            </VStack>
           ))}
         </VStack>
         <Center ref={bottomRef} marginY="70px" opacity={isFetching ? 1 : 0}>
