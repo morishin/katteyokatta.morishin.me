@@ -4,7 +4,6 @@ import {
   Center,
   Link as ChakraLink,
   Spacer,
-  Text,
   VStack,
 } from "@chakra-ui/react";
 import Link from "next/link";
@@ -25,14 +24,24 @@ export const TopGuide: FC<TopGuideProps> = ({ userName }) => {
 };
 
 const ForAnonymousUser: FC = () => (
-  <Center h="150px" bgColor="white">
+  <Center h={["180px", "180px", "150px", "150px"]} bgColor="white">
     <VStack alignItems="center">
-      <Text fontSize="lg">
-        買ってよかったなと思ったものを まとめることができるサービスです。
-      </Text>
-      <Text fontSize="sm">
-        自分のまとめた商品にはAmazonアフィリエイトリンクを設定できます
-      </Text>
+      <Box textAlign="center" fontSize={["md", "md", "lg", "lg"]}>
+        <Box as="span" whiteSpace="nowrap">
+          買ってよかったなと思ったものを
+        </Box>
+        <Box as="span" whiteSpace="nowrap">
+          まとめることができるサービスです。
+        </Box>
+      </Box>
+      <Box textAlign="center" fontSize={["xs", "xs", "sm", "sm"]}>
+        <Box as="span" whiteSpace="nowrap">
+          自分のまとめた商品には
+        </Box>
+        <Box as="span" whiteSpace="nowrap">
+          Amazonアフィリエイトリンクを設定できます
+        </Box>
+      </Box>
       <Spacer h="5px" />
       <Link href="/login" passHref>
         <Button
