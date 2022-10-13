@@ -97,7 +97,7 @@ const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
       <Head>
         <title>買ってよかったもの</title>
       </Head>
-      <HStack justifyContent="flex-end">
+      <HStack justifyContent="flex-end" marginBottom="10px">
         <TweetButton url={pageUrl} />
       </HStack>
       <VStack
@@ -129,7 +129,7 @@ const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
       ) : null}
       <Heading
         as="h2"
-        fontSize="2xl"
+        fontSize="xl"
         fontWeight="normal"
         marginTop="24px"
         marginBottom="16px"

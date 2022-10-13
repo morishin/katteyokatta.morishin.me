@@ -15,7 +15,7 @@ export const SimilarItemsSection: FC<SimilarItemsSectionProps> = ({
     <div>
       <Heading
         as="h2"
-        fontSize="2xl"
+        fontSize="xl"
         fontWeight="normal"
         marginTop="24px"
         marginBottom="16px"

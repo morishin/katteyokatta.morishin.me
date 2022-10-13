@@ -68,7 +68,7 @@ const TopPage: NextPage<TopPageProps> = () => {
       <Container>
         <Heading
           as="h2"
-          fontSize="2xl"
+          fontSize="xl"
           fontWeight="medium"
           marginTop="10px"
           marginBottom="15px"

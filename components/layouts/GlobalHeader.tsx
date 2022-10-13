@@ -6,6 +6,7 @@ import {
   Heading,
   HStack,
   Icon,
+  IconButton,
   Link as ChakraLink,
   Spacer,
   Text,
@@ -14,6 +15,7 @@ import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { FC } from "react";
 import { BsPlusLg } from "react-icons/bs";
+import { FaSearch } from "react-icons/fa";
 import { HiShoppingCart } from "react-icons/hi";
 import { UserLink } from "../UserLink";
 import { SearchForm } from "./SearchForm";
@@ -47,45 +49,80 @@ export const GlobalHeader: FC<Props> = () => {
                     <Center>
                       <Icon as={HiShoppingCart} w="24px" h="24px" />
                     </Center>
-                    <Text fontSize="15px" fontWeight="bold">
+                    <Text fontSize="15px" fontWeight="bold" whiteSpace="nowrap">
                       買ってよかったもの
                     </Text>
                   </HStack>
                 </Heading>
               </ChakraLink>
             </Link>
-            <Spacer />
-            <SearchForm />
-            <Flex flex="auto" textAlign="right" justifyContent="flex-end">
-              {session?.user ? (
-                <HStack>
-                  <Link href="/posts/new" passHref>
-                    <Button
-                      leftIcon={<BsPlusLg color="white" />}
-                      color="white"
-                      bgColor="primary"
-                      _hover={{ bgColor: "#CC565A" }}
-                      as="a"
-                    >
-                      買ってよかったものを追加
-                    </Button>
-                  </Link>
-                  <UserLink
-                    userName={session.user.name ?? ""}
-                    userImage={session.user.image ?? undefined}
+            <Box
+              maxW="500px"
+              marginLeft="20px"
+              display={["none", "none", "block", "block"]}
+            >
+              <SearchForm />
+            </Box>
+            <Spacer display={["block", "block", "none", "none"]} />
+            <HStack flex={1} justifyContent="flex-end">
+              <Flex textAlign="right" justifyContent="flex-end">
+                <Box display={["block", "block", "none", "none"]}>
+                  <IconButton
+                    icon={<FaSearch color="white" />}
                     color="white"
+                    bgColor="primary"
+                    _hover={{ bgColor: "#CC565A" }}
+                    aria-label="検索"
                   />
-                </HStack>
-              ) : (
-                <Button
-                  variant="outline"
-                  _hover={{ bgColor: "#f07e80" }}
-                  onClick={() => signIn()}
-                >
-                  Twitterログイン
-                </Button>
-              )}
-            </Flex>
+                </Box>
+                {session?.user ? (
+                  <HStack spacing={0}>
+                    <Box display={["none", "none", "none", "block"]}>
+                      <Link href="/posts/new" passHref>
+                        <Button
+                          leftIcon={<BsPlusLg color="white" />}
+                          color="white"
+                          bgColor="primary"
+                          _hover={{ bgColor: "#CC565A" }}
+                          as="a"
+                        >
+                          買ってよかったものを追加
+                        </Button>
+                      </Link>
+                    </Box>
+                    <Box
+                      display={["block", "block", "block", "none"]}
+                      paddingRight="10px"
+                    >
+                      <Link href="/posts/new" passHref>
+                        <IconButton
+                          icon={<BsPlusLg color="white" />}
+                          color="white"
+                          bgColor="primary"
+                          _hover={{ bgColor: "#CC565A" }}
+                          as="a"
+                          aria-label="買ってよかったものを追加"
+                        />
+                      </Link>
+                    </Box>
+                    <UserLink
+                      userName={session.user.name ?? ""}
+                      userImage={session.user.image ?? undefined}
+                      color="white"
+                      autoShrink
+                    />
+                  </HStack>
+                ) : (
+                  <Button
+                    variant="outline"
+                    _hover={{ bgColor: "#f07e80" }}
+                    onClick={() => signIn()}
+                  >
+                    Twitterログイン
+                  </Button>
+                )}
+              </Flex>
+            </HStack>
           </Flex>
         </Box>
       </Box>

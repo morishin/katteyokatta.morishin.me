@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Center,
   Link as ChakraLink,
@@ -49,14 +50,20 @@ const ForAnonymousUser: FC = () => (
 );
 
 const ForLoggedInUser: FC<TopGuideProps> = ({ userName }) => (
-  <Center h="150px" bgColor="white">
+  <Center h="150px" bgColor="white" padding="20px">
     <VStack alignItems="center">
-      <Text fontSize="lg">
-        あなたの買ってよかったものを みんなに教えてあげましょう！
-      </Text>
+      <Box textAlign="center" fontSize={["md", "md", "lg", "lg"]}>
+        <Box as="span" whiteSpace="nowrap">
+          あなたの買ってよかったものを
+        </Box>
+        <Box as="span" whiteSpace="nowrap">
+          みんなに教えてあげましょう！
+        </Box>
+      </Box>
       <Link href="/posts/new" passHref>
         <Button
           leftIcon={<BsPlusLg color="white" />}
+          size={["sm", "sm", "md", "md"]}
           color="white"
           bgColor="primary"
           _hover={{ bgColor: "#CC565A" }}

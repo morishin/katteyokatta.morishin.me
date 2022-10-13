@@ -8,6 +8,7 @@ type Props = {
   userName: string;
   userImage?: string | null;
   color?: ComponentProps<typeof ChakraLink>["color"];
+  autoShrink?: boolean;
 };
 
 export const UserLink: FC<Props> = ({
@@ -15,13 +16,21 @@ export const UserLink: FC<Props> = ({
   userImage,
   size,
   color = "primary",
+  autoShrink = false,
 }) => {
   return (
     <Link href={`/${userName}`} passHref>
       <ChakraLink color={color}>
         <HStack spacing="4px">
           <UserIcon image={userImage} size={size} />
-          <Text>{userName}</Text>
+          <Text
+            fontSize="md"
+            display={
+              autoShrink ? ["none", "none", "inline", "inline"] : "inline"
+            }
+          >
+            {userName}
+          </Text>
         </HStack>
       </ChakraLink>
     </Link>
