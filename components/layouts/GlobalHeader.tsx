@@ -8,22 +8,29 @@ import {
   Icon,
   IconButton,
   Link as ChakraLink,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
   Spacer,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { FC } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaSearch } from "react-icons/fa";
 import { HiShoppingCart } from "react-icons/hi";
-import { UserLink } from "../UserLink";
-import { SearchForm } from "./SearchForm";
+import { SearchForm } from "~/components/layouts/SearchForm";
+import { UserLink } from "~/components/UserLink";
+
+const SearchModal = dynamic(
+  () =>
+    import("~/components/layouts/SearchModal").then(
+      ({ SearchModal }) => SearchModal
+    ),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {};
 
@@ -135,25 +142,12 @@ export const GlobalHeader: FC<Props> = () => {
           </Flex>
         </Box>
       </Box>
-      <Modal
-        onClose={searchModal.onClose}
-        size="full"
-        isOpen={searchModal.isOpen}
-      >
-        <ModalOverlay />
-        <ModalContent onClick={searchModal.onClose} bgColor="transparent">
-          <Box
-            paddingTop={2}
-            paddingBottom={2}
-            paddingLeft={{ base: 2, md: 4 }}
-            paddingRight={{ base: 2, md: 4 }}
-            marginRight="42px"
-          >
-            <SearchForm />
-          </Box>
-          <ModalCloseButton color="white" marginTop="4px" />
-        </ModalContent>
-      </Modal>
+      {searchModal.isOpen && (
+        <SearchModal
+          isOpen={searchModal.isOpen}
+          closeModal={searchModal.onClose}
+        />
+      )}
     </header>
   );
 };
