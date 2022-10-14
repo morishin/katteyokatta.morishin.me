@@ -18,7 +18,6 @@ export const getServerSideProps: GetServerSideProps<ItemsSearchPageProps> =
   makeGetServerSideProps<ItemsSearchPageProps>(async (context, { ssg }) => {
     const { params } = context;
     const keyword = params?.["keyword"]?.toString() ?? "";
-    if (keyword.length === 0) return { notFound: true };
 
     await ssg.item.search.prefetchInfinite({
       keyword,
@@ -81,7 +80,7 @@ const ItemsSearchPage: NextPage<ItemsSearchPageProps> = ({ keyword }) => {
       ) : (
         <Text
           marginTop="30px"
-          fontSize="xl"
+          fontSize="lg"
         >{`"${keyword}"に合致する商品は見つかりませんでした。`}</Text>
       )}
       <Center ref={bottomRef} marginY="70px" opacity={isFetching ? 1 : 0}>

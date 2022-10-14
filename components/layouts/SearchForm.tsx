@@ -11,7 +11,9 @@ export const SearchForm: React.FC<Props> = ({ keyword }) => {
   const router = useRouter();
   const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
-    router.push(`/search/${inputValue.current}`);
+    if (inputValue.current.length > 0) {
+      router.push(`/search/${inputValue.current}`);
+    }
   };
   return (
     <form onSubmit={onSubmit}>
@@ -19,6 +21,7 @@ export const SearchForm: React.FC<Props> = ({ keyword }) => {
         <Input
           name="q"
           placeholder="気になる商品名・カテゴリを入力"
+          fontSize={["sm", "sm", "md", "md"]}
           size="md"
           bgColor="white"
           defaultValue={keyword}
@@ -28,7 +31,7 @@ export const SearchForm: React.FC<Props> = ({ keyword }) => {
           textColor="gray.600"
         />
         <Button
-          fontSize="15px"
+          fontSize="sm"
           bgColor="white"
           _hover={{ bgColor: "gray.100" }}
           type="submit"

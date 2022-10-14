@@ -8,8 +8,13 @@ import {
   Icon,
   IconButton,
   Link as ChakraLink,
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
   Spacer,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -24,6 +29,7 @@ type Props = {};
 
 export const GlobalHeader: FC<Props> = () => {
   const { data: session } = useSession();
+  const searchModal = useDisclosure();
   return (
     <header>
       <Box
@@ -56,15 +62,17 @@ export const GlobalHeader: FC<Props> = () => {
                 </Heading>
               </ChakraLink>
             </Link>
-            <Box
-              maxW="500px"
-              marginLeft="20px"
-              display={["none", "none", "block", "block"]}
-            >
-              <SearchForm />
+            <Box flex={1}>
+              <Box
+                maxW="500px"
+                marginLeft="20px"
+                display={["none", "none", "block", "block"]}
+              >
+                <SearchForm />
+              </Box>
             </Box>
             <Spacer display={["block", "block", "none", "none"]} />
-            <HStack flex={1} justifyContent="flex-end">
+            <HStack justifyContent="flex-end">
               <Flex textAlign="right" justifyContent="flex-end">
                 <Box display={["block", "block", "none", "none"]}>
                   <IconButton
@@ -73,6 +81,7 @@ export const GlobalHeader: FC<Props> = () => {
                     bgColor="primary"
                     _hover={{ bgColor: "#CC565A" }}
                     aria-label="検索"
+                    onClick={searchModal.onOpen}
                   />
                 </Box>
                 {session?.user ? (
@@ -126,6 +135,25 @@ export const GlobalHeader: FC<Props> = () => {
           </Flex>
         </Box>
       </Box>
+      <Modal
+        onClose={searchModal.onClose}
+        size="full"
+        isOpen={searchModal.isOpen}
+      >
+        <ModalOverlay />
+        <ModalContent onClick={searchModal.onClose} bgColor="transparent">
+          <Box
+            paddingTop={2}
+            paddingBottom={2}
+            paddingLeft={{ base: 2, md: 4 }}
+            paddingRight={{ base: 2, md: 4 }}
+            marginRight="42px"
+          >
+            <SearchForm />
+          </Box>
+          <ModalCloseButton color="white" marginTop="4px" />
+        </ModalContent>
+      </Modal>
     </header>
   );
 };
