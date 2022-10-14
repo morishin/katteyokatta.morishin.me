@@ -9,19 +9,18 @@ import { FC } from "react";
 import { SearchForm } from "./SearchForm";
 
 type SearchModalProps = {
-  isOpen: boolean;
   closeModal: () => void;
 };
 
-export const SearchModal: FC<SearchModalProps> = ({ isOpen, closeModal }) => {
+export const SearchModal: FC<SearchModalProps> = ({ closeModal }) => {
   return (
-    <Modal onClose={closeModal} size="full" isOpen={isOpen}>
+    <Modal onClose={closeModal} size="full" isOpen={true}>
       <ModalOverlay />
       <ModalContent onClick={closeModal} bgColor="transparent">
         <Box
-          paddingTop={2}
-          paddingBottom={2}
-          paddingLeft={{ base: 2, md: 4 }}
+          paddingTop="10px"
+          paddingBottom="8px"
+          paddingLeft="8px"
           paddingRight="42px"
           backgroundColor="primary"
         >

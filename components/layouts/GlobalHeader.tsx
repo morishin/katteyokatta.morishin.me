@@ -142,12 +142,7 @@ export const GlobalHeader: FC<Props> = () => {
           </Flex>
         </Box>
       </Box>
-      {searchModal.isOpen && (
-        <SearchModal
-          isOpen={searchModal.isOpen}
-          closeModal={searchModal.onClose}
-        />
-      )}
+      {searchModal.isOpen && <SearchModal closeModal={searchModal.onClose} />}
     </header>
   );
 };
