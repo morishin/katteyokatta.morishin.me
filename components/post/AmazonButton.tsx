@@ -8,7 +8,7 @@ type Props = {
   type: "text" | "small" | "large";
 };
 
-const DEFAULT_ASSOCIATE_ID = "morishin02-22";
+const DEFAULT_ASSOCIATE_ID = process.env.NEXT_PUBLIC_DEFAULT_ASSOCIATE_ID;
 
 export const AmazonButton: FC<Props> = ({ asin, associateTag, type }) => {
   const linkUrl = `https://www.amazon.co.jp/dp/${asin}/?tag=${
