@@ -1,6 +1,6 @@
 import { HStack, Link as ChakraLink, Text } from "@chakra-ui/react";
-import Link from "next/link";
 import { ComponentProps, FC } from "react";
+import { DefaultLink } from "~/components/DefaultLink";
 import { UserIcon } from "~/components/UserIcon";
 
 type Props = {
@@ -19,20 +19,16 @@ export const UserLink: FC<Props> = ({
   autoShrink = false,
 }) => {
   return (
-    <Link href={`/${userName}`} passHref>
-      <ChakraLink color={color}>
-        <HStack spacing="4px">
-          <UserIcon image={userImage} size={size} />
-          <Text
-            fontSize="md"
-            display={
-              autoShrink ? ["none", "none", "inline", "inline"] : "inline"
-            }
-          >
-            {userName}
-          </Text>
-        </HStack>
-      </ChakraLink>
-    </Link>
+    <DefaultLink href={`/${userName}`} color={color}>
+      <HStack spacing="4px">
+        <UserIcon image={userImage} size={size} />
+        <Text
+          fontSize="md"
+          display={autoShrink ? ["none", "none", "inline", "inline"] : "inline"}
+        >
+          {userName}
+        </Text>
+      </HStack>
+    </DefaultLink>
   );
 };

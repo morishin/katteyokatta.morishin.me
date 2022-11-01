@@ -43,7 +43,7 @@ const ForAnonymousUser: FC = () => (
         </Box>
       </Box>
       <Spacer h="5px" />
-      <Link href="/login" passHref>
+      <Link href="/login" passHref legacyBehavior>
         <Button
           leftIcon={<FaTwitter color="white" />}
           color="white"
@@ -69,7 +69,7 @@ const ForLoggedInUser: FC<TopGuideProps> = ({ userName }) => (
           みんなに教えてあげましょう！
         </Box>
       </Box>
-      <Link href="/posts/new" passHref>
+      <Link href="/posts/new" passHref legacyBehavior>
         <Button
           leftIcon={<BsPlusLg color="white" />}
           size={["sm", "sm", "md", "md"]}
