@@ -15,6 +15,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaCog, FaTwitter } from "react-icons/fa";
 import { useIntersection, useLocation } from "react-use";
+import { DefaultLink } from "~/components/DefaultLink";
 import { Container } from "~/components/layouts/Container";
 import { PostGrid } from "~/components/post/PostGrid";
 import { TweetButton } from "~/components/TweetButton";
@@ -97,31 +98,27 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
         <title>買ってよかったもの</title>
       </Head>
       <HStack justifyContent="flex-end" spacing="25px">
-        <Link href="/account/settings" passHref>
-          <ChakraLink>
-            <HStack spacing="2px">
-              <Icon as={FaCog} w="15px" h="15px" color="gray" />
-              <Text fontSize="xs">アカウント設定</Text>
-            </HStack>
-          </ChakraLink>
-        </Link>
+        <DefaultLink href="/account/settings">
+          <HStack spacing="2px">
+            <Icon as={FaCog} w="15px" h="15px" color="gray" />
+            <Text fontSize="xs">アカウント設定</Text>
+          </HStack>
+        </DefaultLink>
         <TweetButton url={pageUrl} />
       </HStack>
       <Center>
         <VStack paddingY="40px">
           <UserIcon image={user.image} size={100} />
-          <Link href={`https://twitter.com/${user.name}`} passHref>
-            <ChakraLink>
-              <Icon as={FaTwitter} w="20px" h="20px" color="#46BAED" />
-            </ChakraLink>
-          </Link>
+          <DefaultLink href={`https://twitter.com/${user.name}`}>
+            <Icon as={FaTwitter} w="20px" h="20px" color="#46BAED" />
+          </DefaultLink>
           <HStack>
             <Text as="b" fontSize="2xl">
               {`@${user.name}`}
             </Text>
             <Text>さんの買ってよかったもの</Text>
           </HStack>
-          <Link href="/posts/new" passHref>
+          <Link href="/posts/new" passHref legacyBehavior>
             <Button
               leftIcon={<BsPlusLg color="white" />}
               color="white"

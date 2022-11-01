@@ -5,18 +5,17 @@ import {
   HStack,
   Icon,
   Input,
-  Link as ChakraLink,
   Text,
   theme,
   useToast,
   VStack,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-import Link from "next/link";
 import { FC, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FaCog } from "react-icons/fa";
 import { BeatLoader } from "react-spinners";
+import { DefaultLink } from "~/components/DefaultLink";
 import { Container } from "~/components/layouts/Container";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
@@ -119,9 +118,7 @@ const AccountSettingsPage: FC<AccountSettingsPageProps> = ({
             </HStack>
           </Box>
         </VStack>
-        <Link href="/logout" passHref>
-          <ChakraLink color="primary">ログアウト</ChakraLink>
-        </Link>
+        <DefaultLink href="/logout">ログアウト</DefaultLink>
       </VStack>
     </Container>
   );

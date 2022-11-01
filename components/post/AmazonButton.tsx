@@ -1,6 +1,6 @@
-import { Box, Img, Link as ChakraLink, Text } from "@chakra-ui/react";
-import Link from "next/link";
+import { Box, Img, Text } from "@chakra-ui/react";
 import { FC } from "react";
+import { DefaultLink } from "~/components/DefaultLink";
 
 type Props = {
   asin: string;
@@ -26,27 +26,25 @@ export const AmazonButton: FC<Props> = ({ asin, associateTag, type }) => {
   })();
   return (
     <Box w={width}>
-      <Link href={linkUrl} passHref>
-        <ChakraLink target="_blank">
-          {type === "text" ? (
-            <Text size="sm" color="primary">
-              Amazon詳細ページを見る
-            </Text>
-          ) : type === "small" ? (
-            <Img
-              src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon1.png"
-              width="78px"
-              height="23px"
-            />
-          ) : (
-            <Img
-              src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon4.png"
-              width="177px"
-              height="28px"
-            />
-          )}
-        </ChakraLink>
-      </Link>
+      <DefaultLink href={linkUrl} target="_blank">
+        {type === "text" ? (
+          <Text size="sm" color="primary">
+            Amazon詳細ページを見る
+          </Text>
+        ) : type === "small" ? (
+          <Img
+            src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon1.png"
+            width="78px"
+            height="23px"
+          />
+        ) : (
+          <Img
+            src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon4.png"
+            width="177px"
+            height="28px"
+          />
+        )}
+      </DefaultLink>
     </Box>
   );
 };

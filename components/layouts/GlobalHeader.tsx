@@ -7,7 +7,6 @@ import {
   HStack,
   Icon,
   IconButton,
-  Link as ChakraLink,
   Spacer,
   Text,
   useDisclosure,
@@ -19,6 +18,7 @@ import { FC } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaSearch } from "react-icons/fa";
 import { HiShoppingCart } from "react-icons/hi";
+import { DefaultLink } from "~/components/DefaultLink";
 import { SearchForm } from "~/components/layouts/SearchForm";
 import { UserLink } from "~/components/UserLink";
 
@@ -55,20 +55,18 @@ export const GlobalHeader: FC<Props> = () => {
             marginRight="auto"
             alignItems="center"
           >
-            <Link href="/" passHref>
-              <ChakraLink>
-                <Heading as="h1">
-                  <HStack alignItems="center">
-                    <Center>
-                      <Icon as={HiShoppingCart} w="24px" h="24px" />
-                    </Center>
-                    <Text fontSize="15px" fontWeight="bold" whiteSpace="nowrap">
-                      買ってよかったもの
-                    </Text>
-                  </HStack>
-                </Heading>
-              </ChakraLink>
-            </Link>
+            <DefaultLink href="/">
+              <Heading as="h1">
+                <HStack alignItems="center">
+                  <Center>
+                    <Icon as={HiShoppingCart} w="24px" h="24px" />
+                  </Center>
+                  <Text fontSize="15px" fontWeight="bold" whiteSpace="nowrap">
+                    買ってよかったもの
+                  </Text>
+                </HStack>
+              </Heading>
+            </DefaultLink>
             <Box flex={1}>
               <Box
                 maxW="500px"
@@ -94,7 +92,7 @@ export const GlobalHeader: FC<Props> = () => {
                 {session?.user ? (
                   <HStack spacing={0}>
                     <Box display={["none", "none", "none", "block"]}>
-                      <Link href="/posts/new" passHref>
+                      <Link href="/posts/new" passHref legacyBehavior>
                         <Button
                           leftIcon={<BsPlusLg color="white" />}
                           color="white"
@@ -110,7 +108,7 @@ export const GlobalHeader: FC<Props> = () => {
                       display={["block", "block", "block", "none"]}
                       paddingRight="10px"
                     >
-                      <Link href="/posts/new" passHref>
+                      <Link href="/posts/new" passHref legacyBehavior>
                         <IconButton
                           icon={<BsPlusLg color="white" />}
                           color="white"
