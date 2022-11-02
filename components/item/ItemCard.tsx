@@ -27,7 +27,7 @@ export const ItemCard: FC<Props> = ({ item }) => (
       <DefaultLink href={`/items/${item.id}`}>
         <VStack padding="15px" spacing="8px" alignItems="flex-start">
           <Img src={item.image || undefined} maxHeight="200px" marginX="auto" />
-          <Text>{item.name}</Text>
+          <Text wordBreak="break-all">{item.name}</Text>
         </VStack>
       </DefaultLink>
 

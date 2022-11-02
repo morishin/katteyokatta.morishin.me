@@ -24,7 +24,9 @@ export const SimilarItemCard: FC<Props> = ({ item }) => (
       <DefaultLink href={`/items/${item.id}`}>
         <VStack padding="15px" spacing="8px" alignItems="flex-start">
           <Img src={item.image || undefined} maxHeight="200px" marginX="auto" />
-          <Text fontSize="sm">{item.name}</Text>
+          <Text fontSize="sm" wordBreak="break-all">
+            {item.name}
+          </Text>
         </VStack>
       </DefaultLink>
     </VStack>

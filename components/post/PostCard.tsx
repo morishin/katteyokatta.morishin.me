@@ -26,7 +26,7 @@ export const PostCard: FC<Props> = ({ post }) => {
                 maxHeight="200px"
                 marginX="auto"
               />
-              <Text>{post.item.name}</Text>
+              <Text wordBreak="break-all">{post.item.name}</Text>
             </VStack>
           </DefaultLink>
           <AmazonButton

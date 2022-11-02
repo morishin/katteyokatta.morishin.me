@@ -98,7 +98,7 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
         <title>買ってよかったもの</title>
       </Head>
       <HStack justifyContent="flex-end" spacing="25px">
-        <DefaultLink href="/account/settings">
+        <DefaultLink href="/account/settings" color="gray">
           <HStack spacing="2px">
             <Icon as={FaCog} w="15px" h="15px" color="gray" />
             <Text fontSize="xs">アカウント設定</Text>

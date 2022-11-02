@@ -47,7 +47,9 @@ export const AmazonSearchResultItemCard: FC<
           justifyContent="space-between"
           paddingY="5px"
         >
-          <Text textAlign="start">{item.name}</Text>
+          <Text textAlign="start" wordBreak="break-all">
+            {item.name}
+          </Text>
         </VStack>
       </HStack>
     </button>

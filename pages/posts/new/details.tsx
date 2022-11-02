@@ -121,7 +121,7 @@ const NewPostDetailsPage: NextPage<NewPostDetailsPageProps> = ({ item }) => {
         spacing="20px"
       >
         <Img src={item.image || undefined} maxHeight="200px" marginX="auto" />
-        <Text fontWeight="bold" fontSize="sm">
+        <Text fontWeight="bold" fontSize="sm" wordBreak="break-all">
           {item.name}
         </Text>
         <AmazonButton asin={item.asin} type="large" />
