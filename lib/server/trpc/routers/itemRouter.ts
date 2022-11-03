@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { decodeCursor, encodeCursor } from "~/lib/server/cursor";
 import { prisma } from "~/lib/server/prisma";
-import { trpc } from "~/lib/server/trpc/trpc";
+import { loggedProcedure, trpc } from "~/lib/server/trpc/trpc";
 
 const DEFAULT_PER_PAGE = 20;
 
@@ -41,7 +41,7 @@ const defaultItemSelect = Prisma.validator<Prisma.ItemSelect>()({
 });
 
 export const itemRouter = trpc.router({
-  single: trpc.procedure
+  single: loggedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -53,7 +53,7 @@ export const itemRouter = trpc.router({
         select: defaultItemSelect,
       })
     ),
-  search: trpc.procedure
+  search: loggedProcedure
     .input(
       z.object({
         cursor: z.string().nullish(),

@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { decodeCursor, encodeCursor } from "~/lib/server/cursor";
 import { prisma } from "~/lib/server/prisma";
-import { trpc } from "~/lib/server/trpc/trpc";
+import { loggedProcedure, trpc } from "~/lib/server/trpc/trpc";
 
 const DEFAULT_PER_PAGE = 20;
 
@@ -30,7 +30,7 @@ const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
 });
 
 export const postRouter = trpc.router({
-  latest: trpc.procedure
+  latest: loggedProcedure
     .input(
       z.object({
         cursor: z.string().nullish(),
@@ -84,7 +84,7 @@ export const postRouter = trpc.router({
         nextCursor,
       };
     }),
-  add: trpc.procedure
+  add: loggedProcedure
     .input(
       z.object({
         item: z.object({
@@ -124,7 +124,7 @@ export const postRouter = trpc.router({
         },
       };
     }),
-  update: trpc.procedure
+  update: loggedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -149,7 +149,7 @@ export const postRouter = trpc.router({
         post,
       };
     }),
-  delete: trpc.procedure
+  delete: loggedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.session?.user.id;

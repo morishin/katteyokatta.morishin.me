@@ -2,13 +2,13 @@ import * as amazon from "amazon-paapi";
 import { z } from "zod";
 import { decodeCursor, encodeCursor } from "~/lib/server/cursor";
 import { env } from "~/lib/server/env";
-import { trpc } from "~/lib/server/trpc/trpc";
+import { loggedProcedure, trpc } from "~/lib/server/trpc/trpc";
 
 // 10 is max value https://webservices.amazon.com/paapi5/documentation/search-items.html
 const DEFAULT_PER_PAGE = 9;
 
 export const amazonItemRouter = trpc.router({
-  search: trpc.procedure
+  search: loggedProcedure
     .input(
       z.object({
         cursor: z.string().nullish(),

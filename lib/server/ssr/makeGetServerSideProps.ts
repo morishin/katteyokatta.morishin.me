@@ -8,11 +8,11 @@ import type {
 } from "next";
 import type { Session } from "next-auth";
 import { getSession } from "next-auth/react";
-import pinoHttp from "pino-http";
 import { ParsedUrlQuery } from "querystring";
 import superjson from "superjson";
+import { pinoLogger } from "~/lib/server/pinoLogger";
+import { createContext } from "~/lib/server/trpc/context";
 import { AppRouter, appRouter } from "~/lib/server/trpc/routers/appRouter";
-import { createContext } from "../trpc/context";
 
 const _ssgHelperGen = () => {
   throw new Error("Only for type inference");
@@ -63,23 +63,3 @@ export const makeGetServerSideProps =
   };
 
 type Logger = (req: IncomingMessage, res: ServerResponse) => void;
-const pinoLogger = pinoHttp({
-  serializers: {
-    req(req: IncomingMessage) {
-      return {
-        id: req.id,
-        method: req.method,
-        url: req.url,
-        headers: {
-          "x-amzn-trace-id": req.headers["x-amzn-trace-id"],
-        },
-      };
-    },
-    res(res: ServerResponse) {
-      return {
-        statusCode: res.statusCode,
-        statusMessage: res.statusMessage,
-      };
-    },
-  },
-});

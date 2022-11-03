@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "~/lib/server/prisma";
-import { trpc } from "~/lib/server/trpc/trpc";
+import { loggedProcedure, trpc } from "~/lib/server/trpc/trpc";
 
 const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
   id: true,
@@ -12,7 +12,7 @@ const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
 });
 
 export const userRouter = trpc.router({
-  single: trpc.procedure
+  single: loggedProcedure
     .input(
       z.object({
         name: z.string(),
@@ -26,7 +26,7 @@ export const userRouter = trpc.router({
         select: defaultUserSelect,
       })
     ),
-  updateAssociateTag: trpc.procedure
+  _updateAssociateTag: loggedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session?.user.id;
@@ -40,4 +40,10 @@ export const userRouter = trpc.router({
         data: { associateTag },
       });
     }),
+  get updateAssociateTag() {
+    return this._updateAssociateTag;
+  },
+  set updateAssociateTag(value) {
+    this._updateAssociateTag = value;
+  },
 });
