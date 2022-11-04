@@ -14,6 +14,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaCog, FaTwitter } from "react-icons/fa";
+import { HiOutlineExternalLink } from "react-icons/hi";
 import { useIntersection, useLocation } from "react-use";
 import { DefaultLink } from "~/components/DefaultLink";
 import { Container } from "~/components/layouts/Container";
@@ -133,8 +134,12 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
             href="https://www.amazon.co.jp/gp/css/order-history/"
             color="primary"
             target="_blank"
+            isExternal={true}
           >
-            Amazonの購入履歴を見る
+            <HStack alignItems="center" spacing="2px">
+              <Text>Amazonの購入履歴を見る</Text>
+              <Icon as={HiOutlineExternalLink} />
+            </HStack>
           </ChakraLink>
         </VStack>
       </Center>

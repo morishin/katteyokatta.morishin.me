@@ -2,14 +2,18 @@ import {
   Box,
   Button,
   Center,
+  HStack,
+  Icon,
   Link as ChakraLink,
   Spacer,
+  Text,
   VStack,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { FC } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaTwitter } from "react-icons/fa";
+import { HiOutlineExternalLink } from "react-icons/hi";
 
 type TopGuideProps = {
   userName?: string;
@@ -85,8 +89,12 @@ const ForLoggedInUser: FC<TopGuideProps> = ({ userName }) => (
         href="https://www.amazon.co.jp/gp/css/order-history/"
         color="primary"
         target="_blank"
+        isExternal={true}
       >
-        Amazonの購入履歴を見る
+        <HStack alignItems="center" spacing="2px">
+          <Text>Amazonの購入履歴を見る</Text>
+          <Icon as={HiOutlineExternalLink} />
+        </HStack>
       </ChakraLink>
     </VStack>
   </Center>

@@ -1,8 +1,10 @@
 import {
   Button,
   HStack,
+  Icon,
   Input,
   Link as ChakraLink,
+  Text,
   theme,
   VStack,
 } from "@chakra-ui/react";
@@ -16,6 +18,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { HiOutlineExternalLink } from "react-icons/hi";
 import { Container } from "~/components/layouts/Container";
 import { AmazonSearchResults } from "~/components/post/AmazonSearchResults";
 import { DefaultAmazonItem } from "~/lib/client/types/type";
@@ -100,8 +103,12 @@ const NewPostPage: NextPage<NewPostPageProps> = ({}) => {
           href="https://www.amazon.co.jp/gp/css/order-history/"
           color="primary"
           target="_blank"
+          isExternal={true}
         >
-          Amazonの購入履歴を見る
+          <HStack alignItems="center" spacing="2px">
+            <Text>Amazonの購入履歴を見る</Text>
+            <Icon as={HiOutlineExternalLink} />
+          </HStack>
         </ChakraLink>
         {searchQuery.length > 0 ? (
           <AmazonSearchResults
