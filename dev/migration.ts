@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Client } from "pg";
+import { updateItemSimilarityScores } from "~/lib/itemSimilarity/updateItemSimilarityScores";
 
 const prisma = new PrismaClient();
 const pgClient = new Client({
@@ -42,9 +43,9 @@ async function reset() {
   await prisma.verificationToken.deleteMany();
   await prisma.session.deleteMany();
   await prisma.post.deleteMany();
-  await prisma.item.deleteMany();
   await prisma.itemSimilarity.deleteMany();
   await prisma.itemSimilarityCalculation.deleteMany();
+  await prisma.item.deleteMany();
 }
 
 async function main() {
@@ -99,6 +100,8 @@ async function main() {
       comment: pgPost.comment,
     })),
   });
+
+  await updateItemSimilarityScores();
 }
 
 main()

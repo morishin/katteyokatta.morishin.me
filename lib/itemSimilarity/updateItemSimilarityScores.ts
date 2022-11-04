@@ -1,6 +1,8 @@
 import { prisma } from "../server/prisma";
 import { calculateItemSimilarityScore } from "./calculateItemSimilarityScore";
 
+const SCORE_THRESHOLD = 0.2;
+
 export const updateItemSimilarityScores = async () => {
   // 類似度が計算済みでない item を全て取得
   const itemsWithoutScores = await prisma.item.findMany({
@@ -22,9 +24,9 @@ export const updateItemSimilarityScores = async () => {
       };
     });
 
-    // 類似度レコードを生成する
+    // 閾値を超えた類似度についてレコードを生成する
     const newItemSimilarities = itemSimilarities.filter(
-      ({ score }) => score > 0
+      ({ score }) => score > SCORE_THRESHOLD
     );
     const createItemSimilarities = prisma.itemSimilarity.createMany({
       data: newItemSimilarities,
