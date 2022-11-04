@@ -55,7 +55,7 @@ export const GlobalHeader: FC<Props> = () => {
             marginRight="auto"
             alignItems="center"
           >
-            <DefaultLink href="/">
+            <DefaultLink href="/" color="white">
               <Heading as="h1">
                 <HStack alignItems="center">
                   <Center>
