@@ -66,7 +66,7 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
         userName: user.name,
       },
       {
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       }
     );
 

@@ -37,7 +37,7 @@ const ItemsSearchPage: NextPage<ItemsSearchPageProps> = ({ keyword }) => {
     trpcNext.item.search.useInfiniteQuery(
       { keyword, limit: PER_PAGE },
       {
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       }
     );
 

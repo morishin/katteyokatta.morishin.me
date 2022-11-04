@@ -33,7 +33,7 @@ const TopPage: NextPage<TopPageProps> = () => {
     trpcNext.post.latest.useInfiniteQuery(
       { limit: PER_PAGE },
       {
-        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       }
     );
 

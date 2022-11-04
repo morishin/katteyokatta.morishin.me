@@ -22,7 +22,7 @@ export const AmazonSearchResults: FC<AmazonSearchResultsProps> = memo(
           limit: PER_PAGE,
         },
         {
-          getNextPageParam: (lastPage) => lastPage.nextCursor,
+          getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
           refetchOnMount: false,
           refetchOnWindowFocus: false,
           refetchOnReconnect: false,
