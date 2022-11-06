@@ -2,6 +2,7 @@ import { Box, Img, Text, VStack } from "@chakra-ui/react";
 import { FC } from "react";
 import { DefaultLink } from "~/components/DefaultLink";
 import { AmazonButton } from "~/components/post/AmazonButton";
+import { TextLinker } from "~/components/TextLinker";
 import { UserLink } from "~/components/UserLink";
 import { PostWithItem } from "~/lib/client/types/type";
 
@@ -43,7 +44,10 @@ export const PostCard: FC<Props> = ({ post }) => {
           borderColor="gray.300"
         >
           <UserLink userName={post.user.name} userImage={post.user.image} />
-          <Text marginTop="8px">{post.comment}</Text>
+          <Box marginTop="8px">
+            {" "}
+            <TextLinker text={post.comment} />
+          </Box>
         </Box>
       </VStack>
     </Box>
