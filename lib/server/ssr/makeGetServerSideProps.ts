@@ -1,4 +1,4 @@
-import { createProxySSGHelpers } from "@trpc/react/ssg";
+import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { IncomingMessage, ServerResponse } from "http";
 import type {
   GetServerSideProps,
