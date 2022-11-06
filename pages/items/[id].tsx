@@ -2,12 +2,12 @@ import { Heading, HStack, Img, Spacer, Text, VStack } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
-import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-use";
 import { Comment } from "~/components/item/Comment";
 import { SimilarItemsSection } from "~/components/item/SimilarItemsSection";
 import { Container } from "~/components/layouts/Container";
+import { Meta } from "~/components/Meta";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { TweetButton } from "~/components/TweetButton";
 import { usePostEdit } from "~/lib/client/post/usePostEdit";
@@ -29,7 +29,7 @@ type ItemPageProps = {
 };
 
 export const getServerSideProps: GetServerSideProps<ItemPageProps> =
-  makeGetServerSideProps<ItemPageProps>(async (context, { ssg }) => {
+  makeGetServerSideProps<ItemPageProps>(async (context, { ssg, url }) => {
     const { params, req } = context;
     const itemId = Number(params?.["id"]);
     if (isNaN(itemId)) return { notFound: true };
@@ -41,9 +41,7 @@ export const getServerSideProps: GetServerSideProps<ItemPageProps> =
       props: {
         trpcState: ssg.dehydrate(),
         itemId,
-        url: req.url
-          ? new URL(req.url, `https://${req.headers.host}`).toString()
-          : undefined,
+        url,
       },
     };
   });
@@ -94,9 +92,7 @@ const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
 
   return (
     <Container>
-      <Head>
-        <title>買ってよかったもの</title>
-      </Head>
+      <Meta title={item.name} ogUrl={url} ogImage={item.image ?? undefined} />
       <HStack justifyContent="flex-end" marginBottom="10px">
         <TweetButton url={pageUrl} />
       </HStack>

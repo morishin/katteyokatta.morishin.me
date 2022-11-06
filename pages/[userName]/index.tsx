@@ -9,7 +9,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
-import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
 import { BsPlusLg } from "react-icons/bs";
@@ -18,6 +17,7 @@ import { HiOutlineExternalLink } from "react-icons/hi";
 import { useIntersection, useLocation } from "react-use";
 import { DefaultLink } from "~/components/DefaultLink";
 import { Container } from "~/components/layouts/Container";
+import { Meta } from "~/components/Meta";
 import { PostGrid } from "~/components/post/PostGrid";
 import { TweetButton } from "~/components/TweetButton";
 import { UserIcon } from "~/components/UserIcon";
@@ -33,7 +33,7 @@ type UserPageProps = {
 const PER_PAGE = 20;
 
 export const getServerSideProps: GetServerSideProps<UserPageProps> =
-  makeGetServerSideProps<UserPageProps>(async (context, { ssg }) => {
+  makeGetServerSideProps<UserPageProps>(async (context, { ssg, url }) => {
     const { params, req } = context;
     const userName = params?.["userName"];
     if (typeof userName !== "string") throw new Error("Invalid params");
@@ -49,9 +49,7 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> =
     return {
       props: {
         user,
-        url: req.url
-          ? new URL(req.url, `https://${req.headers.host}`).toString()
-          : undefined,
+        url,
         trpcState: ssg.dehydrate(),
       },
     };
@@ -95,9 +93,12 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
 
   return (
     <Container>
-      <Head>
-        <title>買ってよかったもの</title>
-      </Head>
+      <Meta
+        title={`@${user.name}さんの買ってよかったもの`}
+        ogUrl={url}
+        ogImage={user.image ?? undefined}
+        twitterCreator={user.name}
+      />
       <HStack justifyContent="flex-end" spacing="25px">
         <DefaultLink href="/account/settings" color="gray">
           <HStack spacing="2px">

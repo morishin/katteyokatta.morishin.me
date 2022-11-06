@@ -1,38 +1,44 @@
 import { Center, Heading, Spinner, Text } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
-import Head from "next/head";
 import { useEffect, useMemo, useRef } from "react";
-import { useIntersection } from "react-use";
+import { useIntersection, useLocation } from "react-use";
 import { ItemGrid } from "~/components/item/ItemGrid";
 import { Container } from "~/components/layouts/Container";
+import { Meta } from "~/components/Meta";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
 type ItemsSearchPageProps = {
   keyword: string;
+  url: string | undefined;
 };
 
 const PER_PAGE = 20;
 
 export const getServerSideProps: GetServerSideProps<ItemsSearchPageProps> =
-  makeGetServerSideProps<ItemsSearchPageProps>(async (context, { ssg }) => {
-    const { params } = context;
-    const keyword = params?.["keyword"]?.toString() ?? "";
+  makeGetServerSideProps<ItemsSearchPageProps>(
+    async (context, { ssg, url }) => {
+      const { params } = context;
+      const keyword = params?.["keyword"]?.toString() ?? "";
 
-    await ssg.item.search.prefetchInfinite({
-      keyword,
-      limit: PER_PAGE,
-    });
-
-    return {
-      props: {
+      await ssg.item.search.prefetchInfinite({
         keyword,
-        trpcState: ssg.dehydrate(),
-      },
-    };
-  });
+        limit: PER_PAGE,
+      });
 
-const ItemsSearchPage: NextPage<ItemsSearchPageProps> = ({ keyword }) => {
+      return {
+        props: {
+          keyword,
+          trpcState: ssg.dehydrate(),
+          url,
+        },
+      };
+    }
+  );
+
+const ItemsSearchPage: NextPage<ItemsSearchPageProps> = ({ keyword, url }) => {
+  const { href } = useLocation();
+  const pageUrl = href ?? url;
   const { data, isFetching, fetchNextPage } =
     trpcNext.item.search.useInfiniteQuery(
       { keyword, limit: PER_PAGE },
@@ -65,10 +71,7 @@ const ItemsSearchPage: NextPage<ItemsSearchPageProps> = ({ keyword }) => {
 
   return (
     <Container>
-      <Head>
-        <title>買ってよかったもの</title>
-      </Head>
-
+      <Meta title={`"${keyword}"の検索結果`} ogUrl={url} />
       <Heading
         as="h2"
         fontSize="xl"

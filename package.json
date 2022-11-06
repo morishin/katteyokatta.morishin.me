@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "concurrently --kill-others -n next,prisma -r 'npm run next:dev' 'npm run prisma:generate -- --watch'",
-    "next:dev": "dotenv -e .env.development -- next dev --turbo",
+    "next:dev": "dotenv -e .env.development -- next dev",
     "build": "next build",
     "postinstall": "prisma generate",
     "start": "next start -p $PORT",

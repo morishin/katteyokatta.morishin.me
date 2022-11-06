@@ -28,6 +28,7 @@ type GetServerSidePropsWithParams<
   params: {
     session: Session | null;
     ssg: CreateSSGHelpersReturnType;
+    url: string | undefined;
   }
 ) => Promise<GetServerSidePropsResult<P>>;
 
@@ -51,7 +52,11 @@ export const makeGetServerSideProps =
       transformer: superjson,
     });
 
-    const pageProps = await getServerSideProps(context, { session, ssg });
+    const url = req.url
+      ? new URL(req.url, `https://${req.headers.host}`).toString()
+      : undefined;
+
+    const pageProps = await getServerSideProps(context, { session, ssg, url });
     if ("props" in pageProps) {
       const props =
         pageProps.props instanceof Promise

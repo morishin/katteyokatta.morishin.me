@@ -1,10 +1,10 @@
 import { Center, Heading, Spinner } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
-import Head from "next/head";
 import { useEffect, useMemo, useRef } from "react";
-import { useIntersection } from "react-use";
+import { useIntersection, useLocation } from "react-use";
 import { Container } from "~/components/layouts/Container";
+import { Meta } from "~/components/Meta";
 import { PostGrid } from "~/components/post/PostGrid";
 import { TopGuide } from "~/components/top/TopGuide";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
@@ -15,7 +15,7 @@ type TopPageProps = {};
 const PER_PAGE = 20;
 
 export const getServerSideProps: GetServerSideProps<TopPageProps> =
-  makeGetServerSideProps<TopPageProps>(async (_context, { ssg }) => {
+  makeGetServerSideProps<TopPageProps>(async (_context, { ssg, url }) => {
     await ssg.post.latest.prefetchInfinite({
       limit: PER_PAGE,
     });
@@ -23,11 +23,14 @@ export const getServerSideProps: GetServerSideProps<TopPageProps> =
     return {
       props: {
         trpcState: ssg.dehydrate(),
+        url,
       },
     };
   });
 
-const TopPage: NextPage<TopPageProps> = () => {
+const TopPage: NextPage<TopPageProps> = ({ url }) => {
+  const { href } = useLocation();
+  const pageUrl = href ?? url;
   const { data: session } = useSession();
   const { data, isFetching, fetchNextPage } =
     trpcNext.post.latest.useInfiniteQuery(
@@ -61,9 +64,7 @@ const TopPage: NextPage<TopPageProps> = () => {
 
   return (
     <div>
-      <Head>
-        <title>買ってよかったもの</title>
-      </Head>
+      <Meta ogUrl={url} />
       <TopGuide userName={session?.user.name} />
       <Container>
         <Heading
