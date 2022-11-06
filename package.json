@@ -7,8 +7,8 @@
     "node": "16.17.0"
   },
   "scripts": {
-    "dev": "concurrently --kill-others -n next,prisma -c cyan,gray 'npm run next:dev' 'npm run prisma:generate -- --watch'",
-    "next:dev": "dotenv -e .env.development -- next dev",
+    "dev": "concurrently --kill-others -n next,prisma -r 'npm run next:dev' 'npm run prisma:generate -- --watch'",
+    "next:dev": "dotenv -e .env.development -- next dev --turbo",
     "build": "next build",
     "postinstall": "prisma generate",
     "start": "next start -p $PORT",
