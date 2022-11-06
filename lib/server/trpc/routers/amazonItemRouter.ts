@@ -7,6 +7,9 @@ import { loggedProcedure, trpc } from "~/lib/server/trpc/trpc";
 // 10 is max value https://webservices.amazon.com/paapi5/documentation/search-items.html
 const DEFAULT_PER_PAGE = 9;
 
+const AMAZON_URL_REGEX =
+  /https?:\/\/(www\.)?amazon(\.co)?\.jp\/(.+\/)?((gp\/product\/)|(dp\/))(?<asin>[A-Z0-9]+).*/;
+
 export const amazonItemRouter = trpc.router({
   search: loggedProcedure
     .input(
@@ -30,8 +33,11 @@ export const amazonItemRouter = trpc.router({
         Marketplace: "www.amazon.co.jp" as const,
       };
 
+      // クエリが Amazon の商品 URL の場合は ASIN をクエリにする
+      const asin = input.query.match(AMAZON_URL_REGEX)?.groups?.asin;
+
       const res = await amazon.SearchItems(metadata, {
-        Keywords: input.query,
+        Keywords: asin ?? input.query,
         SearchIndex: "All",
         Resources: [
           "ItemInfo.Title",
