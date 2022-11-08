@@ -10,7 +10,7 @@
     "dev": "concurrently --kill-others -n next,prisma -r 'npm run next:dev' 'npm run prisma:generate -- --watch'",
     "next:dev": "dotenv -e .env.development -- next dev",
     "build": "next build",
-    "vercel-build": "next build && prisma migrate deploy",
+    "vercel-build": "next build && prisma migrate deploy && tsx dev/migration.ts",
     "postinstall": "prisma generate",
     "start": "next start -p $PORT",
     "lint:eslint": "next lint --max-warnings 0",
@@ -49,7 +49,8 @@
     "react-spinners": "^0.13.6",
     "react-use": "^17.4.0",
     "superjson": "^1.11.0",
-    "zod": "^3.19.1"
+    "zod": "^3.19.1",
+    "tsx": "^3.11.0"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
@@ -61,7 +62,6 @@
     "eslint": "^8.26.0",
     "eslint-config-next": "^13.0.2",
     "pg": "^8.8.0",
-    "tsx": "^3.11.0",
     "typescript": "^4.8.4"
   }
 }
