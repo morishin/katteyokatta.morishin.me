@@ -25,12 +25,12 @@ const PostEditModal = dynamic(
 
 type ItemPageProps = {
   itemId: number;
-  url?: string;
+  url: string | null;
 };
 
 export const getServerSideProps: GetServerSideProps<ItemPageProps> =
   makeGetServerSideProps<ItemPageProps>(async (context, { ssg, url }) => {
-    const { params, req } = context;
+    const { params } = context;
     const itemId = Number(params?.["id"]);
     if (isNaN(itemId)) return { notFound: true };
 
@@ -92,7 +92,11 @@ const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
 
   return (
     <Container>
-      <Meta title={item.name} ogUrl={url} ogImage={item.image ?? undefined} />
+      <Meta
+        title={item.name}
+        ogUrl={pageUrl}
+        ogImage={item.image ?? undefined}
+      />
       <HStack justifyContent="flex-end" marginBottom="10px">
         <TweetButton url={pageUrl} />
       </HStack>

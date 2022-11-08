@@ -10,7 +10,9 @@ import { TopGuide } from "~/components/top/TopGuide";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
-type TopPageProps = {};
+type TopPageProps = {
+  url: string | null;
+};
 
 const PER_PAGE = 20;
 
@@ -64,7 +66,7 @@ const TopPage: NextPage<TopPageProps> = ({ url }) => {
 
   return (
     <div>
-      <Meta ogUrl={url} />
+      <Meta ogUrl={pageUrl} />
       <TopGuide userName={session?.user.name} />
       <Container>
         <Heading

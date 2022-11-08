@@ -27,7 +27,7 @@ import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps"
 
 type UserPageProps = {
   user: DefaultUser;
-  url?: string;
+  url: string | null;
 };
 
 const PER_PAGE = 20;
@@ -95,7 +95,7 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
     <Container>
       <Meta
         title={`@${user.name}さんの買ってよかったもの`}
-        ogUrl={url}
+        ogUrl={pageUrl}
         ogImage={user.image ?? undefined}
         twitterCreator={user.name}
       />

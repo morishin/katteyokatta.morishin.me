@@ -3,7 +3,7 @@ import { FC } from "react";
 
 type MetaProps = {
   title?: string;
-  ogUrl?: string;
+  ogUrl?: string | null;
   ogImage?: string;
   twitterCreator?: string;
 };

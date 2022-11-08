@@ -3,15 +3,15 @@ import { FC } from "react";
 import { FaTwitter } from "react-icons/fa";
 
 type TweetButtonProps = {
-  url?: string;
+  url: string | null;
 };
 
 export const TweetButton: FC<TweetButtonProps> = ({ url }) => {
-  const href = url ?? window.location.href;
+  if (url === null) return null;
   return (
     <Box>
       <ChakraLink
-        href={`https://twitter.com/intent/tweet?url=${encodeURI(href)}`}
+        href={`https://twitter.com/intent/tweet?url=${encodeURI(url)}`}
       >
         <Box
           height="20px"

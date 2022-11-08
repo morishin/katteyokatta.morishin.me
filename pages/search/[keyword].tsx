@@ -10,7 +10,7 @@ import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps"
 
 type ItemsSearchPageProps = {
   keyword: string;
-  url: string | undefined;
+  url: string | null;
 };
 
 const PER_PAGE = 20;
@@ -71,7 +71,7 @@ const ItemsSearchPage: NextPage<ItemsSearchPageProps> = ({ keyword, url }) => {
 
   return (
     <Container>
-      <Meta title={`"${keyword}"の検索結果`} ogUrl={url} />
+      <Meta title={`"${keyword}"の検索結果`} ogUrl={pageUrl} />
       <Heading
         as="h2"
         fontSize="xl"

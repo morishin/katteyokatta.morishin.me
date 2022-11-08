@@ -26,7 +26,7 @@ export const userRouter = trpc.router({
         select: defaultUserSelect,
       })
     ),
-  _updateAssociateTag: loggedProcedure
+  updateAssociateTag: loggedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session?.user.id;
@@ -40,10 +40,4 @@ export const userRouter = trpc.router({
         data: { associateTag },
       });
     }),
-  get updateAssociateTag() {
-    return this._updateAssociateTag;
-  },
-  set updateAssociateTag(value) {
-    this._updateAssociateTag = value;
-  },
 });

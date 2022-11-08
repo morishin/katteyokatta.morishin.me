@@ -28,7 +28,7 @@ type GetServerSidePropsWithParams<
   params: {
     session: Session | null;
     ssg: CreateSSGHelpersReturnType;
-    url: string | undefined;
+    url: string | null;
   }
 ) => Promise<GetServerSidePropsResult<P>>;
 
@@ -54,7 +54,7 @@ export const makeGetServerSideProps =
 
     const url = req.url
       ? new URL(req.url, `https://${req.headers.host}`).toString()
-      : undefined;
+      : null;
 
     const pageProps = await getServerSideProps(context, { session, ssg, url });
     if ("props" in pageProps) {

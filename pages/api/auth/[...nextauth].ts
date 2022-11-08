@@ -42,6 +42,8 @@ export const authOptions: NextAuthOptions = {
       return newSession;
     },
     async signIn({ account, profile }) {
+      if (account === null || profile === undefined)
+        return "Unexpected error: account/profiles is null";
       const existingAccount = await prisma.account.findUnique({
         where: {
           provider_providerAccountId: {
@@ -54,8 +56,8 @@ export const authOptions: NextAuthOptions = {
         await prisma.user.update({
           where: { id: existingAccount.userId },
           data: {
-            name: (profile.data as any).username,
-            image: (profile.data as any).profile_image_url?.replace(
+            name: (profile as any).data?.username,
+            image: (profile as any).data?.profile_image_url?.replace(
               /_normal\.(jpg|png|gif)$/,
               ".$1"
             ),
