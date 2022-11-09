@@ -1,10 +1,9 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import TwitterProvider from "next-auth/providers/twitter";
+import { prisma } from "~/lib/server/prisma";
 import { env } from "../../../lib/server/env";
-
-const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
