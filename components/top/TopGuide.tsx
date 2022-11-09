@@ -9,6 +9,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { FC } from "react";
 import { BsPlusLg } from "react-icons/bs";
@@ -47,17 +48,15 @@ const ForAnonymousUser: FC = () => (
         </Box>
       </Box>
       <Spacer h="5px" />
-      <Link href="/login" passHref legacyBehavior>
-        <Button
-          leftIcon={<FaTwitter color="white" />}
-          color="white"
-          backgroundColor="#1d9bf0"
-          _hover={{ backgroundColor: "#0c7abf" }}
-          as="a"
-        >
-          Twitterでログイン
-        </Button>
-      </Link>
+      <Button
+        leftIcon={<FaTwitter color="white" />}
+        color="white"
+        backgroundColor="#1d9bf0"
+        _hover={{ backgroundColor: "#0c7abf" }}
+        onClick={() => signIn("twitter")}
+      >
+        Twitterでログイン
+      </Button>
     </VStack>
   </Center>
 );

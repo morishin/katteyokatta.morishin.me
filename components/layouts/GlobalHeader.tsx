@@ -130,7 +130,7 @@ export const GlobalHeader: FC<Props> = () => {
                   <Button
                     variant="outline"
                     _hover={{ bgColor: "#f07e80" }}
-                    onClick={() => signIn()}
+                    onClick={() => signIn("twitter")}
                   >
                     Twitterログイン
                   </Button>

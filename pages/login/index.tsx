@@ -11,7 +11,7 @@ export const getServerSideProps: GetServerSideProps =
 
 const Login = () => {
   useEffect(() => {
-    signIn();
+    signIn("twitter");
   }, []);
   return <p>Signing in...</p>;
 };
