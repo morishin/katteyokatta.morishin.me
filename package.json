@@ -10,7 +10,7 @@
     "dev": "concurrently --kill-others -n next,prisma -r 'npm run next:dev' 'npm run prisma:generate -- --watch'",
     "next:dev": "dotenv -e .env.development -- next dev",
     "build": "next build",
-    "vercel-build": "next build && tsx dev/migration.ts",
+    "build:migrate": "next build && prisma migrate deploy",
     "postinstall": "prisma generate",
     "start": "next start -p $PORT",
     "lint:eslint": "next lint --max-warnings 0",
