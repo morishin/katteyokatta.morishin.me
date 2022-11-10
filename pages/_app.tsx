@@ -1,4 +1,5 @@
 import { ChakraProvider } from "@chakra-ui/react";
+import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import { chakraTheme } from "~/lib/client/chakraTheme";
@@ -15,6 +16,7 @@ const MyApp = ({
       <SessionProvider session={session}>
         <Layout>
           <Component {...pageProps} />
+          <Analytics />
         </Layout>
       </SessionProvider>
     </ChakraProvider>
