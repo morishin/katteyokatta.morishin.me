@@ -7,6 +7,8 @@ type Props = {
   posts: PostWithItem[];
 };
 
+const NUM_EAGER_LOADING_IMG = 6;
+
 export const PostGrid: FC<Props> = ({ posts }) => {
   return (
     <Grid
@@ -14,8 +16,12 @@ export const PostGrid: FC<Props> = ({ posts }) => {
       gap={["8px", "8px", "16px", "16px"]}
       justifyContent="center"
     >
-      {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
+      {posts.map((post, index) => (
+        <PostCard
+          key={post.id}
+          post={post}
+          eagerLoadImage={index < NUM_EAGER_LOADING_IMG}
+        />
       ))}
     </Grid>
   );

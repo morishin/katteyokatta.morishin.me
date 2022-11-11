@@ -10,9 +10,10 @@ import { PostWithItem } from "~/lib/client/types/type";
 
 type Props = {
   post: PostWithItem;
+  eagerLoadImage?: boolean;
 };
 
-export const PostCard: FC<Props> = ({ post }) => {
+export const PostCard: FC<Props> = ({ post, eagerLoadImage }) => {
   return (
     <Box>
       <VStack
@@ -26,6 +27,7 @@ export const PostCard: FC<Props> = ({ post }) => {
             <VStack alignItems="center">
               {post.item.image ? (
                 <Image
+                  loading={eagerLoadImage ? "eager" : undefined}
                   src={post.item.image}
                   alt=""
                   width="150"

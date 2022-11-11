@@ -114,6 +114,7 @@ const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
       >
         {item.image ? (
           <Image
+            loading="eager"
             src={item.image}
             alt=""
             width="200"
