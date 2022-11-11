@@ -1,6 +1,7 @@
-import { Box, HStack, Icon, Image, Text, VStack } from "@chakra-ui/react";
+import { Box, HStack, Text, VStack } from "@chakra-ui/react";
+import Image from "next/image";
 import type { FC } from "react";
-import { HiShoppingCart } from "react-icons/hi";
+import { PlaceholderImage } from "~/components/PlaceholderImage";
 import { DefaultAmazonItem } from "~/lib/client/types/type";
 
 type AmazonSearchResultItemCardProps = {
@@ -28,16 +29,21 @@ export const AmazonSearchResultItemCard: FC<
         spacing="20px"
       >
         <Box bg="gray.200" w="100px" h="100px">
-          <Image
-            src={item.image ?? undefined}
-            height="100px"
-            width="100px"
-            alt=""
-            objectFit="contain"
-            fallback={
-              <Icon as={HiShoppingCart} w="100px" h="100px" color="white" />
-            }
-          />
+          {item.image ? (
+            <Image
+              src={item.image}
+              alt=""
+              width="100"
+              height="100"
+              style={{
+                objectFit: "contain",
+                width: "100px",
+                height: "100px",
+              }}
+            />
+          ) : (
+            <PlaceholderImage width="100px" height="100px" />
+          )}
         </Box>
         <VStack
           alignItems="stretch"

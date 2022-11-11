@@ -1,4 +1,5 @@
-import { Box, Img, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
+import Image from "next/image";
 import type { FC } from "react";
 import { DefaultLink } from "~/components/DefaultLink";
 
@@ -32,16 +33,18 @@ export const AmazonButton: FC<Props> = ({ asin, associateTag, type }) => {
             Amazon詳細ページを見る
           </Text>
         ) : type === "small" ? (
-          <Img
+          <Image
             src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon1.png"
-            width="78px"
-            height="23px"
+            alt="Amazon詳細ページを見る"
+            width="78"
+            height="23"
           />
         ) : (
-          <Img
+          <Image
             src="https://images-fe.ssl-images-amazon.com/images/G/09/associates/buttons/assocbtn_orange_amazon4.png"
-            width="177px"
-            height="28px"
+            alt="Amazon詳細ページを見る"
+            width="177"
+            height="28"
           />
         )}
       </DefaultLink>

@@ -1,6 +1,8 @@
-import { Box, Img, Text, VStack } from "@chakra-ui/react";
+import { Box, Text, VStack } from "@chakra-ui/react";
+import Image from "next/image";
 import type { FC } from "react";
 import { DefaultLink } from "~/components/DefaultLink";
+import { PlaceholderImage } from "~/components/PlaceholderImage";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { TextLinker } from "~/components/TextLinker";
 import { UserLink } from "~/components/UserLink";
@@ -21,12 +23,22 @@ export const PostCard: FC<Props> = ({ post }) => {
       >
         <VStack padding="15px" spacing="8px" alignItems="flex-start">
           <DefaultLink href={`/items/${post.item.id}`}>
-            <VStack>
-              <Img
-                src={post.item.image || undefined}
-                maxHeight="200px"
-                marginX="auto"
-              />
+            <VStack alignItems="center">
+              {post.item.image ? (
+                <Image
+                  src={post.item.image}
+                  alt=""
+                  width="150"
+                  height="200"
+                  style={{
+                    objectFit: "contain",
+                    width: "150px",
+                    height: "200px",
+                  }}
+                />
+              ) : (
+                <PlaceholderImage width="150px" height="200px" />
+              )}
               <Text wordBreak="break-all">{post.item.name}</Text>
             </VStack>
           </DefaultLink>

@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Img,
   Spacer,
   Text,
   Textarea,
@@ -11,11 +10,13 @@ import {
 } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { BeatLoader } from "react-spinners";
 import { Container } from "~/components/layouts/Container";
+import { PlaceholderImage } from "~/components/PlaceholderImage";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
@@ -120,7 +121,21 @@ const NewPostDetailsPage: NextPage<NewPostDetailsPageProps> = ({ item }) => {
         marginX="auto"
         spacing="20px"
       >
-        <Img src={item.image || undefined} maxHeight="200px" marginX="auto" />
+        {item.image ? (
+          <Image
+            src={item.image}
+            alt=""
+            width="200"
+            height="200"
+            style={{
+              objectFit: "contain",
+              width: "200px",
+              height: "200px",
+            }}
+          />
+        ) : (
+          <PlaceholderImage width="200px" height="200px" />
+        )}
         <Text fontWeight="bold" fontSize="sm" wordBreak="break-all">
           {item.name}
         </Text>

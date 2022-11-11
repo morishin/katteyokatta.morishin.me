@@ -1,14 +1,8 @@
-import {
-  Box,
-  Circle,
-  HStack,
-  Img,
-  Text,
-  Tooltip,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Circle, HStack, Text, Tooltip, VStack } from "@chakra-ui/react";
+import Image from "next/image";
 import type { FC } from "react";
 import { DefaultLink } from "~/components/DefaultLink";
+import { PlaceholderImage } from "~/components/PlaceholderImage";
 import { UserIcon } from "~/components/UserIcon";
 import { ItemWithPosts } from "~/lib/client/types/type";
 
@@ -26,7 +20,21 @@ export const ItemCard: FC<Props> = ({ item }) => (
     >
       <DefaultLink href={`/items/${item.id}`}>
         <VStack padding="15px" spacing="8px" alignItems="flex-start">
-          <Img src={item.image || undefined} maxHeight="200px" marginX="auto" />
+          {item.image ? (
+            <Image
+              src={item.image}
+              alt=""
+              width="150"
+              height="200"
+              style={{
+                objectFit: "contain",
+                width: "150px",
+                height: "200px",
+              }}
+            />
+          ) : (
+            <PlaceholderImage width="150px" height="200px" />
+          )}
           <Text wordBreak="break-all">{item.name}</Text>
         </VStack>
       </DefaultLink>

@@ -1,18 +1,21 @@
-import { Heading, HStack, Img, Spacer, Text, VStack } from "@chakra-ui/react";
+import { Heading, HStack, Spacer, Text, VStack } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-use";
 import { Comment } from "~/components/item/Comment";
 import { SimilarItemsSection } from "~/components/item/SimilarItemsSection";
 import { Container } from "~/components/layouts/Container";
 import { Meta } from "~/components/Meta";
+import { PlaceholderImage } from "~/components/PlaceholderImage";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { TweetButton } from "~/components/TweetButton";
 import { usePostEdit } from "~/lib/client/post/usePostEdit";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
+
 const PostEditModal = dynamic(
   () =>
     import("~/components/post/PostEditModal").then(
@@ -109,7 +112,21 @@ const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
         padding="24px"
         marginX="auto"
       >
-        <Img src={item.image || undefined} maxHeight="200px" marginX="auto" />
+        {item.image ? (
+          <Image
+            src={item.image}
+            alt=""
+            width="200"
+            height="200"
+            style={{
+              objectFit: "contain",
+              width: "200px",
+              height: "200px",
+            }}
+          />
+        ) : (
+          <PlaceholderImage width="200px" height="200px" />
+        )}
         <Text fontWeight="bold" fontSize="sm" wordBreak="break-all">
           {item.name}
         </Text>
