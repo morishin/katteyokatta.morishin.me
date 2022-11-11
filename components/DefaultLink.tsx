@@ -1,6 +1,6 @@
 import { Link as ChakraLink } from "@chakra-ui/react";
 import Link from "next/link";
-import { ComponentProps, FC, PropsWithChildren } from "react";
+import type { ComponentProps, FC, PropsWithChildren } from "react";
 
 type DefaultLinkProps = PropsWithChildren<{
   href: ComponentProps<typeof Link>["href"];

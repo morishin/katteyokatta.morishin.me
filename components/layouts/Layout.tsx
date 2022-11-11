@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import { FC, PropsWithChildren } from "react";
+import type { FC, PropsWithChildren } from "react";
 import { Announcement } from "~/components/layouts/Announcement";
 import { GlobalHeader } from "~/components/layouts/GlobalHeader";
 

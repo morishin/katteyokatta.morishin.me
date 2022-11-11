@@ -1,5 +1,5 @@
 import { HStack, Text } from "@chakra-ui/react";
-import { FC } from "react";
+import type { FC } from "react";
 import { UserIcon } from "../UserIcon";
 
 type Props = {

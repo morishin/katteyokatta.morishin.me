@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { FC } from "react";
+import type { FC } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaTwitter } from "react-icons/fa";
 import { HiOutlineExternalLink } from "react-icons/hi";

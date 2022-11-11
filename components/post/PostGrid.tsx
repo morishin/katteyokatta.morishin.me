@@ -1,5 +1,5 @@
 import { Grid } from "@chakra-ui/react";
-import { FC } from "react";
+import type { FC } from "react";
 import { PostCard } from "~/components/post/PostCard";
 import { PostWithItem } from "~/lib/client/types/type";
 

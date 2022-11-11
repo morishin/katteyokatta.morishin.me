@@ -1,5 +1,5 @@
 import { Heading, HStack } from "@chakra-ui/react";
-import { FC } from "react";
+import type { FC } from "react";
 import { DefaultItem } from "~/lib/client/types/type";
 import { SimilarItemCard } from "./SimilarItemCard";
 

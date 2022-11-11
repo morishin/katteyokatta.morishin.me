@@ -1,5 +1,5 @@
 import { Box, Img, Text } from "@chakra-ui/react";
-import { FC } from "react";
+import type { FC } from "react";
 import { DefaultLink } from "~/components/DefaultLink";
 
 type Props = {

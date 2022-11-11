@@ -1,5 +1,5 @@
 import { Center, Circle, Icon } from "@chakra-ui/react";
-import { FC } from "react";
+import type { FC } from "react";
 import { HiShoppingCart } from "react-icons/hi";
 
 export const ReachedEndMark: FC = () => (

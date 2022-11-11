@@ -7,7 +7,7 @@ import {
   Tooltip,
   VStack,
 } from "@chakra-ui/react";
-import { FC } from "react";
+import type { FC } from "react";
 import { DefaultLink } from "~/components/DefaultLink";
 import { UserIcon } from "~/components/UserIcon";
 import { ItemWithPosts } from "~/lib/client/types/type";

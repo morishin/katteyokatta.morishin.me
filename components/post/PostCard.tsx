@@ -1,5 +1,5 @@
 import { Box, Img, Text, VStack } from "@chakra-ui/react";
-import { FC } from "react";
+import type { FC } from "react";
 import { DefaultLink } from "~/components/DefaultLink";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { TextLinker } from "~/components/TextLinker";

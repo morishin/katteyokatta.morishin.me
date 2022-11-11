@@ -14,7 +14,7 @@ import {
 import { signIn, useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { FC } from "react";
+import type { FC } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaSearch } from "react-icons/fa";
 import { HiShoppingCart } from "react-icons/hi";

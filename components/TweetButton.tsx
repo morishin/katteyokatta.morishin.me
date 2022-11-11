@@ -1,5 +1,5 @@
 import { Box, HStack, Icon, Link as ChakraLink } from "@chakra-ui/react";
-import { FC } from "react";
+import type { FC } from "react";
 import { FaTwitter } from "react-icons/fa";
 
 type TweetButtonProps = {

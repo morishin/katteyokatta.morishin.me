@@ -5,7 +5,7 @@ import {
   ModalContent,
   ModalOverlay,
 } from "@chakra-ui/react";
-import { FC } from "react";
+import type { FC } from "react";
 import { SearchForm } from "./SearchForm";
 
 type SearchModalProps = {

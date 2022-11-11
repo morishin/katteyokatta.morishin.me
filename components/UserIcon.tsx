@@ -1,5 +1,5 @@
 import { Circle, Icon, Image } from "@chakra-ui/react";
-import { FC } from "react";
+import type { FC } from "react";
 import { BsPersonFill } from "react-icons/bs";
 
 type Props = {

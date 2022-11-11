@@ -11,7 +11,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-import { FC, useEffect } from "react";
+import { useEffect, type FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FaCog } from "react-icons/fa";
 import { BeatLoader } from "react-spinners";

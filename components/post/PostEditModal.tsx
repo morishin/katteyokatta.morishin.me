@@ -20,7 +20,7 @@ import {
   theme,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FC, useRef } from "react";
+import { useRef, type FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { BeatLoader } from "react-spinners";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";

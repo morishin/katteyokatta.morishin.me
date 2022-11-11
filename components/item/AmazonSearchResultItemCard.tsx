@@ -1,5 +1,5 @@
 import { Box, HStack, Icon, Image, Text, VStack } from "@chakra-ui/react";
-import { FC } from "react";
+import type { FC } from "react";
 import { HiShoppingCart } from "react-icons/hi";
 import { DefaultAmazonItem } from "~/lib/client/types/type";
 

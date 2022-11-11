@@ -1,5 +1,5 @@
 import { Box, Center, Spinner, VStack } from "@chakra-ui/react";
-import { FC, memo, useEffect, useMemo, useRef } from "react";
+import { memo, useEffect, useMemo, useRef, type FC } from "react";
 import { useIntersection } from "react-use";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { DefaultAmazonItem } from "~/lib/client/types/type";

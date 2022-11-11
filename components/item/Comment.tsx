@@ -1,6 +1,6 @@
 import { Box, Button, HStack, Link as ChakraLink } from "@chakra-ui/react";
 import { format, isThisYear } from "date-fns";
-import { FC } from "react";
+import type { FC } from "react";
 import { TextLinker } from "~/components/TextLinker";
 import { UserLink } from "~/components/UserLink";
 import { DefaultPost } from "~/lib/client/types/type";
