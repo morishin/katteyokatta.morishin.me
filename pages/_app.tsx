@@ -16,7 +16,7 @@ const MyApp = ({
       <SessionProvider session={session}>
         <Layout>
           <Component {...pageProps} />
-          <Analytics />
+          <Analytics debug={process.env.NODE_ENV === "development"} />
         </Layout>
       </SessionProvider>
     </ChakraProvider>
