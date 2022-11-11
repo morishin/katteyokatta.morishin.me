@@ -66,14 +66,15 @@ const ForAnonymousUser: FC = () => (
 const ForLoggedInUser: FC<TopGuideProps> = ({ userName }) => (
   <Center h="150px" bgColor="white" padding="20px">
     <VStack alignItems="center">
-      <Box textAlign="center" fontSize={["md", "md", "lg", "lg"]}>
-        <Box as="span" whiteSpace="nowrap">
-          あなたの買ってよかったものを
-        </Box>
-        <Box as="span" whiteSpace="nowrap">
-          みんなに教えてあげましょう！
-        </Box>
-      </Box>
+      <HStack
+        spacing={0}
+        wrap="wrap"
+        justifyContent="center"
+        fontSize={["md", "md", "lg", "lg"]}
+      >
+        <Box>あなたの買ってよかったものを</Box>
+        <Box>みんなに教えてあげましょう！</Box>
+      </HStack>
       <Link href="/posts/new" passHref legacyBehavior>
         <Button
           leftIcon={<BsPlusLg color="white" />}
