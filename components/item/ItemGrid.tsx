@@ -9,7 +9,10 @@ type Props = {
 
 export const ItemGrid: FC<Props> = ({ items }) => {
   return (
-    <Grid templateColumns="repeat(auto-fill, minmax(160px, 1fr));" gap="16px">
+    <Grid
+      templateColumns="repeat(auto-fill, minmax(160px, 1fr));"
+      gap={["8px", "8px", "16px", "16px"]}
+    >
       {items.map((item) => (
         <ItemCard key={item.id} item={item} />
       ))}

@@ -11,7 +11,7 @@ export const PostGrid: FC<Props> = ({ posts }) => {
   return (
     <Grid
       templateColumns="repeat(auto-fill, minmax(160px, 1fr));"
-      gap="16px"
+      gap={["8px", "8px", "16px", "16px"]}
       justifyContent="center"
     >
       {posts.map((post) => (
