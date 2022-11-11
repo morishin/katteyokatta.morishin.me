@@ -16,7 +16,7 @@ export const SearchModal: FC<SearchModalProps> = ({ closeModal }) => {
   return (
     <Modal onClose={closeModal} size="full" isOpen={true}>
       <ModalOverlay />
-      <ModalContent onClick={closeModal} bgColor="transparent">
+      <ModalContent bgColor="transparent">
         <Box
           paddingTop="10px"
           paddingBottom="8px"
@@ -24,8 +24,9 @@ export const SearchModal: FC<SearchModalProps> = ({ closeModal }) => {
           paddingRight="42px"
           backgroundColor="primary"
         >
-          <SearchForm />
+          <SearchForm onSubmitted={closeModal} />
         </Box>
+        <Box flex={1} onClick={closeModal}></Box>
         <ModalCloseButton color="white" marginTop="4px" marginRight="-6px" />
       </ModalContent>
     </Modal>

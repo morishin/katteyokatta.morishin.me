@@ -1,45 +1,55 @@
-import { Button, HStack, Input } from "@chakra-ui/react";
+import { Button, FormControl, HStack, Input } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React, { FormEventHandler, useRef } from "react";
+import React from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 type Props = {
   keyword?: string;
+  onSubmitted?: () => void;
 };
 
-export const SearchForm: React.FC<Props> = ({ keyword }) => {
-  const inputValue = useRef<string>(keyword || "");
+type Inputs = {
+  query: string;
+};
+
+export const SearchForm: React.FC<Props> = ({ keyword, onSubmitted }) => {
+  const { register, handleSubmit } = useForm<Inputs>({
+    defaultValues: { query: keyword ?? "" },
+  });
+
   const router = useRouter();
-  const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
-    if (inputValue.current.length > 0) {
-      router.push(`/search/${inputValue.current}`);
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    if (data.query.length > 0) {
+      router.push(`/search/${data.query}`);
     }
+    onSubmitted?.();
   };
+
   return (
-    <form onSubmit={onSubmit}>
-      <HStack>
-        <Input
-          name="q"
-          placeholder="気になる商品名・カテゴリを入力"
-          fontSize={["sm", "sm", "md", "md"]}
-          size="md"
-          bgColor="white"
-          defaultValue={keyword}
-          onChange={(event) => {
-            inputValue.current = event.target.value;
-          }}
-          textColor="gray.600"
-        />
-        <Button
-          fontSize="sm"
-          bgColor="white"
-          _hover={{ bgColor: "gray.100" }}
-          type="submit"
-          textColor="gray.600"
-        >
-          検索
-        </Button>
-      </HStack>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormControl>
+        <HStack>
+          <Input
+            {...register("query", { required: true })}
+            placeholder="気になる商品名・カテゴリを入力"
+            fontSize={["sm", "sm", "md", "md"]}
+            size="md"
+            bgColor="white"
+            textColor="gray.600"
+          />
+          <Button
+            fontSize="sm"
+            bgColor="white"
+            _hover={{ bgColor: "gray.100" }}
+            type="submit"
+            form="search-form"
+            textColor="gray.600"
+            onClick={handleSubmit(onSubmit)}
+          >
+            検索
+          </Button>
+        </HStack>
+      </FormControl>
     </form>
   );
 };
