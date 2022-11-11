@@ -46,7 +46,7 @@ model Session {
 
 model User {
   id            Int       @id @default(autoincrement())
-  name          String
+  name          String    @unique
   email         String?
   emailVerified DateTime?
   image         String?
@@ -77,6 +77,9 @@ model Post {
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   item      Item     @relation(fields: [itemId], references: [id])
+
+  @@index(itemId)
+  @@index(userId)
 }
 
 model Item {
