@@ -31,22 +31,24 @@ export const TopGuide: FC<TopGuideProps> = ({ userName }) => {
 const ForAnonymousUser: FC = () => (
   <Center h={["180px", "180px", "150px", "150px"]} bgColor="white">
     <VStack alignItems="center">
-      <Box textAlign="center" fontSize={["md", "md", "lg", "lg"]}>
-        <Box as="span" whiteSpace="nowrap">
-          買ってよかったなと思ったものを
-        </Box>
-        <Box as="span" whiteSpace="nowrap">
-          まとめることができるサービスです。
-        </Box>
-      </Box>
-      <Box textAlign="center" fontSize={["xs", "xs", "sm", "sm"]}>
-        <Box as="span" whiteSpace="nowrap">
-          自分のまとめた商品には
-        </Box>
-        <Box as="span" whiteSpace="nowrap">
-          Amazonアフィリエイトリンクを設定できます
-        </Box>
-      </Box>
+      <HStack
+        spacing={0}
+        wrap="wrap"
+        justifyContent="center"
+        fontSize={["md", "md", "lg", "lg"]}
+      >
+        <Box>買ってよかったなと思ったものを</Box>
+        <Box>まとめることができるサービスです。</Box>
+      </HStack>
+      <HStack
+        spacing={0}
+        wrap="wrap"
+        justifyContent="center"
+        fontSize={["xs", "xs", "sm", "sm"]}
+      >
+        <Box>自分のまとめた商品には</Box>
+        <Box>Amazonアフィリエイトリンクを設定できます</Box>
+      </HStack>
       <Spacer h="5px" />
       <Button
         leftIcon={<FaTwitter color="white" />}
