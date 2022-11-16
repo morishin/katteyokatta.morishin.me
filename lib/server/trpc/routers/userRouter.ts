@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "~/lib/server/prisma";
 import { loggedProcedure, trpc } from "~/lib/server/trpc/trpc";
+import { revalidator } from "../../revalidator";
 
 const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
   id: true,
@@ -34,10 +35,16 @@ export const userRouter = trpc.router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       const associateTag = input.length === 0 ? null : input;
-      return prisma.user.update({
+      const user = await prisma.user.update({
         select: defaultUserSelect,
         where: { id: userId },
         data: { associateTag },
       });
+
+      if (ctx.res) {
+        await revalidator.onUpdateUserAssociateTag(ctx.res, user.name);
+      }
+
+      return user;
     }),
 });

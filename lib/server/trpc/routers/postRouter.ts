@@ -4,6 +4,7 @@ import { z } from "zod";
 import { decodeCursor, encodeCursor } from "~/lib/server/cursor";
 import { prisma } from "~/lib/server/prisma";
 import { loggedProcedure, trpc } from "~/lib/server/trpc/trpc";
+import { revalidator } from "../../revalidator";
 
 const DEFAULT_PER_PAGE = 20;
 
@@ -96,8 +97,8 @@ export const postRouter = trpc.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const userId = ctx.session?.user.id;
-      if (userId === undefined) {
+      const user = ctx.session?.user;
+      if (user === undefined) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       let item = await prisma.item.findUnique({
@@ -110,11 +111,16 @@ export const postRouter = trpc.router({
       }
       const newPost = await prisma.post.create({
         data: {
-          userId,
+          userId: user.id,
           itemId: item.id,
           comment: input.comment,
         },
       });
+
+      if (ctx.res) {
+        await revalidator.onCreateOrUpdatePost(ctx.res, user.name, item.id);
+      }
+
       return {
         post: {
           id: newPost.id,
@@ -132,8 +138,8 @@ export const postRouter = trpc.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const userId = ctx.session?.user.id;
-      if (userId === undefined) {
+      const user = ctx.session?.user;
+      if (user === undefined) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       const post = await prisma.post.update({
@@ -145,6 +151,15 @@ export const postRouter = trpc.router({
         },
         select: defaultPostSelect,
       });
+
+      if (ctx.res) {
+        await revalidator.onCreateOrUpdatePost(
+          ctx.res,
+          user.name,
+          post.item.id
+        );
+      }
+
       return {
         post,
       };
@@ -152,14 +167,24 @@ export const postRouter = trpc.router({
   delete: loggedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const userId = ctx.session?.user.id;
-      if (userId === undefined) {
+      const user = ctx.session?.user;
+      if (user === undefined) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
-      await prisma.post.delete({
+
+      const post = await prisma.post.delete({
         where: {
           id: input.id,
         },
+        select: defaultPostSelect,
       });
+
+      if (ctx.res) {
+        await revalidator.onCreateOrUpdatePost(
+          ctx.res,
+          user.name,
+          post.item.id
+        );
+      }
     }),
 });

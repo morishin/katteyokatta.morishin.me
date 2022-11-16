@@ -8,6 +8,7 @@ import {
   Icon,
   IconButton,
   Spacer,
+  Spinner,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -35,7 +36,7 @@ const SearchModal = dynamic(
 type Props = {};
 
 export const GlobalHeader: FC<Props> = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const searchModal = useDisclosure();
   return (
     <header>
@@ -89,7 +90,7 @@ export const GlobalHeader: FC<Props> = () => {
                     onClick={searchModal.onOpen}
                   />
                 </Box>
-                {session?.user ? (
+                {status === "authenticated" ? (
                   <HStack spacing={0}>
                     <Box display={["none", "none", "none", "block"]}>
                       <Link href="/posts/new" passHref legacyBehavior>
@@ -126,6 +127,10 @@ export const GlobalHeader: FC<Props> = () => {
                       autoShrink
                     />
                   </HStack>
+                ) : status === "loading" ? (
+                  <Center>
+                    <Spinner color="white" opacity={0.5} size="sm" />
+                  </Center>
                 ) : (
                   <Button
                     variant="outline"
