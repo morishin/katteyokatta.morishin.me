@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
+    unoptimized: true, // Vercel の無料枠を超えたので無効化
     remotePatterns: [
       {
         protocol: "https",
