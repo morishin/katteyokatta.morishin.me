@@ -1,37 +1,41 @@
 import { Center, Heading, Spinner } from "@chakra-ui/react";
-import type { GetServerSideProps, NextPage } from "next";
-import { useEffect, useMemo, useRef } from "react";
-import { useIntersection, useLocation } from "react-use";
+import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import { GetStaticProps, NextPage } from "next";
+import { createContext, useEffect, useMemo, useRef } from "react";
+import { useIntersection } from "react-use";
+import superjson from "superjson";
 import { Container } from "~/components/layouts/Container";
 import { Meta } from "~/components/Meta";
 import { PostGrid } from "~/components/post/PostGrid";
 import { TopGuide } from "~/components/top/TopGuide";
+import { WEB_HOST } from "~/lib/client/constants";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
-import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
+import { AppRouter, appRouter } from "~/lib/server/trpc/routers/appRouter";
 
-type TopPageProps = {
-  url: string | null;
+type Props = {
+  pageUrl: string;
 };
 
 const PER_PAGE = 20;
 
-export const getServerSideProps: GetServerSideProps<TopPageProps> =
-  makeGetServerSideProps<TopPageProps>(async (_context, { ssg, url }) => {
-    await ssg.post.latest.prefetchInfinite({
-      limit: PER_PAGE,
-    });
-
-    return {
-      props: {
-        trpcState: ssg.dehydrate(),
-        url,
-      },
-    };
+export const getStaticProps: GetStaticProps<Props> = async (_context) => {
+  const pageUrl = `${WEB_HOST}`;
+  const ssg = createProxySSGHelpers<AppRouter>({
+    router: appRouter,
+    ctx: createContext as any,
+    transformer: superjson,
   });
+  await ssg.post.latest.prefetchInfinite({
+    limit: PER_PAGE,
+  });
+  const props = {
+    trpcState: ssg.dehydrate(),
+    pageUrl,
+  };
+  return { props };
+};
 
-const TopPage: NextPage<TopPageProps> = ({ url }) => {
-  const { href } = useLocation();
-  const pageUrl = href ?? url;
+const TopPage: NextPage<Props> = ({ pageUrl }) => {
   const { data, isFetching, fetchNextPage } =
     trpcNext.post.latest.useInfiniteQuery(
       { limit: PER_PAGE },

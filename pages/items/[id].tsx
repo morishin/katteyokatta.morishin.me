@@ -1,10 +1,11 @@
 import { Heading, HStack, Spacer, Text, VStack } from "@chakra-ui/react";
-import type { GetServerSideProps, NextPage } from "next";
+import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-use";
+import { createContext, useEffect, useState } from "react";
+import superjson from "superjson";
 import { Comment } from "~/components/item/Comment";
 import { SimilarItemsSection } from "~/components/item/SimilarItemsSection";
 import { Container } from "~/components/layouts/Container";
@@ -12,9 +13,10 @@ import { Meta } from "~/components/Meta";
 import { PlaceholderImage } from "~/components/PlaceholderImage";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { TweetButton } from "~/components/TweetButton";
+import { WEB_HOST } from "~/lib/client/constants";
 import { usePostEdit } from "~/lib/client/post/usePostEdit";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
-import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
+import { AppRouter, appRouter } from "~/lib/server/trpc/routers/appRouter";
 
 const PostEditModal = dynamic(
   () =>
@@ -26,33 +28,41 @@ const PostEditModal = dynamic(
   }
 );
 
-type ItemPageProps = {
+type Props = {
   itemId: number;
-  url: string | null;
+  pageUrl: string;
 };
 
-export const getServerSideProps: GetServerSideProps<ItemPageProps> =
-  makeGetServerSideProps<ItemPageProps>(async (context, { ssg, url }) => {
-    const { params } = context;
-    const itemId = Number(params?.["id"]);
-    if (isNaN(itemId)) return { notFound: true };
+export const getStaticPaths: GetStaticPaths = () => ({
+  paths: [],
+  fallback: "blocking",
+});
 
-    const result = await ssg.item.single.fetch({ id: itemId });
-    if (result === null) return { notFound: true };
+export const getStaticProps: GetStaticProps<Props> = async (context) => {
+  const { params } = context;
+  const itemId = Number(params?.["id"]);
+  if (isNaN(itemId)) return { notFound: true };
 
-    return {
-      props: {
-        trpcState: ssg.dehydrate(),
-        itemId,
-        url,
-      },
-    };
+  const pageUrl = `${WEB_HOST}/items/${itemId}`;
+  const ssg = createProxySSGHelpers<AppRouter>({
+    router: appRouter,
+    ctx: createContext as any,
+    transformer: superjson,
   });
 
-const ItemPage: NextPage<ItemPageProps> = ({ itemId, url }) => {
+  const result = await ssg.item.single.fetch({ id: itemId });
+  if (result === null) return { notFound: true };
+
+  const props = {
+    trpcState: ssg.dehydrate(),
+    itemId,
+    pageUrl,
+  };
+  return { props };
+};
+
+const ItemPage: NextPage<Props> = ({ itemId, pageUrl }) => {
   const { data: session } = useSession();
-  const { href } = useLocation();
-  const pageUrl = href ?? url;
 
   const { data: item, refetch } = trpcNext.item.single.useQuery({ id: itemId });
   if (!item) {

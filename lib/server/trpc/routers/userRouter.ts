@@ -2,8 +2,8 @@ import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "~/lib/server/prisma";
+import { revalidator } from "~/lib/server/revalidator";
 import { loggedProcedure, trpc } from "~/lib/server/trpc/trpc";
-import { revalidator } from "../../revalidator";
 
 const defaultUserSelect = Prisma.validator<Prisma.UserSelect>()({
   id: true,

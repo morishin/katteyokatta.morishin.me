@@ -7,14 +7,14 @@ export const revalidator = {
     postItemId: number
   ) => {
     return Promise.all([
-      res.revalidate("/_dev"),
+      res.revalidate("/"),
+      res.revalidate(`/items/${postItemId}`),
       // res.revalidate(`/${postUserName}`),
-      // res.revalidate(`/items/${postItemId}`),
     ]);
   },
   onUpdateUserAssociateTag: async (res: NextApiResponse, userName: string) => {
     return Promise.all([
-      res.revalidate("/_dev"),
+      res.revalidate("/"),
       // res.revalidate(`/${userName}`),
     ]);
   },
