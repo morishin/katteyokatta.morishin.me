@@ -9,6 +9,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
 import { BsPlusLg } from "react-icons/bs";
@@ -91,6 +92,9 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
     [data?.pages]
   );
 
+  const { data: session } = useSession();
+  const isMyPage = session?.user?.id === user.id;
+
   return (
     <Container>
       <Meta
@@ -100,12 +104,14 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
         twitterCreator={user.name}
       />
       <HStack justifyContent="flex-end" spacing="25px">
-        <DefaultLink href="/account/settings" color="gray">
-          <HStack spacing="2px">
-            <Icon as={FaCog} w="15px" h="15px" color="gray" />
-            <Text fontSize="xs">アカウント設定</Text>
-          </HStack>
-        </DefaultLink>
+        {isMyPage ? (
+          <DefaultLink href="/account/settings" color="gray">
+            <HStack spacing="2px">
+              <Icon as={FaCog} w="15px" h="15px" color="gray" />
+              <Text fontSize="xs">アカウント設定</Text>
+            </HStack>
+          </DefaultLink>
+        ) : null}
         <TweetButton url={pageUrl} />
       </HStack>
       <Center>
@@ -120,28 +126,32 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
             </Text>
             <Text>さんの買ってよかったもの</Text>
           </HStack>
-          <Link href="/posts/new" passHref legacyBehavior>
-            <Button
-              leftIcon={<BsPlusLg color="white" />}
-              color="white"
-              bgColor="primary"
-              _hover={{ bgColor: "#CC565A" }}
-              as="a"
-            >
-              買ってよかったものを追加
-            </Button>
-          </Link>
-          <ChakraLink
-            href="https://www.amazon.co.jp/gp/css/order-history/"
-            color="primary"
-            target="_blank"
-            isExternal={true}
-          >
-            <HStack alignItems="center" spacing="2px">
-              <Text>Amazonの購入履歴を見る</Text>
-              <Icon as={HiOutlineExternalLink} />
-            </HStack>
-          </ChakraLink>
+          {isMyPage ? (
+            <>
+              <Link href="/posts/new" passHref legacyBehavior>
+                <Button
+                  leftIcon={<BsPlusLg color="white" />}
+                  color="white"
+                  bgColor="primary"
+                  _hover={{ bgColor: "#CC565A" }}
+                  as="a"
+                >
+                  買ってよかったものを追加
+                </Button>
+              </Link>
+              <ChakraLink
+                href="https://www.amazon.co.jp/gp/css/order-history/"
+                color="primary"
+                target="_blank"
+                isExternal={true}
+              >
+                <HStack alignItems="center" spacing="2px">
+                  <Text>Amazonの購入履歴を見る</Text>
+                  <Icon as={HiOutlineExternalLink} />
+                </HStack>
+              </ChakraLink>
+            </>
+          ) : null}
         </VStack>
       </Center>
       <PostGrid posts={posts} />
