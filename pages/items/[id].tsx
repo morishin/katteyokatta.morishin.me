@@ -16,6 +16,7 @@ import { TweetButton } from "~/components/TweetButton";
 import { WEB_HOST } from "~/lib/client/constants";
 import { usePostEdit } from "~/lib/client/post/usePostEdit";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
+import { prisma } from "~/lib/server/prisma";
 import { AppRouter, appRouter } from "~/lib/server/trpc/routers/appRouter";
 
 const PostEditModal = dynamic(
@@ -33,10 +34,14 @@ type Props = {
   pageUrl: string;
 };
 
-export const getStaticPaths: GetStaticPaths = () => ({
-  paths: [],
-  fallback: "blocking",
-});
+export const getStaticPaths: GetStaticPaths = async () => {
+  const allItems = await prisma.item.findMany({ select: { id: true } });
+  console.info(`ℹ️ ${allItems.length} items found.`);
+  return {
+    paths: allItems.map((item) => ({ params: { id: item.id.toString() } })),
+    fallback: "blocking",
+  };
+};
 
 export const getStaticProps: GetStaticProps<Props> = async (context) => {
   const { params } = context;
