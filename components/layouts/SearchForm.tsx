@@ -1,6 +1,6 @@
 import { Button, FormControl, HStack, Input } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 type Props = {
@@ -13,9 +13,13 @@ type Inputs = {
 };
 
 export const SearchForm: React.FC<Props> = ({ keyword, onSubmitted }) => {
-  const { register, handleSubmit } = useForm<Inputs>({
+  const { register, handleSubmit, setValue } = useForm<Inputs>({
     defaultValues: { query: keyword ?? "" },
   });
+
+  useEffect(() => {
+    setValue("query", keyword ?? "");
+  }, [keyword, setValue]);
 
   const router = useRouter();
   const onSubmit: SubmitHandler<Inputs> = (data) => {

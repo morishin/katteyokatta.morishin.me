@@ -15,7 +15,8 @@ import {
 import { signIn, useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import type { FC } from "react";
+import { useRouter } from "next/router";
+import { FC, useEffect, useState } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaSearch } from "react-icons/fa";
 import { HiShoppingCart } from "react-icons/hi";
@@ -35,9 +36,29 @@ const SearchModal = dynamic(
 
 type Props = {};
 
+const findKeyword = () =>
+  typeof location === "undefined"
+    ? ""
+    : location.pathname.split("/")[1] === "search"
+    ? decodeURI(location.pathname?.split("/").pop() ?? "")
+    : "";
+
 export const GlobalHeader: FC<Props> = () => {
   const { data: session, status } = useSession();
   const searchModal = useDisclosure();
+
+  const [keyword, setKeyword] = useState(findKeyword());
+  const router = useRouter();
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setKeyword(findKeyword());
+    };
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
+
   return (
     <header>
       <Box
@@ -74,7 +95,7 @@ export const GlobalHeader: FC<Props> = () => {
                 marginLeft="20px"
                 display={["none", "none", "block", "block"]}
               >
-                <SearchForm />
+                <SearchForm keyword={keyword} />
               </Box>
             </Box>
             <Spacer display={["block", "block", "none", "none"]} />
