@@ -22,7 +22,7 @@ export const getStaticProps: GetStaticProps<Props> = async (_context) => {
   const pageUrl = `${WEB_HOST}/_dev`;
   const ssg = createProxySSGHelpers<AppRouter>({
     router: appRouter,
-    ctx: createContext as any, // TODO: type mismatch??
+    ctx: createContext as any,
     transformer: superjson,
   });
   await ssg.post.latest.prefetchInfinite({
