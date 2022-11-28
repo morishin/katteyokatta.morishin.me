@@ -8,56 +8,69 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import type { GetServerSideProps, NextPage } from "next";
+import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Link from "next/link";
-import { useEffect, useMemo, useRef } from "react";
+import { createContext, useEffect, useMemo, useRef } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaCog, FaTwitter } from "react-icons/fa";
 import { HiOutlineExternalLink } from "react-icons/hi";
 import { useIntersection, useLocation } from "react-use";
+import superjson from "superjson";
 import { DefaultLink } from "~/components/DefaultLink";
 import { Container } from "~/components/layouts/Container";
 import { Meta } from "~/components/Meta";
 import { PostGrid } from "~/components/post/PostGrid";
 import { TweetButton } from "~/components/TweetButton";
 import { UserIcon } from "~/components/UserIcon";
+import { WEB_HOST } from "~/lib/client/constants";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { DefaultUser } from "~/lib/client/types/type";
-import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
-
-type UserPageProps = {
-  user: DefaultUser;
-  url: string | null;
-};
+import { prisma } from "~/lib/server/prisma";
+import { AppRouter, appRouter } from "~/lib/server/trpc/routers/appRouter";
 
 const PER_PAGE = 20;
 
-export const getServerSideProps: GetServerSideProps<UserPageProps> =
-  makeGetServerSideProps<UserPageProps>(async (context, { ssg, url }) => {
-    const { params, req } = context;
-    const userName = params?.["userName"];
-    if (typeof userName !== "string") throw new Error("Invalid params");
+type Props = {
+  user: DefaultUser;
+  pageUrl: string;
+};
 
-    const user = await ssg.user.single.fetch({ name: userName });
-    if (!user) return { notFound: true };
+export const getStaticPaths: GetStaticPaths = async () => {
+  const allUsers = await prisma.user.findMany({ select: { name: true } });
+  return {
+    paths: allUsers.map((user) => ({
+      params: { userName: user.name.toString() },
+    })),
+    fallback: "blocking",
+  };
+};
 
-    await ssg.post.latest.prefetchInfinite({
-      limit: PER_PAGE,
-      userName,
-    });
+export const getStaticProps: GetStaticProps<Props> = async (context) => {
+  const { params } = context;
+  const userName = params?.["userName"];
+  if (typeof userName !== "string") throw new Error("Invalid params");
 
-    return {
-      props: {
-        user,
-        url,
-        trpcState: ssg.dehydrate(),
-      },
-    };
+  const pageUrl = `${WEB_HOST}/${userName}`;
+  const ssg = createProxySSGHelpers<AppRouter>({
+    router: appRouter,
+    ctx: createContext as any,
+    transformer: superjson,
   });
 
-const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
+  const user = await ssg.user.single.fetch({ name: userName });
+  if (!user) return { notFound: true };
+
+  const props = {
+    trpcState: ssg.dehydrate(),
+    user,
+    pageUrl,
+  };
+  return { props };
+};
+
+const UserPage: NextPage<Props> = ({ user, pageUrl }) => {
   const { href } = useLocation();
-  const pageUrl = href ?? url;
   const { data, isFetching, fetchNextPage } =
     trpcNext.post.latest.useInfiniteQuery(
       {

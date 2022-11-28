@@ -36,7 +36,6 @@ type Props = {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const allItems = await prisma.item.findMany({ select: { id: true } });
-  console.info(`ℹ️ ${allItems.length} items found.`);
   return {
     paths: allItems.map((item) => ({ params: { id: item.id.toString() } })),
     fallback: "blocking",
