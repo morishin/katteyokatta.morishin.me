@@ -16,7 +16,7 @@ import { createContext, useEffect, useMemo, useRef } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaCog, FaTwitter } from "react-icons/fa";
 import { HiOutlineExternalLink } from "react-icons/hi";
-import { useIntersection, useLocation } from "react-use";
+import { useIntersection } from "react-use";
 import superjson from "superjson";
 import { DefaultLink } from "~/components/DefaultLink";
 import { Container } from "~/components/layouts/Container";
@@ -62,6 +62,11 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   const user = await ssg.user.single.fetch({ name: userName });
   if (!user) return { notFound: true };
 
+  await ssg.post.latest.prefetchInfinite({
+    limit: PER_PAGE,
+    userName: user.name,
+  });
+
   const props = {
     trpcState: ssg.dehydrate(),
     user,
@@ -71,7 +76,6 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
 };
 
 const UserPage: NextPage<Props> = ({ user, pageUrl }) => {
-  const { href } = useLocation();
   const { data, isFetching, fetchNextPage } =
     trpcNext.post.latest.useInfiniteQuery(
       {
