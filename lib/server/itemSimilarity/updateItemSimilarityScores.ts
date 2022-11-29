@@ -14,10 +14,10 @@ export const updateItemSimilarityScores = async () => {
       similarityCalculation: null,
     },
   });
+  if (itemsWithoutScores.length === 0) return;
   console.info(
     `updateItemSimilarityScores: ${itemsWithoutScores.length} items`
   );
-  if (itemsWithoutScores.length === 0) return;
 
   const allItems = await prisma.item.findMany({
     select: {
