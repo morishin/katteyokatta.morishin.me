@@ -59,8 +59,7 @@ export const PostCard: FC<Props> = ({ post, eagerLoadImage }) => {
         >
           <UserLink userName={post.user.name} userImage={post.user.image} />
           <Box marginTop="8px">
-            {" "}
-            <TextLinker text={post.comment} />
+            <TextLinker noOfLines={10} text={post.comment} />
           </Box>
         </Box>
       </VStack>
