@@ -56,7 +56,13 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   });
 
   // item ページのビルド時に ItemSimilirary のスコア計算とレコード作成を行う
-  await updateItemSimilarityScores();
+  try {
+    await updateItemSimilarityScores();
+  } catch (error) {
+    console.warn(
+      `Failed to updateItemSimilarityScores while generating: /items/${itemId}`
+    );
+  }
 
   const result = await ssg.item.single.fetch({ id: itemId });
   if (result === null) return { notFound: true };
