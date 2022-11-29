@@ -38,20 +38,20 @@ type Props = {};
 
 const findKeyword = () =>
   typeof location === "undefined"
-    ? ""
-    : location.pathname.split("/")[1] === "search"
-    ? decodeURI(location.pathname?.split("/").pop() ?? "")
-    : "";
+    ? undefined
+    : location.search !== undefined
+    ? new URLSearchParams(location.search).get("q") ?? undefined
+    : undefined;
 
 export const GlobalHeader: FC<Props> = () => {
   const { data: session, status } = useSession();
   const searchModal = useDisclosure();
 
-  const [keyword, setKeyword] = useState(findKeyword());
+  const [keyword, setKeyword] = useState(findKeyword() ?? "");
   const router = useRouter();
   useEffect(() => {
     const handleRouteChange = () => {
-      setKeyword(findKeyword());
+      setKeyword(findKeyword() ?? "");
     };
     router.events.on("routeChangeComplete", handleRouteChange);
     return () => {

@@ -1,5 +1,5 @@
-import { Center, Heading, Spinner, Text } from "@chakra-ui/react";
-import { FC, useEffect, useMemo, useRef } from "react";
+import { Center, Heading, Skeleton, Spinner, Text } from "@chakra-ui/react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { useIntersection, useLocation } from "react-use";
 import { ItemGrid } from "~/components/item/ItemGrid";
 import { Container } from "~/components/layouts/Container";
@@ -9,13 +9,20 @@ import { trpcNext } from "~/lib/client/trpc/trpcNext";
 const PER_PAGE = 20;
 
 export const ItemSearchResults: FC = () => {
-  const { href, pathname } = useLocation();
-  const keyword = decodeURI(pathname?.split("/").pop() ?? "");
+  const { href, search } = useLocation();
+  const [keyword, setKeyword] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    setKeyword(
+      search !== undefined
+        ? new URLSearchParams(search).get("q") ?? undefined
+        : undefined
+    );
+  }, [search]);
   const pageUrl = href;
 
   const { data, isFetching, fetchNextPage } =
     trpcNext.item.search.useInfiniteQuery(
-      { keyword, limit: PER_PAGE },
+      { keyword: keyword ?? "", limit: PER_PAGE },
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
       }
@@ -46,12 +53,13 @@ export const ItemSearchResults: FC = () => {
   return (
     <Container>
       <Meta title={`"${keyword}"の検索結果`} ogUrl={pageUrl} />
-      <Heading
-        as="h2"
-        fontSize="xl"
-        marginTop="10px"
-        marginBottom="15px"
-      >{`"${keyword}" の検索結果`}</Heading>
+      <Heading as="h2" fontSize="xl" marginTop="10px" marginBottom="15px">
+        {keyword ? (
+          `"${keyword}" の検索結果`
+        ) : (
+          <Skeleton height="20px" width="200px" />
+        )}
+      </Heading>
       {items.length > 0 ? (
         <ItemGrid items={items} />
       ) : !isFetching ? (

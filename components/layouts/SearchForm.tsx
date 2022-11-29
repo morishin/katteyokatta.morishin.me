@@ -24,7 +24,7 @@ export const SearchForm: React.FC<Props> = ({ keyword, onSubmitted }) => {
   const router = useRouter();
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     if (data.query.length > 0) {
-      router.push(`/search/${data.query}`);
+      router.push(`/search?q=${data.query}`);
     }
     onSubmitted?.();
   };
