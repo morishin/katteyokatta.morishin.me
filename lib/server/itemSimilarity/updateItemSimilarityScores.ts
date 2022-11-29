@@ -1,17 +1,30 @@
-import { prisma } from "../server/prisma";
-import { calculateItemSimilarityScore } from "./calculateItemSimilarityScore";
+import { calculateItemSimilarityScore } from "~/lib/server/itemSimilarity/calculateItemSimilarityScore";
+import { prisma } from "~/lib/server/prisma";
 
 const SCORE_THRESHOLD = 0.2;
 
 export const updateItemSimilarityScores = async () => {
   // 類似度が計算済みでない item を全て取得
   const itemsWithoutScores = await prisma.item.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
     where: {
       similarityCalculation: null,
     },
   });
+  console.info(
+    `updateItemSimilarityScores: ${itemsWithoutScores.length} items`
+  );
+  if (itemsWithoutScores.length === 0) return;
 
-  const allItems = await prisma.item.findMany();
+  const allItems = await prisma.item.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+  });
 
   for (const item of itemsWithoutScores) {
     const targetItems = allItems.filter(({ id }) => id !== item.id);

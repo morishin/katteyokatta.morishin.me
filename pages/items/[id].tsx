@@ -16,6 +16,7 @@ import { TweetButton } from "~/components/TweetButton";
 import { WEB_HOST } from "~/lib/client/constants";
 import { usePostEdit } from "~/lib/client/post/usePostEdit";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
+import { updateItemSimilarityScores } from "~/lib/server/itemSimilarity/updateItemSimilarityScores";
 import { prisma } from "~/lib/server/prisma";
 import { AppRouter, appRouter } from "~/lib/server/trpc/routers/appRouter";
 
@@ -53,6 +54,9 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
     ctx: createContext as any,
     transformer: superjson,
   });
+
+  // item ページのビルド時に ItemSimilirary のスコア計算とレコード作成を行う
+  await updateItemSimilarityScores();
 
   const result = await ssg.item.single.fetch({ id: itemId });
   if (result === null) return { notFound: true };
