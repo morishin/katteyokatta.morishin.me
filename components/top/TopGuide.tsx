@@ -5,8 +5,8 @@ import {
   HStack,
   Icon,
   Link as ChakraLink,
+  Skeleton,
   Spacer,
-  Spinner,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -22,7 +22,7 @@ export const TopGuide: FC = () => {
   return (
     <Center h="180px" bgColor="white">
       {status === "loading" ? (
-        <Spinner color="gray.300" size="xl" />
+        <ForAnonymousUserSkeleton />
       ) : status === "authenticated" ? (
         <ForLoggedInUser userName={session.user.name} />
       ) : (
@@ -31,6 +31,46 @@ export const TopGuide: FC = () => {
     </Center>
   );
 };
+
+const ForAnonymousUserSkeleton: FC = () => (
+  <VStack alignItems="center">
+    <HStack
+      spacing={0}
+      wrap="wrap"
+      justifyContent="center"
+      fontSize={["md", "md", "lg", "lg"]}
+    >
+      <Box pt="4px">
+        <Skeleton>買ってよかったなと思ったものを</Skeleton>
+      </Box>
+      <Box pt="4px">
+        <Skeleton>まとめることができるサービスです。</Skeleton>
+      </Box>
+    </HStack>
+    <HStack
+      spacing={0}
+      wrap="wrap"
+      justifyContent="center"
+      fontSize={["xs", "xs", "sm", "sm"]}
+    >
+      <Box pt="4px">
+        <Skeleton>自分のまとめた商品には</Skeleton>
+      </Box>
+      <Box pt="4px">
+        <Skeleton>Amazonアフィリエイトリンクを設定できます</Skeleton>
+      </Box>
+    </HStack>
+    <Spacer h="5px" />
+    <Button
+      leftIcon={<FaTwitter color="white" />}
+      color="white"
+      backgroundColor="#1d9bf0"
+      isLoading={true}
+    >
+      Twitterでログイン
+    </Button>
+  </VStack>
+);
 
 const ForAnonymousUser: FC = () => (
   <VStack alignItems="center">

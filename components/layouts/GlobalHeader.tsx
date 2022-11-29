@@ -8,7 +8,6 @@ import {
   Icon,
   IconButton,
   Spacer,
-  Spinner,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -148,15 +147,12 @@ export const GlobalHeader: FC<Props> = () => {
                       autoShrink
                     />
                   </HStack>
-                ) : status === "loading" ? (
-                  <Center>
-                    <Spinner color="white" opacity={0.5} size="sm" />
-                  </Center>
                 ) : (
                   <Button
                     variant="outline"
                     _hover={{ bgColor: "#f07e80" }}
                     onClick={() => signIn("twitter")}
+                    isLoading={status === "loading"}
                   >
                     Twitterログイン
                   </Button>
