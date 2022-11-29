@@ -14,7 +14,8 @@ import {
 import { signIn, useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import type { FC } from "react";
+import { useRouter } from "next/router";
+import { FC, useEffect, useState } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaSearch } from "react-icons/fa";
 import { HiShoppingCart } from "react-icons/hi";
@@ -34,9 +35,29 @@ const SearchModal = dynamic(
 
 type Props = {};
 
+const findKeyword = () =>
+  typeof location === "undefined"
+    ? undefined
+    : location.search !== undefined
+    ? new URLSearchParams(location.search).get("q") ?? undefined
+    : undefined;
+
 export const GlobalHeader: FC<Props> = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const searchModal = useDisclosure();
+
+  const [keyword, setKeyword] = useState(findKeyword() ?? "");
+  const router = useRouter();
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setKeyword(findKeyword() ?? "");
+    };
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
+
   return (
     <header>
       <Box
@@ -73,7 +94,7 @@ export const GlobalHeader: FC<Props> = () => {
                 marginLeft="20px"
                 display={["none", "none", "block", "block"]}
               >
-                <SearchForm />
+                <SearchForm keyword={keyword} />
               </Box>
             </Box>
             <Spacer display={["block", "block", "none", "none"]} />
@@ -89,7 +110,7 @@ export const GlobalHeader: FC<Props> = () => {
                     onClick={searchModal.onOpen}
                   />
                 </Box>
-                {session?.user ? (
+                {status === "authenticated" ? (
                   <HStack spacing={0}>
                     <Box display={["none", "none", "none", "block"]}>
                       <Link href="/posts/new" passHref legacyBehavior>
@@ -131,6 +152,7 @@ export const GlobalHeader: FC<Props> = () => {
                     variant="outline"
                     _hover={{ bgColor: "#f07e80" }}
                     onClick={() => signIn("twitter")}
+                    isLoading={status === "loading"}
                   >
                     Twitterログイン
                   </Button>
