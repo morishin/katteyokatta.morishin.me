@@ -1,9 +1,10 @@
+import { Text, type TextProps } from "@chakra-ui/react";
 import { memo } from "react";
-import { DefaultLink } from "./DefaultLink";
+import { DefaultLink } from "~/components/DefaultLink";
 
 type TextLinkerProps = {
   text: string;
-};
+} & TextProps;
 
 const LINE_BREAK_REGEX = /(\r\n|\r|\n)/g;
 
@@ -35,7 +36,10 @@ const parse = (text: string): Token[] => {
   return tokens;
 };
 
-export const TextLinker = memo<TextLinkerProps>(function TextLinker({ text }) {
+export const TextLinker = memo<TextLinkerProps>(function TextLinker({
+  text,
+  ...textProps
+}) {
   const nodes = text.split(LINE_BREAK_REGEX).map((line, idx) => {
     if (LINE_BREAK_REGEX.test(line)) {
       return <br key={idx} />;
@@ -54,5 +58,5 @@ export const TextLinker = memo<TextLinkerProps>(function TextLinker({ text }) {
     });
   });
 
-  return <>{nodes}</>;
+  return <Text {...textProps}>{nodes}</Text>;
 });

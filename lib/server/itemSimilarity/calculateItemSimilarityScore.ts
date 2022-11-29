@@ -1,4 +1,7 @@
-import { Item } from "@prisma/client";
+type Item = {
+  id: number;
+  name: string;
+};
 
 export const calculateItemSimilarityScore = (itemA: Item, itemB: Item) =>
   calculateDocumentSimilarityScore(itemA.name, itemB.name);

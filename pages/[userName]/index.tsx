@@ -8,56 +8,74 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import type { GetServerSideProps, NextPage } from "next";
+import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useEffect, useMemo, useRef } from "react";
+import { createContext, useEffect, useMemo, useRef } from "react";
 import { BsPlusLg } from "react-icons/bs";
 import { FaCog, FaTwitter } from "react-icons/fa";
 import { HiOutlineExternalLink } from "react-icons/hi";
-import { useIntersection, useLocation } from "react-use";
+import { useIntersection } from "react-use";
+import superjson from "superjson";
 import { DefaultLink } from "~/components/DefaultLink";
 import { Container } from "~/components/layouts/Container";
 import { Meta } from "~/components/Meta";
 import { PostGrid } from "~/components/post/PostGrid";
 import { TweetButton } from "~/components/TweetButton";
 import { UserIcon } from "~/components/UserIcon";
+import { WEB_HOST } from "~/lib/client/constants";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
 import { DefaultUser } from "~/lib/client/types/type";
-import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
-
-type UserPageProps = {
-  user: DefaultUser;
-  url: string | null;
-};
+import { prisma } from "~/lib/server/prisma";
+import { AppRouter, appRouter } from "~/lib/server/trpc/routers/appRouter";
 
 const PER_PAGE = 20;
 
-export const getServerSideProps: GetServerSideProps<UserPageProps> =
-  makeGetServerSideProps<UserPageProps>(async (context, { ssg, url }) => {
-    const { params, req } = context;
-    const userName = params?.["userName"];
-    if (typeof userName !== "string") throw new Error("Invalid params");
+type Props = {
+  user: DefaultUser;
+  pageUrl: string;
+};
 
-    const user = await ssg.user.single.fetch({ name: userName });
-    if (!user) return { notFound: true };
+export const getStaticPaths: GetStaticPaths = async () => {
+  const allUsers = await prisma.user.findMany({ select: { name: true } });
+  return {
+    paths: allUsers.map((user) => ({
+      params: { userName: user.name.toString() },
+    })),
+    fallback: "blocking",
+  };
+};
 
-    await ssg.post.latest.prefetchInfinite({
-      limit: PER_PAGE,
-      userName,
-    });
+export const getStaticProps: GetStaticProps<Props> = async (context) => {
+  const { params } = context;
+  const userName = params?.["userName"];
+  if (typeof userName !== "string") throw new Error("Invalid params");
 
-    return {
-      props: {
-        user,
-        url,
-        trpcState: ssg.dehydrate(),
-      },
-    };
+  const pageUrl = `${WEB_HOST}/${userName}`;
+  const ssg = createProxySSGHelpers<AppRouter>({
+    router: appRouter,
+    ctx: createContext as any,
+    transformer: superjson,
   });
 
-const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
-  const { href } = useLocation();
-  const pageUrl = href ?? url;
+  const user = await ssg.user.single.fetch({ name: userName });
+  if (!user) return { notFound: true };
+
+  await ssg.post.latest.prefetchInfinite({
+    limit: PER_PAGE,
+    userName: user.name,
+  });
+
+  const props = {
+    trpcState: ssg.dehydrate(),
+    user,
+    pageUrl,
+  };
+  return { props };
+};
+
+const UserPage: NextPage<Props> = ({ user, pageUrl }) => {
   const { data, isFetching, fetchNextPage } =
     trpcNext.post.latest.useInfiniteQuery(
       {
@@ -91,6 +109,9 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
     [data?.pages]
   );
 
+  const { data: session } = useSession();
+  const isMyPage = session?.user?.id === user.id;
+
   return (
     <Container>
       <Meta
@@ -100,12 +121,14 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
         twitterCreator={user.name}
       />
       <HStack justifyContent="flex-end" spacing="25px">
-        <DefaultLink href="/account/settings" color="gray">
-          <HStack spacing="2px">
-            <Icon as={FaCog} w="15px" h="15px" color="gray" />
-            <Text fontSize="xs">アカウント設定</Text>
-          </HStack>
-        </DefaultLink>
+        {isMyPage ? (
+          <DefaultLink href="/account/settings" color="gray">
+            <HStack spacing="2px">
+              <Icon as={FaCog} w="15px" h="15px" color="gray" />
+              <Text fontSize="xs">アカウント設定</Text>
+            </HStack>
+          </DefaultLink>
+        ) : null}
         <TweetButton url={pageUrl} />
       </HStack>
       <Center>
@@ -120,28 +143,32 @@ const UserPage: NextPage<UserPageProps> = ({ user, url }) => {
             </Text>
             <Text>さんの買ってよかったもの</Text>
           </HStack>
-          <Link href="/posts/new" passHref legacyBehavior>
-            <Button
-              leftIcon={<BsPlusLg color="white" />}
-              color="white"
-              bgColor="primary"
-              _hover={{ bgColor: "#CC565A" }}
-              as="a"
-            >
-              買ってよかったものを追加
-            </Button>
-          </Link>
-          <ChakraLink
-            href="https://www.amazon.co.jp/gp/css/order-history/"
-            color="primary"
-            target="_blank"
-            isExternal={true}
-          >
-            <HStack alignItems="center" spacing="2px">
-              <Text>Amazonの購入履歴を見る</Text>
-              <Icon as={HiOutlineExternalLink} />
-            </HStack>
-          </ChakraLink>
+          {isMyPage ? (
+            <>
+              <Link href="/posts/new" passHref legacyBehavior>
+                <Button
+                  leftIcon={<BsPlusLg color="white" />}
+                  color="white"
+                  bgColor="primary"
+                  _hover={{ bgColor: "#CC565A" }}
+                  as="a"
+                >
+                  買ってよかったものを追加
+                </Button>
+              </Link>
+              <ChakraLink
+                href="https://www.amazon.co.jp/gp/css/order-history/"
+                color="primary"
+                target="_blank"
+                isExternal={true}
+              >
+                <HStack alignItems="center" spacing="2px">
+                  <Text>Amazonの購入履歴を見る</Text>
+                  <Icon as={HiOutlineExternalLink} />
+                </HStack>
+              </ChakraLink>
+            </>
+          ) : null}
         </VStack>
       </Center>
       <PostGrid posts={posts} />
