@@ -5,6 +5,7 @@ import { decodeCursor, encodeCursor } from "~/lib/server/cursor";
 import { prisma } from "~/lib/server/prisma";
 import { revalidator } from "~/lib/server/revalidator";
 import { loggedProcedure, trpc } from "~/lib/server/trpc/trpc";
+import { tweet } from "~/lib/server/tweet";
 
 const DEFAULT_PER_PAGE = 20;
 
@@ -118,7 +119,17 @@ export const postRouter = trpc.router({
       });
 
       if (ctx.res) {
-        await revalidator.onCreateOrUpdatePost(ctx.res, user.name, item.id);
+        await Promise.all([
+          revalidator.onCreateOrUpdatePost(ctx.res, user.name, item.id),
+          tweet(
+            `⚡🆕 買ってよかったものが追加されました！👇⚡\n"${truncate(
+              newPost.comment,
+              50
+            )}" #買ってよかったもの\nhttps://${
+              process.env.NEXT_PUBLIC_WEB_HOST
+            }/items/${item.id}#comment-${newPost.id}`
+          ),
+        ]);
       }
 
       return {
@@ -188,3 +199,6 @@ export const postRouter = trpc.router({
       }
     }),
 });
+
+const truncate = (text: string, maxLength: number) =>
+  text.length <= maxLength ? text : text.substr(0, maxLength) + "...";
