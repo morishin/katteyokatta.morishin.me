@@ -125,7 +125,7 @@ export const postRouter = trpc.router({
             `⚡🆕 買ってよかったものが追加されました！👇⚡\n"${truncate(
               newPost.comment,
               50
-            )}" #買ってよかったもの\nhttps://${
+            )}" #買ってよかったもの\n${
               process.env.NEXT_PUBLIC_WEB_HOST
             }/items/${item.id}#comment-${newPost.id}`
           ),
