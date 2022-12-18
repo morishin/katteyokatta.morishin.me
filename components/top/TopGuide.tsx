@@ -98,7 +98,7 @@ const ForAnonymousUser: FC = () => (
       color="white"
       backgroundColor="#1d9bf0"
       _hover={{ backgroundColor: "#0c7abf" }}
-      onClick={() => signIn("twitter")}
+      onClick={() => signIn()}
     >
       Twitterでログイン
     </Button>
