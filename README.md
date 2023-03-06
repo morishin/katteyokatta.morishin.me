@@ -58,11 +58,21 @@ https://morishin.hatenablog.com/entry/release-katteyokatta
 
 ## Development
 
+### Setup
+
+Install dependencies.
+
+```sh
+$ npm i
+```
+
 Copy and edit an env file.
 
 ```sh
-cp .env.development.example .env.development
+$ cp .env.development.example .env.development
 ```
+
+### Run
 
 Run database.
 
