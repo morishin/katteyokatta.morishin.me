@@ -77,7 +77,7 @@ $ cp .env.development.example .env.development
 Run database.
 
 ```sh
-$ docker-compose -f docker-compose.dev.yml up
+$ docker-compose -f compose.yml up
 ```
 
 Run app.
