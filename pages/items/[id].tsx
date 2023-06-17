@@ -1,5 +1,5 @@
 import { Heading, HStack, Spacer, Text, VStack } from "@chakra-ui/react";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import { createServerSideHelpers } from "@trpc/react-query/server";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
@@ -49,7 +49,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   if (isNaN(itemId)) return { notFound: true };
 
   const pageUrl = `${WEB_HOST}/items/${itemId}`;
-  const ssg = createProxySSGHelpers<AppRouter>({
+  const helper = createServerSideHelpers<AppRouter>({
     router: appRouter,
     ctx: createContext as any,
     transformer: superjson,
@@ -64,11 +64,11 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
     );
   }
 
-  const result = await ssg.item.single.fetch({ id: itemId });
+  const result = await helper.item.single.fetch({ id: itemId });
   if (result === null) return { notFound: true };
 
   const props = {
-    trpcState: ssg.dehydrate(),
+    trpcState: helper.dehydrate(),
     itemId,
     pageUrl,
   };

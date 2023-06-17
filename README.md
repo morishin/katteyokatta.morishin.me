@@ -80,6 +80,12 @@ Run database.
 $ docker-compose -f compose.yml up
 ```
 
+Run migration.
+
+```sh
+$ npm run prisma:migrate:dev
+```
+
 Run app.
 
 ```sh

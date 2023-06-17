@@ -1,5 +1,5 @@
 import { Center, Heading, Spinner } from "@chakra-ui/react";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import { createServerSideHelpers } from "@trpc/react-query/server";
 import { GetStaticProps, NextPage } from "next";
 import { createContext, useEffect, useMemo, useRef } from "react";
 import { useIntersection } from "react-use";
@@ -20,16 +20,16 @@ const PER_PAGE = 20;
 
 export const getStaticProps: GetStaticProps<Props> = async (_context) => {
   const pageUrl = `${WEB_HOST}`;
-  const ssg = createProxySSGHelpers<AppRouter>({
+  const helper = createServerSideHelpers<AppRouter>({
     router: appRouter,
     ctx: createContext as any,
     transformer: superjson,
   });
-  await ssg.post.latest.prefetchInfinite({
+  await helper.post.latest.prefetchInfinite({
     limit: PER_PAGE,
   });
   const props = {
-    trpcState: ssg.dehydrate(),
+    trpcState: helper.dehydrate(),
     pageUrl,
   };
   return { props };

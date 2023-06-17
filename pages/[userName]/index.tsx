@@ -8,7 +8,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import { createServerSideHelpers } from "@trpc/react-query/server";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -53,22 +53,22 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   if (typeof userName !== "string") throw new Error("Invalid params");
 
   const pageUrl = `${WEB_HOST}/${userName}`;
-  const ssg = createProxySSGHelpers<AppRouter>({
+  const helper = createServerSideHelpers<AppRouter>({
     router: appRouter,
     ctx: createContext as any,
     transformer: superjson,
   });
 
-  const user = await ssg.user.single.fetch({ name: userName });
+  const user = await helper.user.single.fetch({ name: userName });
   if (!user) return { notFound: true };
 
-  await ssg.post.latest.prefetchInfinite({
+  await helper.post.latest.prefetchInfinite({
     limit: PER_PAGE,
     userName: user.name,
   });
 
   const props = {
-    trpcState: ssg.dehydrate(),
+    trpcState: helper.dehydrate(),
     user,
     pageUrl,
   };
