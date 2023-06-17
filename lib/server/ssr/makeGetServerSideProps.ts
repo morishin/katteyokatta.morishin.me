@@ -1,4 +1,4 @@
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import { createServerSideHelpers } from "@trpc/react-query/server";
 import { IncomingMessage, ServerResponse } from "http";
 import type {
   GetServerSideProps,
@@ -14,11 +14,11 @@ import { pinoLogger } from "~/lib/server/pinoLogger";
 import { createContext } from "~/lib/server/trpc/context";
 import { AppRouter, appRouter } from "~/lib/server/trpc/routers/appRouter";
 
-const _ssgHelperGen = () => {
+const _helperGen = () => {
   throw new Error("Only for type inference");
-  return createProxySSGHelpers<AppRouter>({} as any);
+  return createServerSideHelpers<AppRouter>({} as any);
 };
-type CreateSSGHelpersReturnType = ReturnType<typeof _ssgHelperGen>;
+type CreateServerSideHelpersReturnType = ReturnType<typeof _helperGen>;
 type GetServerSidePropsWithParams<
   P extends { [key: string]: any },
   Q extends ParsedUrlQuery = ParsedUrlQuery,
@@ -27,7 +27,7 @@ type GetServerSidePropsWithParams<
   context: GetServerSidePropsContext<Q, D>,
   params: {
     session: Session | null;
-    ssg: CreateSSGHelpersReturnType;
+    ssrHelper: CreateServerSideHelpersReturnType;
     url: string | null;
   }
 ) => Promise<GetServerSidePropsResult<P>>;
@@ -46,7 +46,7 @@ export const makeGetServerSideProps =
     const { req } = context;
     const session = await getSession({ req });
 
-    const ssg = createProxySSGHelpers<AppRouter>({
+    const ssrHelper = createServerSideHelpers<AppRouter>({
       router: appRouter,
       ctx: createContext as any, // TODO: type mismatch??
       transformer: superjson,
@@ -56,7 +56,11 @@ export const makeGetServerSideProps =
       ? new URL(req.url, `https://${req.headers.host}`).toString()
       : null;
 
-    const pageProps = await getServerSideProps(context, { session, ssg, url });
+    const pageProps = await getServerSideProps(context, {
+      session,
+      ssrHelper,
+      url,
+    });
     if ("props" in pageProps) {
       const props =
         pageProps.props instanceof Promise
