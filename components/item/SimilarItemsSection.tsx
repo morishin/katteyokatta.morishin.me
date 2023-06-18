@@ -22,7 +22,7 @@ export const SimilarItemsSection: FC<SimilarItemsSectionProps> = ({
       >
         似ているもの
       </Heading>
-      <HStack overflow="scroll" spacing="5px" alignItems="flex-start">
+      <HStack overflowX="auto" spacing="5px" alignItems="flex-start">
         {items.map((item) => (
           <SimilarItemCard key={item.id} item={item} />
         ))}

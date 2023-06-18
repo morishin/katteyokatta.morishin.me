@@ -128,7 +128,9 @@ export const postRouter = trpc.router({
             )}" #買ってよかったもの\n${
               process.env.NEXT_PUBLIC_WEB_HOST
             }/items/${item.id}#comment-${newPost.id}`
-          ),
+          ).catch((e) => {
+            console.error(e);
+          }),
         ]);
       }
 
