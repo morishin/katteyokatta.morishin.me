@@ -155,7 +155,10 @@ export const GlobalHeader: FC<Props> = () => {
                     onClick={() => signIn("twitter")}
                     isLoading={status === "loading"}
                   >
-                    Twitterログイン
+                    <Text fontSize="lg" color="white" marginRight={1}>
+                      𝕏
+                    </Text>
+                    <Text>でログイン</Text>
                   </Button>
                 )}
               </Flex>

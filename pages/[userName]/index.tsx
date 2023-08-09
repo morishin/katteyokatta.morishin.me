@@ -7,6 +7,7 @@ import {
   Spinner,
   Text,
   VStack,
+  Circle,
 } from "@chakra-ui/react";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
@@ -134,8 +135,15 @@ const UserPage: NextPage<Props> = ({ user, pageUrl }) => {
       <Center>
         <VStack paddingY="40px">
           <UserIcon image={user.image} size={100} />
-          <DefaultLink href={`https://twitter.com/${user.name}`}>
-            <Icon as={FaTwitter} w="20px" h="20px" color="#46BAED" />
+          <DefaultLink
+            href={`https://twitter.com/${user.name}`}
+            textDecorationOnHover="none"
+          >
+            <Circle size="30px" bgColor="black">
+              <Text fontWeight="bold" fontSize="lg" color="white">
+                𝕏
+              </Text>
+            </Circle>
           </DefaultLink>
           <HStack>
             <Text as="b" fontSize="2xl">

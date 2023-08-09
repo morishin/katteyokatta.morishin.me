@@ -1,6 +1,5 @@
-import { Box, HStack, Icon, Link as ChakraLink } from "@chakra-ui/react";
+import { Box, HStack, Text, Link as ChakraLink } from "@chakra-ui/react";
 import type { FC } from "react";
-import { FaTwitter } from "react-icons/fa";
 
 type TweetButtonProps = {
   url: string | null;
@@ -16,8 +15,8 @@ export const TweetButton: FC<TweetButtonProps> = ({ url }) => {
         <Box
           height="20px"
           borderRadius="10px"
-          backgroundColor="#1d9bf0"
-          _hover={{ backgroundColor: "#0c7abf" }}
+          backgroundColor="black"
+          _hover={{ backgroundColor: "#222222" }}
           color="white"
           paddingX="12px"
           paddingY="1px"
@@ -26,7 +25,9 @@ export const TweetButton: FC<TweetButtonProps> = ({ url }) => {
           cursor="pointer"
         >
           <HStack alignItems="center" spacing="4px">
-            <Icon as={FaTwitter} w="12px" h="12px" verticalAlign="top" />
+            <Text fontWeight="bold" fontSize="sm" color="white">
+              𝕏
+            </Text>
             <Box fontWeight="600" fontSize="12px">
               ツイート
             </Box>

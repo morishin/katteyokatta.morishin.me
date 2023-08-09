@@ -61,13 +61,11 @@ const ForAnonymousUserSkeleton: FC = () => (
       </Box>
     </HStack>
     <Spacer h="5px" />
-    <Button
-      leftIcon={<FaTwitter color="white" />}
-      color="white"
-      backgroundColor="#1d9bf0"
-      isLoading={true}
-    >
-      Twitterでログイン
+    <Button color="white" backgroundColor="black" isLoading={true}>
+      <Text fontSize="lg" color="white" marginRight={1}>
+        𝕏
+      </Text>
+      <Text>ログイン</Text>
     </Button>
   </VStack>
 );
@@ -94,13 +92,15 @@ const ForAnonymousUser: FC = () => (
     </HStack>
     <Spacer h="5px" />
     <Button
-      leftIcon={<FaTwitter color="white" />}
       color="white"
-      backgroundColor="#1d9bf0"
-      _hover={{ backgroundColor: "#0c7abf" }}
+      backgroundColor="black"
+      _hover={{ backgroundColor: "#222222" }}
       onClick={() => signIn("twitter")}
     >
-      Twitterでログイン
+      <Text fontSize="lg" color="white" marginRight={1}>
+        𝕏
+      </Text>
+      <Text>でログイン</Text>
     </Button>
   </VStack>
 );
