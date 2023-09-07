@@ -29,7 +29,7 @@ export const TweetButton: FC<TweetButtonProps> = ({ url }) => {
               𝕏
             </Text>
             <Box fontWeight="600" fontSize="12px">
-              ツイート
+              ポスト
             </Box>
           </HStack>
         </Box>
