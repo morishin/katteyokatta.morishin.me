@@ -20,7 +20,7 @@ import { updateItemSimilarityScores } from "~/lib/server/itemSimilarity/updateIt
 import { prisma } from "~/lib/server/prisma";
 import { AppRouter, appRouter } from "~/lib/server/trpc/routers/appRouter";
 
-const LIMIT_BUILD_STATIC_GENERATION = 100;
+const LIMIT_BUILD_STATIC_GENERATION = 50;
 
 const PostEditModal = dynamic(
   () =>
