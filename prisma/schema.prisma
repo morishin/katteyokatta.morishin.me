@@ -12,10 +12,10 @@ datasource db {
 
 model Account {
   id                String   @id @default(cuid())
-  userId            Int
+  userId            Int      @map("userid")
   type              String
   provider          String
-  providerAccountId String
+  providerAccountId String   @map("provideraccountid")
   refresh_token     String?
   access_token      String?
   expires_at        Int?
@@ -23,36 +23,33 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime @default(now()) @map("createdat")
+  updatedAt         DateTime @updatedAt @map("updatedat")
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-
   @@map("accounts")
 }
 
 model Session {
   id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       Int
+  sessionToken String   @unique @map("sessiontoken")
+  userId       Int      @map("userid")
   expires      DateTime
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime @default(now()) @map("createdat")
+  updatedAt    DateTime @updatedAt @map("updatedat")
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
 }
 
 model User {
   id            Int       @id @default(autoincrement())
   name          String    @unique
   email         String?
-  emailVerified DateTime?
+  emailVerified DateTime? @map("emailverified")
   image         String?
-  associateTag  String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  associateTag  String?   @map("associatetag")
+  createdAt     DateTime  @default(now()) @map("createdat")
+  updatedAt     DateTime  @updatedAt @map("updatedat")
   accounts      Account[]
   posts         Post[]
   sessions      Session[]
@@ -64,27 +61,25 @@ model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now()) @map("createdat")
+  updatedAt  DateTime @updatedAt @map("updatedat")
 
   @@unique([identifier, token])
-
   @@map("verification_tokens")
 }
 
 model Post {
   id        Int      @id @default(autoincrement())
-  userId    Int
-  itemId    Int
+  userId    Int      @map("userid")
+  itemId    Int      @map("itemid")
   comment   String   @db.VarChar(1000)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("createdat")
+  updatedAt DateTime @updatedAt @map("updatedat")
   item      Item     @relation(fields: [itemId], references: [id])
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([itemId])
   @@index([userId])
-
   @@map("posts")
 }
 
@@ -93,10 +88,10 @@ model Item {
   asin                  String                     @unique
   name                  String                     @db.VarChar(1000)
   image                 String?
-  createdAt             DateTime                   @default(now())
-  updatedAt             DateTime                   @updatedAt
+  createdAt             DateTime                   @default(now()) @map("createdat")
+  updatedAt             DateTime                   @updatedAt @map("updatedat")
   similarities          ItemSimilarity[]           @relation("item")
-  reversedSimilarities  ItemSimilarity[]           @relation("targetItem")
+  reversedSimilarities  ItemSimilarity[]           @relation("targetitem")
   similarityCalculation ItemSimilarityCalculation?
   posts                 Post[]
 
@@ -105,25 +100,24 @@ model Item {
 
 model ItemSimilarity {
   id           Int      @id @default(autoincrement())
-  itemId       Int
-  targetItemId Int
+  itemId       Int      @map("itemid")
+  targetItemId Int      @map("targetitemid")
   score        Float
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime @default(now()) @map("createdat")
+  updatedAt    DateTime @updatedAt @map("updatedat")
   item         Item     @relation("item", fields: [itemId], references: [id])
-  targetItem   Item     @relation("targetItem", fields: [targetItemId], references: [id])
+  targetItem   Item     @relation("targetitem", fields: [targetItemId], references: [id])
 
   @@unique([itemId, targetItemId])
   @@index([itemId])
-
   @@map("item_similarities")
 }
 
 model ItemSimilarityCalculation {
   id        Int      @id @default(autoincrement())
-  itemId    Int      @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  itemId    Int      @unique @map("itemid")
+  createdAt DateTime @default(now()) @map("createdat")
+  updatedAt DateTime @updatedAt @map("updatedat")
   item      Item     @relation(fields: [itemId], references: [id])
 
   @@map("item_similarity_calculations")
