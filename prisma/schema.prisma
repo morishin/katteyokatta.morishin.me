@@ -39,6 +39,8 @@ model Session {
   createdAt    DateTime @default(now()) @map("createdat")
   updatedAt    DateTime @updatedAt @map("updatedat")
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
 model User {
