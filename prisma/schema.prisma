@@ -28,6 +28,8 @@ model Account {
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+
+  @@map("accounts")
 }
 
 model Session {
@@ -38,6 +40,8 @@ model Session {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
 model User {
@@ -64,6 +68,8 @@ model VerificationToken {
   updatedAt  DateTime @updatedAt
 
   @@unique([identifier, token])
+
+  @@map("verification_tokens")
 }
 
 model Post {
@@ -78,6 +84,8 @@ model Post {
 
   @@index([itemId])
   @@index([userId])
+
+  @@map("posts")
 }
 
 model Item {
@@ -91,6 +99,8 @@ model Item {
   reversedSimilarities  ItemSimilarity[]           @relation("targetItem")
   similarityCalculation ItemSimilarityCalculation?
   posts                 Post[]
+
+  @@map("items")
 }
 
 model ItemSimilarity {
@@ -105,6 +115,8 @@ model ItemSimilarity {
 
   @@unique([itemId, targetItemId])
   @@index([itemId])
+
+  @@map("item_similarities")
 }
 
 model ItemSimilarityCalculation {
@@ -113,4 +125,6 @@ model ItemSimilarityCalculation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   item      Item     @relation(fields: [itemId], references: [id])
+
+  @@map("item_similarity_calculations")
 }
