@@ -1,16 +1,13 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
-  binaryTargets   = ["native", "darwin", "linux-musl"]
   previewFeatures = ["referentialIntegrity"]
+  binaryTargets   = ["native", "darwin", "linux-musl"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model Account {
@@ -19,17 +16,16 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?  @db.Text
-  access_token      String?  @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?  @db.Text
+  id_token          String?
   session_state     String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -39,9 +35,9 @@ model Session {
   sessionToken String   @unique
   userId       Int
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
@@ -50,12 +46,12 @@ model User {
   email         String?
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
-  sessions      Session[]
   associateTag  String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  accounts      Account[]
   posts         Post[]
+  sessions      Session[]
 
   @@map("users")
 }
@@ -77,11 +73,11 @@ model Post {
   comment   String   @db.VarChar(1000)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   item      Item     @relation(fields: [itemId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index(itemId)
-  @@index(userId)
+  @@index([itemId])
+  @@index([userId])
 }
 
 model Item {
@@ -91,10 +87,10 @@ model Item {
   image                 String?
   createdAt             DateTime                   @default(now())
   updatedAt             DateTime                   @updatedAt
-  posts                 Post[]
   similarities          ItemSimilarity[]           @relation("item")
   reversedSimilarities  ItemSimilarity[]           @relation("targetItem")
   similarityCalculation ItemSimilarityCalculation?
+  posts                 Post[]
 }
 
 model ItemSimilarity {
@@ -102,19 +98,19 @@ model ItemSimilarity {
   itemId       Int
   targetItemId Int
   score        Float
-  item         Item     @relation("item", fields: [itemId], references: [id])
-  targetItem   Item     @relation("targetItem", fields: [targetItemId], references: [id])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  item         Item     @relation("item", fields: [itemId], references: [id])
+  targetItem   Item     @relation("targetItem", fields: [targetItemId], references: [id])
 
   @@unique([itemId, targetItemId])
-  @@index(itemId)
+  @@index([itemId])
 }
 
 model ItemSimilarityCalculation {
   id        Int      @id @default(autoincrement())
   itemId    Int      @unique
-  item      Item     @relation(fields: [itemId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  item      Item     @relation(fields: [itemId], references: [id])
 }

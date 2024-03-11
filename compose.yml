@@ -1,16 +1,13 @@
-version: '3'
+version: '3.9'
 
 services:
   db:
-    image: mysql:8
-    container_name: mysql
+    image: postgres:15
+    restart: always
     ports:
-      - 3307:3306
+      - 5433:5432
     volumes:
-      - db-store:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: katteyokatta_dev
-      TZ: Asia/Tokyo
+      - postgres-data:/var/lib/postgresql/data
+    env_file: .env
 volumes:
-  db-store:
+  postgres-data:

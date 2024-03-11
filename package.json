@@ -18,6 +18,7 @@
     "lint:prettier:write": "prettier --write '**/*.{js,ts,tsx}'",
     "lint:tsc": "tsc",
     "format": "prettier --list-different --write '**/*.{js,ts,tsx}'",
+    "prisma": "prisma",
     "prisma:generate": "prisma generate",
     "prisma:db:push": "dotenv -e .env.development -- prisma db push",
     "prisma:migrate:dev": "dotenv -e .env.development -- prisma migrate dev",
