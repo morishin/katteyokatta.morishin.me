@@ -39,6 +39,13 @@ type Props = {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  if (process.env.SKIP_BUILD_STATIC_GENERATION) {
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
+
   const allUsers = await prisma.user.findMany({ select: { name: true } });
   return {
     paths: allUsers.map((user) => ({

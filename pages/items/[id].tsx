@@ -20,6 +20,8 @@ import { updateItemSimilarityScores } from "~/lib/server/itemSimilarity/updateIt
 import { prisma } from "~/lib/server/prisma";
 import { AppRouter, appRouter } from "~/lib/server/trpc/routers/appRouter";
 
+const LIMIT_BUILD_STATIC_GENERATION = 500;
+
 const PostEditModal = dynamic(
   () =>
     import("~/components/post/PostEditModal").then(
@@ -36,7 +38,18 @@ type Props = {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const allItems = await prisma.item.findMany({ select: { id: true } });
+  if (process.env.SKIP_BUILD_STATIC_GENERATION) {
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
+
+  const allItems = await prisma.item.findMany({
+    select: { id: true },
+    take: LIMIT_BUILD_STATIC_GENERATION,
+    orderBy: { createdAt: "desc" },
+  });
   return {
     paths: allItems.map((item) => ({ params: { id: item.id.toString() } })),
     fallback: "blocking",
