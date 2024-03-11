@@ -15,7 +15,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { createContext, useEffect, useMemo, useRef } from "react";
 import { BsPlusLg } from "react-icons/bs";
-import { FaCog, FaTwitter } from "react-icons/fa";
+import { FaCog } from "react-icons/fa";
 import { HiOutlineExternalLink } from "react-icons/hi";
 import { useIntersection } from "react-use";
 import superjson from "superjson";
@@ -31,6 +31,7 @@ import { DefaultUser } from "~/lib/client/types/type";
 import { prisma } from "~/lib/server/prisma";
 import { AppRouter, appRouter } from "~/lib/server/trpc/routers/appRouter";
 
+const LIMIT_BUILD_STATIC_GENERATION = 50;
 const PER_PAGE = 20;
 
 type Props = {
@@ -46,7 +47,20 @@ export const getStaticPaths: GetStaticPaths = async () => {
     };
   }
 
-  const allUsers = await prisma.user.findMany({ select: { name: true } });
+  const allUsers = await prisma.user.findMany({
+    select: { name: true },
+    where: {
+      posts: {
+        some: {},
+      },
+    },
+    orderBy: {
+      posts: {
+        _count: "desc",
+      },
+    },
+    take: LIMIT_BUILD_STATIC_GENERATION,
+  });
   return {
     paths: allUsers.map((user) => ({
       params: { userName: user.name.toString() },
