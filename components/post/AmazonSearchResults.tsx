@@ -1,4 +1,4 @@
-import { Box, Center, Spinner, VStack } from "@chakra-ui/react";
+import { Box, Center, Spinner, useToast, VStack } from "@chakra-ui/react";
 import { memo, useEffect, useMemo, useRef, type FC } from "react";
 import { useIntersection } from "react-use";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
@@ -39,6 +39,8 @@ export const AmazonSearchResults: FC<AmazonSearchResultsProps> = memo(
       root: null,
     });
 
+    const toast = useToast();
+
     const previousIsIntersecting = useRef<boolean | undefined>(false);
     useEffect(() => {
       if (
@@ -50,6 +52,20 @@ export const AmazonSearchResults: FC<AmazonSearchResultsProps> = memo(
       }
       previousIsIntersecting.current = intersection?.isIntersecting;
     }, [fetchNextPage, intersection?.isIntersecting, isFetching]);
+
+    useEffect(() => {
+      const lastPage = data?.pages[data.pages.length - 1];
+      if (lastPage?.error?.status === 429) {
+        toast({
+          title:
+            "Amazon API のレート制限に達しました。しばらく待ってから再度お試しください。",
+          status: "error",
+          isClosable: true,
+        });
+      } else {
+        toast.closeAll();
+      }
+    }, [data]);
 
     return (
       <div>

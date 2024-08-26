@@ -36,18 +36,29 @@ export const amazonItemRouter = trpc.router({
       // クエリが Amazon の商品 URL の場合は ASIN をクエリにする
       const asin = input.query.match(AMAZON_URL_REGEX)?.groups?.asin;
 
-      const res = await amazon.SearchItems(metadata, {
-        Keywords: asin ?? input.query,
-        SearchIndex: "All",
-        Resources: [
-          "ItemInfo.Title",
-          "Images.Primary.Large",
-          "Offers.Listings.Price",
-        ],
-        ItemCount: perPage + 1, // get an extra item at the end which we'll use as next cursor
-        ItemPage: pageNumber ?? undefined,
-      });
-      if (res.Errors) throw new Error(res.Errors[0].Message);
+      let res: amazon.AmazonSearchItemsResponse;
+      try {
+        res = await amazon.SearchItems(metadata, {
+          Keywords: asin ?? input.query,
+          SearchIndex: "All",
+          Resources: [
+            "ItemInfo.Title",
+            "Images.Primary.Large",
+            "Offers.Listings.Price",
+          ],
+          ItemCount: perPage + 1, // get an extra item at the end which we'll use as next cursor
+          ItemPage: pageNumber ?? undefined,
+        });
+      } catch (error: any) {
+        if (Number(error.status) === 429) {
+          return {
+            amazonItems: [],
+            nextCursor: null,
+            error: { status: 429, message: "Rate limit exceeded" },
+          };
+        }
+        throw error;
+      }
 
       const amazonItems = res.SearchResult.Items.map((rawItem) => ({
         asin: rawItem.ASIN,

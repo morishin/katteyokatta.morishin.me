@@ -69,7 +69,7 @@ $ npm i
 Copy and edit an env file.
 
 ```sh
-$ cp .env.development.example .env.development
+$ cp .env.example .env
 ```
 
 ### Run
