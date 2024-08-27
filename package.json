@@ -1,10 +1,10 @@
 {
   "private": true,
   "engines": {
-    "node": "18"
+    "node": "22"
   },
   "volta": {
-    "node": "18.14.2"
+    "node": "22.7.0"
   },
   "scripts": {
     "dev": "concurrently --kill-others -n next,prisma -r 'npm run next:dev' 'npm run prisma:generate -- --watch'",
