@@ -6,6 +6,7 @@ import {
   Link as ChakraLink,
   Text,
   theme,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import type { GetServerSideProps, NextPage } from "next";
@@ -22,6 +23,7 @@ import { HiOutlineExternalLink } from "react-icons/hi";
 import { Container } from "~/components/layouts/Container";
 import { AmazonSearchResults } from "~/components/post/AmazonSearchResults";
 import { DefaultAmazonItem } from "~/lib/client/types/type";
+import { isAmazonUrl } from "~/lib/server/asin";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
 type NewPostPageProps = {};
@@ -45,6 +47,7 @@ const NewPostPage: NextPage<NewPostPageProps> = ({}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const toast = useToast();
 
   const onClickItem = useCallback(
     (item: DefaultAmazonItem) => {
@@ -64,7 +67,23 @@ const NewPostPage: NextPage<NewPostPageProps> = ({}) => {
   const onSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     if (inputRef.current && inputRef.current.value.length > 0) {
-      setSearchQuery(inputRef.current.value);
+      if (isAmazonUrl(inputRef.current.value)) {
+        toast({
+          title:
+            "Amazonの商品ページを読み込んでいます。しばらくお待ちください。",
+          status: "loading",
+          isClosable: true,
+          position: "top",
+        });
+        router.push({
+          pathname: "/posts/new/details",
+          query: {
+            url: inputRef.current.value,
+          },
+        });
+      } else {
+        setSearchQuery(inputRef.current.value);
+      }
     }
   };
 

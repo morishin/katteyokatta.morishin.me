@@ -19,6 +19,7 @@ import { Container } from "~/components/layouts/Container";
 import { PlaceholderImage } from "~/components/PlaceholderImage";
 import { AmazonButton } from "~/components/post/AmazonButton";
 import { trpcNext } from "~/lib/client/trpc/trpcNext";
+import { PageInfo } from "~/lib/server/PageInfo";
 import { makeGetServerSideProps } from "~/lib/server/ssr/makeGetServerSideProps";
 
 type NewPostDetailsPageProps = {
@@ -38,6 +39,14 @@ export const getServerSideProps: GetServerSideProps<NewPostDetailsPageProps> =
             destination: "/login",
             permanent: false,
           },
+        };
+      }
+
+      const amazonUrl = context.query["url"]?.toString();
+      if (amazonUrl) {
+        const item = await PageInfo.fetch(amazonUrl);
+        return {
+          props: { item },
         };
       }
 

@@ -58,14 +58,15 @@ export const AmazonSearchResults: FC<AmazonSearchResultsProps> = memo(
       if (lastPage?.error?.status === 429) {
         toast({
           title:
-            "Amazon API のレート制限に達しました。しばらく待ってから再度お試しください。",
+            "Amazonの検索APIのレート制限に達しました。お手数ですが商品ページのURLを直接入力してください。",
           status: "error",
           isClosable: true,
+          position: "top",
         });
       } else {
         toast.closeAll();
       }
-    }, [data]);
+    }, [data, toast]);
 
     return (
       <div>

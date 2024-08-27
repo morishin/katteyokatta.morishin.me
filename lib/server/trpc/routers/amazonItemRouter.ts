@@ -1,14 +1,12 @@
 import * as amazon from "amazon-paapi";
 import { z } from "zod";
+import { asinFromUrl } from "~/lib/server/asin";
 import { decodeCursor, encodeCursor } from "~/lib/server/cursor";
 import { env } from "~/lib/server/env";
 import { loggedProcedure, trpc } from "~/lib/server/trpc/trpc";
 
 // 10 is max value https://webservices.amazon.com/paapi5/documentation/search-items.html
 const DEFAULT_PER_PAGE = 9;
-
-const AMAZON_URL_REGEX =
-  /https?:\/\/(www\.)?amazon(\.co)?\.jp\/(.+\/)?((gp\/product\/)|(dp\/))(?<asin>[A-Z0-9]+).*/;
 
 export const amazonItemRouter = trpc.router({
   search: loggedProcedure
@@ -34,7 +32,7 @@ export const amazonItemRouter = trpc.router({
       };
 
       // クエリが Amazon の商品 URL の場合は ASIN をクエリにする
-      const asin = input.query.match(AMAZON_URL_REGEX)?.groups?.asin;
+      const asin = asinFromUrl(input.query);
 
       let res: amazon.AmazonSearchItemsResponse;
       try {
