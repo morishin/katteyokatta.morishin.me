@@ -119,19 +119,20 @@ export const postRouter = trpc.router({
       });
 
       if (ctx.res) {
-        await Promise.all([
-          revalidator.onCreateOrUpdatePost(ctx.res, user.name, item.id),
-          tweet(
-            `⚡🆕 買ってよかったものが追加されました！👇⚡\n"${truncate(
-              newPost.comment,
-              50
-            )}" #買ってよかったもの\n${
-              process.env.NEXT_PUBLIC_WEB_HOST
-            }/items/${item.id}#comment-${newPost.id}`
-          ).catch((e) => {
-            console.error(e);
-          }),
-        ]);
+        await revalidator.onCreateOrUpdatePost(ctx.res, user.name, item.id);
+        // await Promise.all([
+        //   revalidator.onCreateOrUpdatePost(ctx.res, user.name, item.id),
+        //   tweet(
+        //     `⚡🆕 買ってよかったものが追加されました！👇⚡\n"${truncate(
+        //       newPost.comment,
+        //       50
+        //     )}" #買ってよかったもの\n${
+        //       process.env.NEXT_PUBLIC_WEB_HOST
+        //     }/items/${item.id}#comment-${newPost.id}`
+        //   ).catch((e) => {
+        //     console.error(e);
+        //   }),
+        // ]);
       }
 
       return {
